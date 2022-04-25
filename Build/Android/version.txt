@@ -1,0 +1,5 @@
+android studio 3.5.3
+jdk 1.8.0_77
+ndk r21d
+
+youtube : https://www.youtube.com/watch?v=VcAB7CGK85c
