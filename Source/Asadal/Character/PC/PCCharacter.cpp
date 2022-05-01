@@ -24,6 +24,16 @@ APCCharacter::APCCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
+void APCCharacter::InputMoveForward(float Value)
+{
+	//UE_LOG(LogTemp, Display, TEXT("MoveForward <%.2f>"), Value);
+}
+
+void APCCharacter::InputMoveRight(float Value)
+{
+	//UE_LOG(LogTemp, Display, TEXT("MoveRight <%.2f>"), Value);
+}
+
 // Called when the game starts or when spawned
 void APCCharacter::BeginPlay()
 {

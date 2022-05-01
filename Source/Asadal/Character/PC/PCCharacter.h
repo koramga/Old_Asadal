@@ -16,6 +16,10 @@ public:
 	// Sets default values for this character's properties
 	APCCharacter();
 
+public :
+	void InputMoveForward(float Value);
+	void InputMoveRight(float Value);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

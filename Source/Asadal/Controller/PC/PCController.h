@@ -16,5 +16,16 @@ class ASADAL_API APCController : public APlayerController
 
 public :
 	APCController();
+
+protected:
+	virtual void SetupInputComponent() override;
+	virtual void OnPossess(APawn* InPawn) override;
+
+protected:
+	class APCCharacter* PCCharacter;
+	
+private :
+	void __InputMoveRight(float Value);
+	void __InputMoveForward(float Value);
 	
 };
