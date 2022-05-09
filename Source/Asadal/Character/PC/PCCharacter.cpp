@@ -2,7 +2,7 @@
 
 
 #include "PCCharacter.h"
-
+#include "Asadal/Asadal.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -27,11 +27,37 @@ APCCharacter::APCCharacter()
 void APCCharacter::InputMoveForward(float Value)
 {
 	//UE_LOG(LogTemp, Display, TEXT("MoveForward <%.2f>"), Value);
+	
+	if (IsValid(Controller))
+	{
+		//if (Cast<ACPlayerController>(Controller)->bOnClick) return;
+		// find out which way is forward
+		//const FRotator Rotation = Controller->GetControlRotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator YawRotation(0, QUARTER_VIEW_ANGLE, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
+	}
 }
 
 void APCCharacter::InputMoveRight(float Value)
 {
 	//UE_LOG(LogTemp, Display, TEXT("MoveRight <%.2f>"), Value);
+	
+	if (IsValid(Controller))
+	{
+		//	if (Cast<ACPlayerController>(Controller)->bOnClick) return;
+		// find out which way is right
+		//const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, QUARTER_VIEW_ANGLE, 0.f);
+
+		// get right vector 
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		// add movement in that direction
+		AddMovementInput(Direction, Value);
+	}
 }
 
 // Called when the game starts or when spawned

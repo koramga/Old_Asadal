@@ -3,6 +3,8 @@
 
 #include "BaseCharacter.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
+#include "Asadal/Animation/BaseAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -33,7 +35,7 @@ void ABaseCharacter::InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGe
 
 void ABaseCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
-	if(IsValid(BaseCharacterAttributeSet))
+	if(BaseCharacterAttributeSet.IsValid())
 	{
 		Health = BaseCharacterAttributeSet->GetHealth();
 		MaxHealth = BaseCharacterAttributeSet->GetMaxHealth();		
@@ -51,7 +53,7 @@ void ABaseCharacter::SetHealthValues(float NewHealth, float NewMaxHealth)
 
 void ABaseCharacter::GetManaValues(float& Mana, float& MaxMana)
 {
-	if(IsValid(BaseCharacterAttributeSet))
+	if(BaseCharacterAttributeSet.IsValid())
 	{
 		Mana = BaseCharacterAttributeSet->GetMana();
 		MaxMana = BaseCharacterAttributeSet->GetMaxMana();		
@@ -120,12 +122,14 @@ void ABaseCharacter::ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	BaseAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance());
+	
 	if(IsValid(GASComponent))
 	{
 		BaseCharacterAttributeSet = GASComponent->GetSet<UBaseCharacterAttributeSet>();
 
-		if(IsValid(BaseCharacterAttributeSet))
+		if(BaseCharacterAttributeSet.IsValid())
 		{
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
@@ -137,6 +141,66 @@ void ABaseCharacter::BeginPlay()
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	FVector Forward = GetActorForwardVector();
+	FVector Velocity = Movement->Velocity;
+	float Speed = Velocity.Size();
+	float Angle = 0.f;
+
+	if (Movement->IsMovingOnGround())
+	{
+		if (Speed > 0)
+		{
+			//https://amored8701.tistory.com/132
+
+			//if (IsLockOn())
+			//{
+			//	FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LockOnBaseCharacter->GetActorLocation());
+			//
+			//	SetActorRotation(Rotator.Quaternion());
+			//
+			//	vForward = Rotator.RotateVector(FVector::ForwardVector);
+			//}
+
+			Forward.Z = 0.f;
+			Velocity.Z = 0.f;
+
+			Forward.Normalize();
+			Velocity.Normalize();
+
+			float fDot = FVector::DotProduct(Forward, Velocity);
+			float fAcosAngle = FMath::Acos(fDot);
+			float fAngle = FMath::RadiansToDegrees(fAcosAngle);
+
+			FVector vCross = FVector::CrossProduct(Forward, Velocity);
+
+			if (vCross.Z < 0)
+			{
+				//fAngle *= -1.f;
+				fAngle = 360 - fAngle;
+			}
+
+			//Angle = fAngle + QUARTER_VIEW_ANGLE;
+
+			//UE_LOG(LogTemp, Display, TEXT("Angle : %.2f"), fAngle);
+		}
+
+		if (BaseAnimInstance.IsValid())
+		{
+			//if (EMoveType::Run == MoveType)
+			//{
+			//	Ratio = 1.f;
+			//}
+			//else if (EMoveType::Sprint == MoveType)
+			//{
+			//	Ratio = 1.5f;
+			//}
+			BaseAnimInstance->SetSpeed(Speed / GetCharacterMovement()->GetMaxSpeed() * MoveBlendRatio);
+			BaseAnimInstance->SetAngle(Angle);
+		}
+	}
 }
 
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)

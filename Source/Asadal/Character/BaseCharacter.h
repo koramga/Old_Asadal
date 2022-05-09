@@ -45,8 +45,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
 	UGASComponent* GASComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="BaseCharacter")
-	const class UBaseCharacterAttributeSet*	BaseCharacterAttributeSet;
+	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
+	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
+	float MoveBlendRatio = 1.f;
 
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);
