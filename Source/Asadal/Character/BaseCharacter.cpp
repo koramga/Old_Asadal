@@ -20,17 +20,21 @@ UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 	return GASComponent;
 }
 
-void ABaseCharacter::InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel)
+FGameplayAbilitySpecHandle ABaseCharacter::InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel)
 {
+	FGameplayAbilitySpecHandle AbilitySpecHandle;
+
 	if(IsValid(GASComponent))
 	{
 		if(HasAuthority() && IsValid(AbilityToGet))
 		{
-			GASComponent->GiveAbility(FGameplayAbilitySpec(AbilityToGet, AbilityLevel, 0));
+			AbilitySpecHandle = GASComponent->GiveAbility(FGameplayAbilitySpec(AbilityToGet, AbilityLevel, 0));
 		}
 
 		GASComponent->InitAbilityActorInfo(this, this);
 	}
+	
+	return AbilitySpecHandle;
 }
 
 void ABaseCharacter::GetHealthValues(float& Health, float& MaxHealth)

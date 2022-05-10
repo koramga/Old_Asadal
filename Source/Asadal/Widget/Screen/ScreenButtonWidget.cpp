@@ -3,20 +3,40 @@
 
 #include "ScreenButtonWidget.h"
 
+#include "Components/Image.h"
+
+void UScreenButtonWidget::SetIconTexture(UTexture2D* Texture)
+{
+	if(nullptr == Texture
+		|| false == IsValid(Texture))
+	{
+		MainIcon->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		if(MainIcon.IsValid())
+		{
+			MainIcon->SetVisibility(ESlateVisibility::Visible);
+			MainIcon->SetBrushFromTexture(Texture);
+		}		
+	}
+}
+
 void UScreenButtonWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	MainButtonNative = Cast<UButton>(GetWidgetFromName(TEXT("MainButton")));
+	MainButton = Cast<UButton>(GetWidgetFromName(TEXT("ID_MainButton")));
+	MainIcon = Cast<UImage>(GetWidgetFromName(TEXT("ID_ButtonIcon")));
 }
 
 void UScreenButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if(MainButtonNative.IsValid())
+	if(MainButton.IsValid())
 	{
-		MainButtonNative->OnClicked.AddDynamic(this, &UScreenButtonWidget::__OnButtonClickedNative);
+		MainButton->OnClicked.AddDynamic(this, &UScreenButtonWidget::__OnButtonClickedNative);
 	}
 }
 
@@ -32,5 +52,5 @@ void UScreenButtonWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 
 void UScreenButtonWidget::__OnButtonClickedNative()
 {
-	OnClicked.Broadcast();
+	OnClicked.Broadcast(this);
 }

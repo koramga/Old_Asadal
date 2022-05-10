@@ -60,11 +60,30 @@ void APCCharacter::InputMoveRight(float Value)
 	}
 }
 
+FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 SkillNumber)
+{
+	if(PlayerSkillSet.Num() > SkillNumber)
+	{
+		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[SkillNumber];
+
+		if(AbilitySpecHandle.IsValid())
+		{
+			return GASComponent->FindAbilitySpecFromHandle(AbilitySpecHandle);
+		}
+	}
+
+	return nullptr;
+}
+
 // Called when the game starts or when spawned
 void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if(IsValid(BasicAttackAbility))
+	{
+		PlayerSkillSet.Add(InitializeAbility(BasicAttackAbility, 1));
+	}	
 }
 
 // Called every frame
@@ -72,3 +91,34 @@ void APCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+//bool APCCharacter::HasSkill(uint32_t Index)
+//{
+//	FString GameplayTagName = FString::Printf(TEXT("PC.Ability.%d"), Index);
+//	
+//	FGameplayTag GameplayTag = FGameplayTag::RequestGameplayTag(FName(GameplayTagName, false));
+//
+//	FGameplayTagContainer GameplayTagContainer;
+//	GameplayTagContainer.AddTag(GameplayTag);
+//
+//	TArray<FGameplayAbilitySpec*> GameplayAbilitySpecs;
+//	
+//	GASComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(GameplayTagContainer, GameplayAbilitySpecs);
+//
+//	//for(FGameplayAbilitySpec* AbilitySpec : GameplayAbilitySpecs)
+//	//{
+//	//	AbilitySpec->Ability
+//	//}
+//
+//	if(GameplayAbilitySpecs.Num() > 0)
+//	{
+//		return true;
+//	}
+//	
+//	//if(GameplayTag.IsValid())
+//	//{
+//	//	return GASComponent->HasMatchingGameplayTag(GameplayTag);
+//	//}
+//
+//	return false;
+//}

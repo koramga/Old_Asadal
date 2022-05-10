@@ -19,7 +19,7 @@ public:
 	ABaseCharacter();
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	void InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel);
+	FGameplayAbilitySpecHandle InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel);
 	void GetHealthValues(float& Health, float& MaxHealth);
 	void SetHealthValues(float NewHealth, float NewMaxHealth);
 	void GetManaValues(float& Mana, float& MaxMana);

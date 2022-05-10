@@ -3,6 +3,11 @@
 
 #include "BaseHUDWidget.h"
 
+void UBaseHUDWidget::SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec)
+{
+	
+}
+
 void UBaseHUDWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();

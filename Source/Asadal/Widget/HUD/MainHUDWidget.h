@@ -13,10 +13,16 @@ UCLASS()
 class ASADAL_API UMainHUDWidget : public UBaseHUDWidget
 {
 	GENERATED_BODY()
+
+public :
+	virtual void SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec) override;
 	
 protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+protected:
+	TSoftObjectPtr<class UScreenSkillSetWidget> ScreenSkillSetWidget;
 };

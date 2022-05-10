@@ -20,11 +20,12 @@ public :
 	void InputMoveForward(float Value);
 	void InputMoveRight(float Value);
 
+public :
+	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 SkillNumber);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
@@ -34,4 +35,9 @@ protected :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent* SpringArmComponent;
+
+	TArray<FGameplayAbilitySpecHandle>	PlayerSkillSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayAbility> BasicAttackAbility;
 };

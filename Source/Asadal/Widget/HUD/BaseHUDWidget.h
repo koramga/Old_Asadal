@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayAbilitySpec.h"
 #include "Asadal/Widget/BaseUserWidget.h"
 #include "BaseHUDWidget.generated.h"
 
@@ -14,6 +15,9 @@ class ASADAL_API UBaseHUDWidget : public UBaseUserWidget
 {
 	GENERATED_BODY()
 
+public :
+	virtual void SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec);
+	
 protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;

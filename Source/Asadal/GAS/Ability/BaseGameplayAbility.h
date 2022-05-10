@@ -14,6 +14,9 @@ UCLASS()
 class ASADAL_API UBaseGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+
+public :
+	UTexture2D* GetIconTexture() const;
 	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
@@ -22,6 +25,6 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	UTexture*	IconTexture;
+	UTexture2D*	IconTexture;
 	
 };

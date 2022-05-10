@@ -13,12 +13,14 @@ UCLASS()
 class ASADAL_API ABaseHUD : public AHUD
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UBaseHUDWidget>		BaseHUDWidgetClass;
 	TSoftObjectPtr<class UBaseHUDWidget>	BaseHUDWidget;
-
-protected:
-	virtual void BeginPlay() override;
+	TSoftObjectPtr<class APCCharacter>		PCCharacter;
 };
