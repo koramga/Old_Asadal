@@ -2,7 +2,6 @@
 
 
 #include "MainGameMode.h"
-#include "Asadal/Widget/Screen/BaseScreenWidget.h"
 
 // Sets default values
 AMainGameMode::AMainGameMode()
@@ -15,14 +14,6 @@ AMainGameMode::AMainGameMode()
 void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if(IsValid(BaseScreenWidgetClass))
-	{
-		BaseScreenWidget = 	CreateWidget<UBaseScreenWidget>(GetWorld(), BaseScreenWidgetClass);
-		
-		if (BaseScreenWidget)
-			BaseScreenWidget->AddToViewport();
-	}	
 }
 
 // Called every frame

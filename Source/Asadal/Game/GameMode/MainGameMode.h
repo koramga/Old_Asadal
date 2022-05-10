@@ -16,9 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	AMainGameMode();
 	
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UMainScreenWidget*	MainScreenWidget;
 
 protected:
 	// Called when the game starts or when spawned

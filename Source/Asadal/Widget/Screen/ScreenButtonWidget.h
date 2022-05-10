@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BaseScreenWidget.h"
-#include "MainScreenWidget.generated.h"
+#include "Components/Button.h"
+#include "ScreenButtonWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ASADAL_API UMainScreenWidget : public UBaseScreenWidget
+class ASADAL_API UScreenButtonWidget : public UBaseScreenWidget
 {
 	GENERATED_BODY()
 	
@@ -21,9 +22,12 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 protected:
-	TSoftObjectPtr<class UButton>	ButtonTest;
+	TSoftObjectPtr<UButton>	MainButtonNative;
 
-private :
+public :
+	FOnButtonClickedEvent OnClicked;
+
+private:
 	UFUNCTION()
-	void __OnClickTest();
+	void __OnButtonClickedNative();
 };

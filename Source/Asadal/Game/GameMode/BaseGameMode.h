@@ -23,10 +23,4 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UBaseScreenWidget>	BaseScreenWidgetClass;
-	
-	TSoftObjectPtr<class UBaseScreenWidget>	BaseScreenWidget;
 };
