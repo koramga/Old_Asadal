@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayAbilitySpec.h"
 #include "Asadal/Widget/BaseUserWidget.h"
+#include "Asadal/Widget/Screen/ScreenSkillSetWidget.h"
 #include "BaseHUDWidget.generated.h"
 
 /**
@@ -17,6 +18,9 @@ class ASADAL_API UBaseHUDWidget : public UBaseUserWidget
 
 public :
 	virtual void SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec);
+
+public :
+	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;
 	
 protected:
 	virtual void NativePreConstruct() override;

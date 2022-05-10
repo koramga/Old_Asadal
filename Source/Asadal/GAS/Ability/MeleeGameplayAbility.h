@@ -37,9 +37,14 @@ protected:
 	TSoftObjectPtr<class UAbilityTask_WaitGameplayEvent>	WaitGameplayEvent;
 
 private:
+	UFUNCTION()
 	void __OnCompleteNative();
+	UFUNCTION()
 	void __OnBlendOutNative();
+	UFUNCTION()
 	void __OnInterruptedNative();
+	UFUNCTION()
 	void __OnCancelledNative();
+	UFUNCTION()
 	void __OnWaitGameplayEventReceivedNative(FGameplayEventData Payload);
 };

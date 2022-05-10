@@ -23,4 +23,8 @@ protected:
 	TSubclassOf<class UBaseHUDWidget>		BaseHUDWidgetClass;
 	TSoftObjectPtr<class UBaseHUDWidget>	BaseHUDWidget;
 	TSoftObjectPtr<class APCCharacter>		PCCharacter;
+
+private:
+	UFUNCTION()
+	void __OnSkillSetButtonClickNative(int32 Index);
 };

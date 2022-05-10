@@ -24,6 +24,11 @@ void UMainHUDWidget::NativePreConstruct()
 void UMainHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if(ScreenSkillSetWidget.IsValid())
+	{
+		ScreenSkillSetWidget->SkillSetButtonClickedEvent.AddDynamic(this, &UMainHUDWidget::__OnSkillSetButtonClickNative);
+	}
 }
 
 void UMainHUDWidget::NativeDestruct()
@@ -34,4 +39,9 @@ void UMainHUDWidget::NativeDestruct()
 void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
+
+void UMainHUDWidget::__OnSkillSetButtonClickNative(int32 Index)
+{
+	SkillSetButtonClickedEvent.Broadcast(Index);
 }

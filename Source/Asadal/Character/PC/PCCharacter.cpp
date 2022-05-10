@@ -60,11 +60,11 @@ void APCCharacter::InputMoveRight(float Value)
 	}
 }
 
-FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 SkillNumber)
+FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 {
-	if(PlayerSkillSet.Num() > SkillNumber)
+	if(PlayerSkillSet.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[SkillNumber];
+		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
 
 		if(AbilitySpecHandle.IsValid())
 		{
@@ -73,6 +73,29 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 SkillNumb
 	}
 
 	return nullptr;
+}
+
+bool APCCharacter::TryActivateSkillByIndex(int32 Index)
+{
+	if(PlayerSkillSet.Num() > Index)
+	{
+		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
+
+		if(AbilitySpecHandle.IsValid())
+		{
+			if(GASComponent->TryActivateAbility(AbilitySpecHandle))
+			{
+				UE_LOG(LogTemp, Display, TEXT("TryActivateAbility Success"));
+				return true;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Display, TEXT("TryActivateAbility Failed"));
+			}
+		}
+	}
+
+	return false;
 }
 
 // Called when the game starts or when spawned

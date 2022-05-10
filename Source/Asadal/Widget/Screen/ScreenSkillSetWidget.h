@@ -11,14 +11,19 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillSetButtonClickedEvent, int32, Index);
+
 UCLASS()
 class ASADAL_API UScreenSkillSetWidget : public UBaseScreenWidget
 {
 	GENERATED_BODY()
-
 	
 public :
 	void SetPCSkill(int32 Index, FGameplayAbilitySpec* GameplayAbilitySpec);
+
+public :
+	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;
 	
 protected:
 	virtual void NativePreConstruct() override;

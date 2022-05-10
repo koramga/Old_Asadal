@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseHUDWidget.h"
+#include "Asadal/Widget/Screen/ScreenSkillSetWidget.h"
 #include "MainHUDWidget.generated.h"
 
 /**
@@ -25,4 +26,8 @@ protected:
 
 protected:
 	TSoftObjectPtr<class UScreenSkillSetWidget> ScreenSkillSetWidget;
+
+private:
+	UFUNCTION()
+	void __OnSkillSetButtonClickNative(int32 Index);
 };

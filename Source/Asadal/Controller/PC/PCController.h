@@ -27,5 +27,13 @@ protected:
 private :
 	void __InputMoveRight(float Value);
 	void __InputMoveForward(float Value);
+
+	void __InputPressedPCSkill0();
+	void __InputPressedPCSkill1();
+	void __InputPressedPCSkill2();
+	void __InputPressedPCSkill3();
+	void __InputPressedPCSkill4();
 	
 };
+
+

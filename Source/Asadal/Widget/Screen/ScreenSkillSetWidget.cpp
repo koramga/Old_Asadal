@@ -64,4 +64,6 @@ void UScreenSkillSetWidget::NativeTick(const FGeometry& MyGeometry, float InDelt
 void UScreenSkillSetWidget::__OnSkillButtonClickNative(UScreenButtonWidget* ScreenButtonWidget)
 {
 	int32 Index = PCSkillButtons.Find(ScreenButtonWidget);
+
+	SkillSetButtonClickedEvent.Broadcast(Index);
 }

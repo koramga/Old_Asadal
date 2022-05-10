@@ -21,7 +21,8 @@ public :
 	void InputMoveRight(float Value);
 
 public :
-	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 SkillNumber);
+	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
+	bool TryActivateSkillByIndex(int32 Index);
 
 protected:
 	// Called when the game starts or when spawned

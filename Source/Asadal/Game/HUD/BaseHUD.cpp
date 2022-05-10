@@ -15,10 +15,12 @@ void ABaseHUD::BeginPlay()
 	{
 		BaseHUDWidget = CreateWidget<UBaseHUDWidget>(GetWorld(), BaseHUDWidgetClass);
 		
-		if (BaseHUDWidget)
+		if (BaseHUDWidget.IsValid())
+		{
 			BaseHUDWidget->AddToViewport();
+			BaseHUDWidget->SkillSetButtonClickedEvent.AddDynamic(this, &ABaseHUD::__OnSkillSetButtonClickNative);
+		}	
 	}
-	
 
 	APlayerController* PlayerController = GetOwningPlayerController();
 
@@ -45,5 +47,13 @@ void ABaseHUD::Tick(float DeltaSeconds)
 		
 		
 		//UE_LOG(LogTemp, Display, TEXT("Has Skill <%d>"), PCCharacter->HasSkill(0));
+	}
+}
+
+void ABaseHUD::__OnSkillSetButtonClickNative(int32 Index)
+{
+	if(PCCharacter.IsValid())
+	{
+		PCCharacter->TryActivateSkillByIndex(Index);
 	}
 }
