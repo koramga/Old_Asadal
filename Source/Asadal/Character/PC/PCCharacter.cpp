@@ -103,10 +103,15 @@ void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(IsValid(BasicAttackAbility))
+	for(int i = 0; i < PlayerSkillAbilityClasses.Num(); ++i)
 	{
-		PlayerSkillSet.Add(InitializeAbility(BasicAttackAbility, 1));
-	}	
+		if(i >= MAX_PC_SKILL_COUNT)
+		{
+			break;
+		}
+
+		PlayerSkillSet.Add(InitializeAbility(PlayerSkillAbilityClasses[i], 0));
+	}
 }
 
 // Called every frame

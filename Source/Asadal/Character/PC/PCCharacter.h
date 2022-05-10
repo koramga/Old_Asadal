@@ -40,5 +40,5 @@ protected :
 	TArray<FGameplayAbilitySpecHandle>	PlayerSkillSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UGameplayAbility> BasicAttackAbility;
+	TArray<TSubclassOf<UGameplayAbility>>	PlayerSkillAbilityClasses;
 };
