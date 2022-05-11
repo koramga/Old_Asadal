@@ -19,8 +19,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	virtual void OnHealthChanged(const FOnAttributeChangeData& Data) override;
+	virtual void UpdateDeath(bool bIsDeath) override;
+	void UpdateStatusWidgetOnHealth();
+	
+protected:
+	TSoftObjectPtr<class UScreenNPCStatusWidget>	ScreenNPCStatusWidget;
 };

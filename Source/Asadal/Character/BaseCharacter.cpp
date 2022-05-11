@@ -108,6 +108,16 @@ void ABaseCharacter::AddLooseGameplayTag(FGameplayTag TagToAdd)
 	}
 }
 
+bool ABaseCharacter::HasMatchingGameplayTag(FGameplayTag Tag) const
+{
+	if(IsValid(GASComponent))
+	{
+		return GASComponent->HasMatchingGameplayTag(Tag);
+	}
+
+	return false;
+}
+
 void ABaseCharacter::RemoveLooseGameplayTag(FGameplayTag TagToRemove)
 {
 	if(IsValid(GASComponent))
@@ -162,6 +172,11 @@ void ABaseCharacter::SetupWeapons()
 		}
 	}
 	SetEquipWepaon(true);
+}
+
+bool ABaseCharacter::IsDeath() const
+{
+	return HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
 }
 
 // Called when the game starts or when spawned
@@ -253,11 +268,42 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	UE_LOG(LogTemp, Display, TEXT("<%s> Health Change From %.2f To %.2f"), *GetName(), Data.OldValue, Data.NewValue);
+	//UE_LOG(LogTemp, Display, TEXT("<%s> Health Change From %.2f To %.2f"), *GetName(), Data.OldValue, Data.NewValue);
+
+	if(Data.NewValue <= 0.f)
+	{
+		if(false == IsDeath())
+		{
+			AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
+			UpdateDeath(true);
+		}
+	}
+	else
+	{
+		if(true == IsDeath())
+		{
+			RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
+			UpdateDeath(false);
+		}	
+	}
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
+}
+
+void ABaseCharacter::UpdateDeath(bool bIsDeath)
+{
+	if(true == bIsDeath)
+	{
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);		
+	}
+	else
+	{
+		
+	}
 }
 
 void ABaseCharacter::SetEquipWepaon(bool bIsEquip)
@@ -277,7 +323,7 @@ void ABaseCharacter::SetEquipWepaon(bool bIsEquip)
 }
 
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
-{
+{	
 	OnHealthChanged(Data);
 }
 

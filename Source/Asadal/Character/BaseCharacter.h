@@ -28,6 +28,7 @@ public:
 	void ChangeAbilityLevelWithTags(FGameplayTagContainer TagContainer, int32 NewAbilityLevel);
 	void CancelAbilityWithTags(FGameplayTagContainer WithTags, FGameplayTagContainer WithoutTags);
 	void AddLooseGameplayTag(FGameplayTag TagToAdd);
+	bool HasMatchingGameplayTag(FGameplayTag Tag) const;
 	void RemoveLooseGameplayTag(FGameplayTag TagToRemove);
 	void ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec, const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 
@@ -35,6 +36,7 @@ public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate);
 	void SetupWeapons();
+	bool IsDeath() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,8 +46,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
-	void OnManaChanged(const FOnAttributeChangeData& Data);
+	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
+	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
+	virtual void UpdateDeath(bool bIsDeath);
 
 protected:
 	void SetEquipWepaon(bool bIsEquip);
