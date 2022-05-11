@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Asadal/Actor/BaseObject.h"
 #include "Asadal/Asadal.h"
 #include "BaseWeapon.generated.h"
@@ -22,6 +23,8 @@ public:
 
 	void SetActivateCollision(bool bIsActivate);
 
+	void SetEquip(bool bIsEquip);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,6 +35,9 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	TArray<FString>		CollisionComponentNames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
+	FGameplayTag		WeaponGameplayTag;
 
 	TArray<TSoftObjectPtr<UPrimitiveComponent>>	CollisionComponents;
 

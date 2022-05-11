@@ -44,6 +44,23 @@ void ABaseWeapon::SetActivateCollision(bool bIsActivate)
 	}
 }
 
+void ABaseWeapon::SetEquip(bool bIsEquip)
+{
+	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetOwner());
+
+	if(IsValid(BaseCharacter))
+	{
+		if(bIsEquip)
+		{
+			BaseCharacter->AddLooseGameplayTag(WeaponGameplayTag);
+		}
+		else
+		{
+			BaseCharacter->RemoveLooseGameplayTag(WeaponGameplayTag);			
+		}
+	}	
+}
+
 // Called when the game starts or when spawned
 void ABaseWeapon::BeginPlay()
 {

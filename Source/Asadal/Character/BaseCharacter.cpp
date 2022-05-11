@@ -2,6 +2,8 @@
 
 
 #include "BaseCharacter.h"
+
+#include "Asadal/Actor/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/BaseAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -101,7 +103,7 @@ void ABaseCharacter::AddLooseGameplayTag(FGameplayTag TagToAdd)
 	if(IsValid(GASComponent))
 	{
 		GASComponent->AddLooseGameplayTag(TagToAdd);
-		GASComponent->SetTagMapCount(TagToAdd, 1);
+		//GASComponent->SetTagMapCount(TagToAdd, 1);
 	}
 }
 
@@ -122,6 +124,39 @@ void ABaseCharacter::ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec
 	}
 }
 
+void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
+{
+}
+
+void ABaseCharacter::SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate)
+{
+}
+
+void ABaseCharacter::SetupWeapons()
+{
+	SetEquipWepaon(false);
+	
+	BaseWeapons.Empty();
+	
+	TArray<UActorComponent*> ActorComponents;
+	GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
+
+	for(UActorComponent* ActorComponent : ActorComponents)
+	{
+		UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
+
+		if(IsValid(ChildActorComponent))
+		{
+			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+			{
+				//우선 Weapon에 담는다.
+				BaseWeapons.Add(ChildActorComponent);
+			}
+		}
+	}
+	SetEquipWepaon(true);
+}
+
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
@@ -139,6 +174,8 @@ void ABaseCharacter::BeginPlay()
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
 		}		
 	}
+
+	SetupWeapons();
 }
 
 // Called every frame
@@ -213,6 +250,22 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
+}
+
+void ABaseCharacter::SetEquipWepaon(bool bIsEquip)
+{
+	for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
+	{
+		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+		{
+			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+
+			if(IsValid(BaseWeapon))
+			{
+				BaseWeapon->SetEquip(bIsEquip);
+			}
+		}
+	}
 }
 
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)

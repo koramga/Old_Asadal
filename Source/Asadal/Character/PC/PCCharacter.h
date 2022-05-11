@@ -23,6 +23,8 @@ public :
 public :
 	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
+	virtual void SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate) override;
+	void SetActivateWeapon(bool bIsActivate);
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,6 +43,4 @@ protected :
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayAbility>>	PlayerSkillAbilityClasses;
-
-	TArray<TSoftObjectPtr<UChildActorComponent>> BaseWeapons;
 };

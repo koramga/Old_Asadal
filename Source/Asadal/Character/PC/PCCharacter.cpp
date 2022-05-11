@@ -99,6 +99,34 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 	return false;
 }
 
+void APCCharacter::SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate)
+{
+	Super::SetActivateCollision(GameplayTag, bIsActivate);
+
+	FGameplayTag WeaponGameplayTag = FGameplayTag::RequestGameplayTag("Object.Weapon");
+
+	if(GameplayTag.MatchesTag(WeaponGameplayTag))
+	{
+		//Weapon이구나!
+	}
+}
+
+void APCCharacter::SetActivateWeapon(bool bIsActivate)
+{
+	for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
+	{
+		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+		{
+			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+
+			if(IsValid(BaseWeapon))
+			{
+				BaseWeapon->SetActivateCollision(bIsActivate);
+			}
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void APCCharacter::BeginPlay()
 {
@@ -112,23 +140,6 @@ void APCCharacter::BeginPlay()
 		}
 
 		PlayerSkillSet.Add(InitializeAbility(PlayerSkillAbilityClasses[i], 0));
-	}
-
-	TArray<UActorComponent*> ActorComponents;
-	GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
-
-	for(UActorComponent* ActorComponent : ActorComponents)
-	{
-		UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
-
-		if(IsValid(ChildActorComponent))
-		{
-			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
-			{
-				//우선 Weapon에 담는다.
-				BaseWeapons.Add(ChildActorComponent);
-			}
-		}
 	}
 }
 

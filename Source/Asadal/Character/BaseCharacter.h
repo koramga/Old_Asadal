@@ -30,6 +30,11 @@ public:
 	void RemoveLooseGameplayTag(FGameplayTag TagToRemove);
 	void ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec, const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 
+public :
+	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
+	virtual void SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate);
+	void SetupWeapons();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -42,12 +47,17 @@ protected:
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 
 protected:
+	void SetEquipWepaon(bool bIsEquip);
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
 	UGASComponent* GASComponent;
 
 	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
 	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
 	float MoveBlendRatio = 1.f;
+
+	TArray<TSoftObjectPtr<UChildActorComponent>> BaseWeapons;
 
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);
