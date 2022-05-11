@@ -3,6 +3,7 @@
 
 #include "PCCharacter.h"
 #include "Asadal/Asadal.h"
+#include "Asadal/Actor/Weapon/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -111,6 +112,23 @@ void APCCharacter::BeginPlay()
 		}
 
 		PlayerSkillSet.Add(InitializeAbility(PlayerSkillAbilityClasses[i], 0));
+	}
+
+	TArray<UActorComponent*> ActorComponents;
+	GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
+
+	for(UActorComponent* ActorComponent : ActorComponents)
+	{
+		UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
+
+		if(IsValid(ChildActorComponent))
+		{
+			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+			{
+				//우선 Weapon에 담는다.
+				BaseWeapons.Add(ChildActorComponent);
+			}
+		}
 	}
 }
 

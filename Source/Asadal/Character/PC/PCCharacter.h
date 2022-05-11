@@ -41,4 +41,6 @@ protected :
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayAbility>>	PlayerSkillAbilityClasses;
+
+	TArray<TSoftObjectPtr<UChildActorComponent>> BaseWeapons;
 };
