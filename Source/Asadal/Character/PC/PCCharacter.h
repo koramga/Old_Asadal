@@ -23,9 +23,8 @@ public :
 public :
 	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
-	virtual void SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate) override;
-	void SetActivateWeapon(bool bIsActivate);
-
+	virtual void SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate) override;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Asadal.generated.h"
 
 #define QUARTER_VIEW_ANGLE	-45
 
@@ -12,14 +11,3 @@
 #define MOVE_RIGHT			0x02
 #define MOVE_BACK			0x04
 #define MOVE_LEFT			0x08
-
-
-USTRUCT(BlueprintType)
-struct ASADAL_API FOverlapEventData
-{
-	GENERATED_BODY()
-
-public:
-	TSoftObjectPtr<AActor> OtherActor;
-	
-};

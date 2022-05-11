@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "../GAS/GASComponent.h"
 #include "Abilities/GameplayAbility.h"
+#include "Asadal/Actor/Equipment/BaseEquipment.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -32,7 +33,7 @@ public:
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
-	virtual void SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate);
+	virtual void SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate);
 	void SetupWeapons();
 
 protected:
@@ -62,4 +63,7 @@ protected:
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);
 	void __OnManaChangedNative(const FOnAttributeChangeData& Data);
+
+	UFUNCTION()
+	void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
 };

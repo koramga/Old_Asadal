@@ -3,9 +3,10 @@
 
 #include "BaseCharacter.h"
 
-#include "Asadal/Actor/Weapon/BaseWeapon.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Asadal/Actor/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
-#include "Asadal/Animation/BaseAnimInstance.h"
+#include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -128,7 +129,7 @@ void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }
 
-void ABaseCharacter::SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate)
+void ABaseCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
 {
 }
 
@@ -151,6 +152,12 @@ void ABaseCharacter::SetupWeapons()
 			{
 				//우선 Weapon에 담는다.
 				BaseWeapons.Add(ChildActorComponent);
+				ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+
+				if(IsValid(BaseWeapon))
+				{
+					BaseWeapon->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+				}
 			}
 		}
 	}
@@ -246,6 +253,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
+	UE_LOG(LogTemp, Display, TEXT("<%s> Health Change From %.2f To %.2f"), *GetName(), Data.OldValue, Data.NewValue);
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
@@ -276,4 +284,24 @@ void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
 void ABaseCharacter::__OnManaChangedNative(const FOnAttributeChangeData& Data)
 {
 	OnManaChanged(Data);
+}
+
+void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData)
+{
+	if(OverlapEventData.Caller->IsA(ABaseWeapon::StaticClass()))
+	{
+		//여기서부터 공격이 시작된다.
+		if(OverlapEventData.OtherActor.IsValid())
+		{
+			FGameplayTag AttackEventGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Event.Attack.Basic"));
+
+			if(AttackEventGameplayTag.IsValid())
+			{
+				FGameplayEventData GameplayEventData;
+				GameplayEventData.Target = OverlapEventData.OtherActor.Get();
+
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AttackEventGameplayTag, GameplayEventData);				
+			}			
+		}
+	}
 }

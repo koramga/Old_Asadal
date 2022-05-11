@@ -3,7 +3,7 @@
 
 #include "PCCharacter.h"
 #include "Asadal/Asadal.h"
-#include "Asadal/Actor/Weapon/BaseWeapon.h"
+#include "Asadal/Actor/eQUIPMENT/Weapon/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -99,29 +99,25 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 	return false;
 }
 
-void APCCharacter::SetActivateCollision(FGameplayTag GameplayTag, bool bIsActivate)
+void APCCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
 {
-	Super::SetActivateCollision(GameplayTag, bIsActivate);
+	Super::SetActivateEquipment(GameplayTag, bIsActivate);
 
 	FGameplayTag WeaponGameplayTag = FGameplayTag::RequestGameplayTag("Object.Weapon");
 
 	if(GameplayTag.MatchesTag(WeaponGameplayTag))
 	{
 		//Weapon이구나!
-	}
-}
-
-void APCCharacter::SetActivateWeapon(bool bIsActivate)
-{
-	for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
-	{
-		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+		for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
 		{
-			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
-
-			if(IsValid(BaseWeapon))
+			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
 			{
-				BaseWeapon->SetActivateCollision(bIsActivate);
+				ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+
+				if(IsValid(BaseWeapon))
+				{
+					BaseWeapon->SetActivateCollision(bIsActivate);
+				}
 			}
 		}
 	}

@@ -4,34 +4,46 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Asadal/Actor/BaseObject.h"
-#include "Asadal/Asadal.h"
-#include "BaseWeapon.generated.h"
+#include "GameFramework/Actor.h"
+#include "BaseEquipment.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBaseWeaponOverlapBeginEvent, FOverlapEventData, OverlapEventData);
+USTRUCT(BlueprintType)
+struct ASADAL_API FEquipmentOverlapEventData
+{
+	GENERATED_BODY()
+
+public:
+	TSoftObjectPtr<AActor> OtherActor;
+	TSoftObjectPtr<class ABaseEquipment>	Caller;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipmentOverlapEvent, FEquipmentOverlapEventData, OverlapEventData);
 
 UCLASS()
-class ASADAL_API ABaseWeapon : public ABaseObject
+class ASADAL_API ABaseEquipment : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ABaseWeapon();
+	ABaseEquipment();
 
-	FOnBaseWeaponOverlapBeginEvent OnBaseWeaponOverlapBeginEvent;
+public :
+	void SetEquip(bool bIsEquip);
+
+	FOnEquipmentOverlapEvent OnEquipmentOverlapEvent;
 
 	void SetActivateCollision(bool bIsActivate);
-
-	void SetEquip(bool bIsEquip);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	void OnEquipmentOverlapBroadcast(AActor* OtherActor);
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	TArray<FString>		CollisionComponentNames;
@@ -40,6 +52,7 @@ protected:
 	FGameplayTag		WeaponGameplayTag;
 
 	TArray<TSoftObjectPtr<UPrimitiveComponent>>	CollisionComponents;
+	TArray<AActor*>								AlreadyOverlapActors;
 
 private :
 	UFUNCTION()

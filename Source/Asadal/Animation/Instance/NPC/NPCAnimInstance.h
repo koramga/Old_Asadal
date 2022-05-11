@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Asadal/Animation/BaseAnimInstance.h"
+#include "../BaseAnimInstance.h"
 #include "UObject/Object.h"
 #include "NPCAnimInstance.generated.h"
 

@@ -1,50 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseWeapon.h"
+#include "BaseEquipment.h"
 
 #include "Asadal/Character/BaseCharacter.h"
 
 
 // Sets default values
-ABaseWeapon::ABaseWeapon()
+ABaseEquipment::ABaseEquipment()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ABaseWeapon::SetActivateCollision(bool bIsActivate)
-{
-	if(bIsActivate)
-	{
-		for(TSoftObjectPtr<UPrimitiveComponent> PrimitiveComponent : CollisionComponents)
-		{
-			PrimitiveComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			TArray<AActor*> OverlappingActors;
-			
-			PrimitiveComponent->GetOverlappingActors(OverlappingActors, ABaseCharacter::StaticClass());
-
-			for(AActor* OverlappingActor : OverlappingActors)
-			{
-				//HitResult 넘겨주자
-				FOverlapEventData OverlapEventData;
-
-				OverlapEventData.OtherActor = OverlappingActor;
-				
-				OnBaseWeaponOverlapBeginEvent.Broadcast(OverlapEventData);
-			}
-		}
-	}
-	else
-	{
-		for(TSoftObjectPtr<UPrimitiveComponent> PrimitiveComponent : CollisionComponents)
-		{
-			PrimitiveComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-	}
-}
-
-void ABaseWeapon::SetEquip(bool bIsEquip)
+void ABaseEquipment::SetEquip(bool bIsEquip)
 {
 	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetOwner());
 
@@ -61,8 +30,37 @@ void ABaseWeapon::SetEquip(bool bIsEquip)
 	}	
 }
 
+void ABaseEquipment::SetActivateCollision(bool bIsActivate)
+{
+	AlreadyOverlapActors.Empty();
+	
+	if(bIsActivate)
+	{
+		for(TSoftObjectPtr<UPrimitiveComponent> PrimitiveComponent : CollisionComponents)
+		{
+			PrimitiveComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			TArray<AActor*> OverlappingActors;
+			
+			PrimitiveComponent->GetOverlappingActors(OverlappingActors, ABaseCharacter::StaticClass());
+
+			for(AActor* OverlappingActor : OverlappingActors)
+			{
+				//HitResult 넘겨주자
+				OnEquipmentOverlapBroadcast(OverlappingActor);
+			}
+		}
+	}
+	else
+	{
+		for(TSoftObjectPtr<UPrimitiveComponent> PrimitiveComponent : CollisionComponents)
+		{
+			PrimitiveComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+	}
+}
+
 // Called when the game starts or when spawned
-void ABaseWeapon::BeginPlay()
+void ABaseEquipment::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -77,25 +75,51 @@ void ABaseWeapon::BeginPlay()
 			UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(PrimitiveComponents[PrimitiveComponentIndex]);
 			
 			PrimitiveComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			PrimitiveComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::__OnComponentOverlapNative);
+			PrimitiveComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseEquipment::__OnComponentOverlapNative);
 			
 			CollisionComponents.Add(PrimitiveComponent);
 		}
-	}
+	}	
 }
 
 // Called every frame
-void ABaseWeapon::Tick(float DeltaTime)
+void ABaseEquipment::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void ABaseWeapon::__OnComponentOverlapNative(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult& SweepResult)
+void ABaseEquipment::OnEquipmentOverlapBroadcast(AActor* OtherActor)
 {
-	FOverlapEventData OverlapEventData;
+	AActor* EquipmentOwner = GetOwner();
 
-	OverlapEventData.OtherActor = OtherActor;
+	if(false ==  IsValid(EquipmentOwner))
+	{
+		UChildActorComponent* ChildActorComponent = GetParentComponent();
+
+		if(IsValid(ChildActorComponent))
+		{
+			EquipmentOwner = ChildActorComponent->GetOwner();
+		}
+	}
 	
-	OnBaseWeaponOverlapBeginEvent.Broadcast(OverlapEventData);
+	if(EquipmentOwner != OtherActor)
+	{
+		if(false == AlreadyOverlapActors.Contains(OtherActor))
+		{
+			AlreadyOverlapActors.Add(OtherActor);
+		
+			FEquipmentOverlapEventData OverlapEventData;
+
+			OverlapEventData.Caller = this;
+			OverlapEventData.OtherActor = OtherActor;
+	
+			OnEquipmentOverlapEvent.Broadcast(OverlapEventData);		
+		}		
+	}	
+}
+
+void ABaseEquipment::__OnComponentOverlapNative(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	OnEquipmentOverlapBroadcast(OtherActor);
 }
