@@ -8,6 +8,7 @@
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "Asadal/Actor/DamageText/DamageTextActor.h"
+#include "Asadal/Utility/AsadalGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -177,7 +178,8 @@ void ABaseCharacter::SetupWeapons()
 
 bool ABaseCharacter::IsDeath() const
 {
-	return HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
+	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
+	//return HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
 }
 
 // Called when the game starts or when spawned
@@ -291,7 +293,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(false == IsDeath())
 		{
-			AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
+			AddLooseGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
 			UpdateDeath(true);
 		}
 	}
@@ -299,7 +301,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(true == IsDeath())
 		{
-			RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
+			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
 			UpdateDeath(false);
 		}	
 	}
@@ -402,15 +404,10 @@ void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData 
 		//여기서부터 공격이 시작된다.
 		if(OverlapEventData.OtherActor.IsValid())
 		{
-			FGameplayTag AttackEventGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Event.Attack.Basic"));
+			FGameplayEventData GameplayEventData;
+			GameplayEventData.Target = OverlapEventData.OtherActor.Get();
 
-			if(AttackEventGameplayTag.IsValid())
-			{
-				FGameplayEventData GameplayEventData;
-				GameplayEventData.Target = OverlapEventData.OtherActor.Get();
-
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AttackEventGameplayTag, GameplayEventData);				
-			}			
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
 		}
 	}
 }
