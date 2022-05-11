@@ -4,9 +4,10 @@
 #include "BaseCharacter.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Asadal/Actor/Equipment/Weapon/BaseWeapon.h"
+#include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
+#include "Asadal/Actor/DamageText/DamageTextActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -197,6 +198,22 @@ void ABaseCharacter::BeginPlay()
 		}		
 	}
 
+	DamageTextSpawnComponents.Empty();
+
+	TArray<UActorComponent*> FindActorComponents;
+
+	GetComponents(USceneComponent::StaticClass(), FindActorComponents);
+
+	for(UActorComponent* ActorComponent : FindActorComponents)
+	{
+		if(DamageTextSpawnComponentNames.Contains(ActorComponent->GetName()))
+		{
+			USceneComponent* SceneComponent = Cast<USceneComponent>(ActorComponent);
+		
+			DamageTextSpawnComponents.Add(SceneComponent);			
+		}		
+	}
+
 	SetupWeapons();
 }
 
@@ -286,6 +303,52 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 			UpdateDeath(false);
 		}	
 	}
+
+	if(false == IsDeath())
+	{		
+		float DeltaValue = Data.NewValue - Data.OldValue; 
+
+		if(DamageTextActorClasses.Num() > 0)
+		{
+			if(DeltaValue != 0)
+			{
+				int32 Index =  FMath::RandRange(0, DamageTextActorClasses.Num() - 1);
+		
+				FActorSpawnParameters ActorSpawnParam;
+
+				ActorSpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+				ActorSpawnParam.Owner = this;
+
+				FVector DamageTextLocation = GetActorLocation();
+				//FRotator DamageTextRotator = GetActorRotation();
+
+				if(DamageTextSpawnComponents.Num() > 0)
+				{
+					int32 DamageTextSpawnComponentIndex =  FMath::RandRange(0, DamageTextSpawnComponents.Num() - 1);
+
+					FTransform WorldTransform = DamageTextSpawnComponents[DamageTextSpawnComponentIndex]->GetComponentToWorld();
+
+					DamageTextLocation = WorldTransform.GetLocation();
+					//DamageTextRotator = WorldTransform.GetRotation().Rotator();
+				}
+
+				ADamageTextActor* DamageTextActor = GetWorld()->SpawnActor<ADamageTextActor>(DamageTextActorClasses[Index], DamageTextLocation, FRotator::ZeroRotator, ActorSpawnParam);
+			
+				if(IsValid(DamageTextActor))
+				{
+					FColor Color = FColor::Red;
+		
+					if(DeltaValue > 0)
+					{
+						Color = FColor::Blue;
+					}
+
+					DamageTextActor->SetText(FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue)), Color);
+				}
+			}	
+		}
+	}
+
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)

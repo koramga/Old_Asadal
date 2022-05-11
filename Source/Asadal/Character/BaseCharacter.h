@@ -7,7 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "../GAS/GASComponent.h"
 #include "Abilities/GameplayAbility.h"
-#include "Asadal/Actor/Equipment/BaseEquipment.h"
+#include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -57,11 +57,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
 	UGASComponent* GASComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
+	TArray<TSubclassOf<class ADamageTextActor>>		DamageTextActorClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
+	TArray<FString>									DamageTextSpawnComponentNames;
+
 	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
 	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
 	float MoveBlendRatio = 1.f;
 
-	TArray<TSoftObjectPtr<UChildActorComponent>> BaseWeapons;
+	TArray<TSoftObjectPtr<UChildActorComponent>>	BaseWeapons;
+	
+
+	TArray<TSoftObjectPtr<USceneComponent>>			DamageTextSpawnComponents;						
 
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);

@@ -2,8 +2,6 @@
 
 
 #include "AnimNotify_SetActivateEquipment.h"
-
-#include "Asadal/Actor/Equipment/BaseEquipment.h"
 #include "Asadal/Character/BaseCharacter.h"
 
 FString UAnimNotify_SetActivateEquipment::GetNotifyName_Implementation() const

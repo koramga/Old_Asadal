@@ -3,7 +3,7 @@
 
 #include "PCCharacter.h"
 #include "Asadal/Asadal.h"
-#include "Asadal/Actor/eQUIPMENT/Weapon/BaseWeapon.h"
+#include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 

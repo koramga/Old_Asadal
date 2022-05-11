@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "../BaseObject.h"
 #include "GameFramework/Actor.h"
 #include "BaseEquipment.generated.h"
 
@@ -20,7 +21,7 @@ public:
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipmentOverlapEvent, FEquipmentOverlapEventData, OverlapEventData);
 
 UCLASS()
-class ASADAL_API ABaseEquipment : public AActor
+class ASADAL_API ABaseEquipment : public ABaseObject
 {
 	GENERATED_BODY()
 
