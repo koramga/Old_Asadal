@@ -7,8 +7,8 @@
 #include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
-#include "Asadal/Actor/DamageText/DamageTextActor.h"
-#include "Asadal/Utility/AsadalGameplayTags.h"
+#include "Asadal/Actor/DamageText/TextActor.h"
+#include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -106,7 +106,7 @@ void ABaseCharacter::AddLooseGameplayTag(FGameplayTag TagToAdd)
 	if(IsValid(GASComponent))
 	{
 		GASComponent->AddLooseGameplayTag(TagToAdd);
-		//GASComponent->SetTagMapCount(TagToAdd, 1);
+		GASComponent->SetTagMapCount(TagToAdd, 1);
 	}
 }
 
@@ -334,9 +334,9 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 					//DamageTextRotator = WorldTransform.GetRotation().Rotator();
 				}
 
-				ADamageTextActor* DamageTextActor = GetWorld()->SpawnActor<ADamageTextActor>(DamageTextActorClasses[Index], DamageTextLocation, FRotator::ZeroRotator, ActorSpawnParam);
+				ATextActor* TextActor = GetWorld()->SpawnActor<ATextActor>(DamageTextActorClasses[Index], DamageTextLocation, FRotator::ZeroRotator, ActorSpawnParam);
 			
-				if(IsValid(DamageTextActor))
+				if(IsValid(TextActor))
 				{
 					FColor Color = FColor::Red;
 		
@@ -345,7 +345,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 						Color = FColor::Blue;
 					}
 
-					DamageTextActor->SetText(FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue)), Color);
+					TextActor->SetText(FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue)), Color);
 				}
 			}	
 		}

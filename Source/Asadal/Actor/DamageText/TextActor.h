@@ -3,29 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Asadal/Actor/BaseActor.h"
 #include "GameFramework/Actor.h"
-#include "DamageTextActor.generated.h"
+#include "TextActor.generated.h"
 
 UCLASS()
-class ASADAL_API ADamageTextActor : public AActor
+class ASADAL_API ATextActor : public ABaseActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ADamageTextActor();
+	ATextActor();
 	
 public:
 	void SetText(const FString& Text, const FColor& Color);
-	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UTextRenderComponent*		TextRenderComponent;
 	

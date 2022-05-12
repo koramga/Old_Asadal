@@ -39,6 +39,7 @@ protected :
 	class USpringArmComponent* SpringArmComponent;
 
 	TArray<FGameplayAbilitySpecHandle>	PlayerSkillSet;
+	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>>	PlayerSkillSetOnWeapons;	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayAbility>>	PlayerSkillAbilityClasses;

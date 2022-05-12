@@ -58,10 +58,10 @@ protected:
 	UGASComponent* GASComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	TArray<TSubclassOf<class ADamageTextActor>>		DamageTextActorClasses;
+	TArray<TSubclassOf<class ATextActor>>		DamageTextActorClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	TArray<FString>									DamageTextSpawnComponentNames;
+	TArray<FString>								DamageTextSpawnComponentNames;
 
 	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
 	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;

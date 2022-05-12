@@ -15,7 +15,19 @@ ABaseEquipment::ABaseEquipment()
 
 void ABaseEquipment::SetEquip(bool bIsEquip)
 {
-	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetOwner());
+	AActor* OwnerActor = GetOwner();
+
+	if(false == IsValid(OwnerActor))
+	{
+		UChildActorComponent* ChildActorComponent = GetParentComponent();
+
+		if(IsValid(ChildActorComponent))
+		{
+			OwnerActor = ChildActorComponent->GetOwner();
+		}
+	}
+	
+	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(OwnerActor);
 
 	if(IsValid(BaseCharacter))
 	{
@@ -27,7 +39,7 @@ void ABaseEquipment::SetEquip(bool bIsEquip)
 		{
 			BaseCharacter->RemoveLooseGameplayTag(WeaponGameplayTag);			
 		}
-	}	
+	}
 }
 
 void ABaseEquipment::SetActivateCollision(bool bIsActivate)

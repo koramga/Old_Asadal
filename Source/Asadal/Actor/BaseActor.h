@@ -3,23 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Asadal/Actor/BaseActor.h"
 #include "GameFramework/Actor.h"
-#include "BaseObject.generated.h"
+#include "BaseActor.generated.h"
 
 UCLASS()
-class ASADAL_API ABaseObject : public ABaseActor
+class ASADAL_API ABaseActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ABaseObject();
+	ABaseActor();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 };

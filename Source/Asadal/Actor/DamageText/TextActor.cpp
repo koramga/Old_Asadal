@@ -1,19 +1,23 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DamageTextActor.h"
+#include "TextActor.h"
+
 #include "Components/TextRenderComponent.h"
 
+
 // Sets default values
-ADamageTextActor::ADamageTextActor()
+ATextActor::ATextActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponent"));
+
+	SetRootComponent(TextRenderComponent);
 }
 
-void ADamageTextActor::SetText(const FString& Text, const FColor& Color)
+void ATextActor::SetText(const FString& Text, const FColor& Color)
 {
 	if(IsValid(TextRenderComponent))
 	{
@@ -23,15 +27,15 @@ void ADamageTextActor::SetText(const FString& Text, const FColor& Color)
 }
 
 // Called when the game starts or when spawned
-void ADamageTextActor::BeginPlay()
+void ATextActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetLifeSpan(LimitTime);
+	SetLifeSpan(LimitTime);	
 }
 
 // Called every frame
-void ADamageTextActor::Tick(float DeltaTime)
+void ATextActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
