@@ -26,3 +26,8 @@ void UBaseGameplayAbility::EndAbility(bool bWasCancelled, bool bReplicateEndAbil
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
+
+bool UBaseGameplayAbility::HasTagActivationRequiredTags(FGameplayTag GameplayTag)
+{
+	return ActivationRequiredTags.HasTag(GameplayTag);
+}

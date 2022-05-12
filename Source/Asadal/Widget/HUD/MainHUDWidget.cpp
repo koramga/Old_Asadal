@@ -28,6 +28,7 @@ void UMainHUDWidget::NativeConstruct()
 	if(ScreenSkillSetWidget.IsValid())
 	{
 		ScreenSkillSetWidget->SkillSetButtonClickedEvent.AddDynamic(this, &UMainHUDWidget::__OnSkillSetButtonClickNative);
+		ScreenSkillSetWidget->SwapWeaponChangeClickEvent.AddDynamic(this, &UMainHUDWidget::__OnSwapWeaponButtonClickNative);
 	}
 }
 
@@ -44,4 +45,9 @@ void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 void UMainHUDWidget::__OnSkillSetButtonClickNative(int32 Index)
 {
 	SkillSetButtonClickedEvent.Broadcast(Index);
+}
+
+void UMainHUDWidget::__OnSwapWeaponButtonClickNative()
+{
+	SwapWeaponChangeClickEvent.Broadcast();
 }

@@ -27,4 +27,7 @@ protected:
 private:
 	UFUNCTION()
 	void __OnSkillSetButtonClickNative(int32 Index);
+
+	UFUNCTION()
+	void __OnSwapWeaponButtonClickNative();
 };

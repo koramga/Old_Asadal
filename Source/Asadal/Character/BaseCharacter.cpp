@@ -147,33 +147,33 @@ void ABaseCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActi
 
 void ABaseCharacter::SetupWeapons()
 {
-	SetEquipWepaon(false);
-	
-	BaseWeapons.Empty();
-	
-	TArray<UActorComponent*> ActorComponents;
-	GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
-
-	for(UActorComponent* ActorComponent : ActorComponents)
-	{
-		UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
-
-		if(IsValid(ChildActorComponent))
-		{
-			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
-			{
-				//우선 Weapon에 담는다.
-				BaseWeapons.Add(ChildActorComponent);
-				ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
-
-				if(IsValid(BaseWeapon))
-				{
-					BaseWeapon->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
-				}
-			}
-		}
-	}
-	SetEquipWepaon(true);
+	//SetEquipWepaon(false);
+	//
+	//BaseWeapons.Empty();
+	//
+	//TArray<UActorComponent*> ActorComponents;
+	//GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
+//
+	//for(UActorComponent* ActorComponent : ActorComponents)
+	//{
+	//	UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
+//
+	//	if(IsValid(ChildActorComponent))
+	//	{
+	//		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
+	//		{
+	//			//우선 Weapon에 담는다.
+	//			BaseWeapons.Add(ChildActorComponent);
+	//			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+//
+	//			if(IsValid(BaseWeapon))
+	//			{
+	//				BaseWeapon->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+	//			}
+	//		}
+	//	}
+	//}
+	//SetEquipWepaon(true);
 }
 
 bool ABaseCharacter::IsDeath() const
@@ -395,19 +395,4 @@ void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
 void ABaseCharacter::__OnManaChangedNative(const FOnAttributeChangeData& Data)
 {
 	OnManaChanged(Data);
-}
-
-void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData)
-{
-	if(OverlapEventData.Caller->IsA(ABaseWeapon::StaticClass()))
-	{
-		//여기서부터 공격이 시작된다.
-		if(OverlapEventData.OtherActor.IsValid())
-		{
-			FGameplayEventData GameplayEventData;
-			GameplayEventData.Target = OverlapEventData.OtherActor.Get();
-
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
-		}
-	}
 }

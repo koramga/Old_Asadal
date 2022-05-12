@@ -33,6 +33,7 @@ private :
 	void __InputPressedPCSkill2();
 	void __InputPressedPCSkill3();
 	void __InputPressedPCSkill4();
+	void __InputSwapWeapon();
 	
 };
 

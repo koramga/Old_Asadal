@@ -7,8 +7,16 @@ UAsadalInventoryItemDefinition::UAsadalInventoryItemDefinition(const FObjectInit
 {
 }
 
-const UAsadalInventoryItemFragment* UAsadalInventoryItemDefinition::FindFragmentByClass(
+UAsadalInventoryItemFragment* UAsadalInventoryItemDefinition::FindFragmentByClass(
 	TSubclassOf<UAsadalInventoryItemFragment> FragmentClass) const
 {
+	for(UAsadalInventoryItemFragment* Fragment : Fragments)
+	{
+		if(Fragment->IsA(FragmentClass))
+		{
+			return Fragment;
+		}
+	}
+	
 	return nullptr;
 }

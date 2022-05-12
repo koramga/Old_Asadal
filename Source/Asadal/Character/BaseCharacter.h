@@ -70,12 +70,13 @@ protected:
 	TArray<TSoftObjectPtr<UChildActorComponent>>	BaseWeapons;
 	
 
-	TArray<TSoftObjectPtr<USceneComponent>>			DamageTextSpawnComponents;						
+	TArray<TSoftObjectPtr<USceneComponent>>			DamageTextSpawnComponents;
 
+//private:
+//	UFUNCTION()
+//	virtual void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
+	
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);
 	void __OnManaChangedNative(const FOnAttributeChangeData& Data);
-
-	UFUNCTION()
-	void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
 };

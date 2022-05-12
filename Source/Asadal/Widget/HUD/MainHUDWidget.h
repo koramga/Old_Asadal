@@ -25,9 +25,12 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 protected:
-	TSoftObjectPtr<class UScreenSkillSetWidget> ScreenSkillSetWidget;
+	TSoftObjectPtr<class UScreenSkillSetWidget> ScreenSkillSetWidget;	
 
 private:
 	UFUNCTION()
 	void __OnSkillSetButtonClickNative(int32 Index);
+
+	UFUNCTION()
+	void __OnSwapWeaponButtonClickNative();
 };

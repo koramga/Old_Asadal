@@ -36,6 +36,8 @@ void UScreenSkillSetWidget::NativePreConstruct()
 
 		PCSkillButtons.Add(Cast<UScreenButtonWidget>(GetWidgetFromName(FName(ButtonName))));	
 	}
+	
+	WeaponSwapButton = Cast<UScreenButtonWidget>(GetWidgetFromName(FName(TEXT("ID_ButtonPCSwapWeapon"))));
 }
 
 void UScreenSkillSetWidget::NativeConstruct()
@@ -48,6 +50,11 @@ void UScreenSkillSetWidget::NativeConstruct()
 		{
 			PCSkillButtons[i]->OnClicked.AddDynamic(this, &UScreenSkillSetWidget::__OnSkillButtonClickNative);
 		}
+	}
+
+	if(WeaponSwapButton.IsValid())
+	{
+		WeaponSwapButton->OnClicked.AddDynamic(this, &UScreenSkillSetWidget::__OnWeaponChangeButtonClickNative);
 	}
 }
 
@@ -66,4 +73,9 @@ void UScreenSkillSetWidget::__OnSkillButtonClickNative(UScreenButtonWidget* Scre
 	int32 Index = PCSkillButtons.Find(ScreenButtonWidget);
 
 	SkillSetButtonClickedEvent.Broadcast(Index);
+}
+
+void UScreenSkillSetWidget::__OnWeaponChangeButtonClickNative(UScreenButtonWidget* ScreenButtonWidget)
+{
+	SwapWeaponChangeClickEvent.Broadcast();
 }

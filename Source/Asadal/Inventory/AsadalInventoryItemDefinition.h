@@ -36,5 +36,5 @@ public:
 	TArray<UAsadalInventoryItemFragment*> Fragments;
 	
 public:
-	const UAsadalInventoryItemFragment* FindFragmentByClass(TSubclassOf<UAsadalInventoryItemFragment> FragmentClass) const;
+	UAsadalInventoryItemFragment* FindFragmentByClass(TSubclassOf<UAsadalInventoryItemFragment> FragmentClass) const;
 };

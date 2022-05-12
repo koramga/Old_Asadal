@@ -2,8 +2,14 @@
 
 
 #include "PCCharacter.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Asadal/Asadal.h"
 #include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
+#include "Asadal/GAS/Ability/BaseGameplayAbility.h"
+#include "Asadal/Inventory/AsadalInventoryItemDefinition.h"
+#include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
+#include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -63,10 +69,11 @@ void APCCharacter::InputMoveRight(float Value)
 
 FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 {
-	if(PlayerSkillSet.Num() > Index)
+	if(nullptr != PlayerSkillSet
+		&& PlayerSkillSet->Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
-
+		FGameplayAbilitySpecHandle AbilitySpecHandle = (*PlayerSkillSet)[Index];
+	
 		if(AbilitySpecHandle.IsValid())
 		{
 			return GASComponent->FindAbilitySpecFromHandle(AbilitySpecHandle);
@@ -78,10 +85,11 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 
 bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 {
-	if(PlayerSkillSet.Num() > Index)
+	if(nullptr != PlayerSkillSet
+		&& PlayerSkillSet->Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
-
+		FGameplayAbilitySpecHandle AbilitySpecHandle = (*PlayerSkillSet)[Index];
+	
 		if(AbilitySpecHandle.IsValid())
 		{
 			if(GASComponent->TryActivateAbility(AbilitySpecHandle))
@@ -103,22 +111,75 @@ void APCCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActiva
 {
 	Super::SetActivateEquipment(GameplayTag, bIsActivate);
 
-	FGameplayTag WeaponGameplayTag = FGameplayTag::RequestGameplayTag("Object.Weapon");
+	UInventoryFragment_EquippableItem* WeaponFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
 
-	if(GameplayTag.MatchesTag(WeaponGameplayTag))
+	WeaponFragmentEquippableItem->SetActivateCollisions(bIsActivate);
+}
+
+void APCCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefinition> InventoryItemDefinition)
+{
+	UInventoryFragment_EquippableItem* FragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(InventoryItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+	if(IsValid(FragmentEquippableItem))
 	{
-		//Weapon이구나!
-		for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
+		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ObjectWeaponTag))
 		{
-			if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
-			{
-				ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
+			//Weapon입니다.
 
-				if(IsValid(BaseWeapon))
+			if(InventoryItemDefinition != EquipmentWepaonItemDefinition)
+			{
+				if(EquipmentWepaonItemDefinition.IsValid())
 				{
-					BaseWeapon->SetActivateCollision(bIsActivate);
+					UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+					EquipmentFragmentEquippableItem->SetEquip(this, false);
 				}
+
+				if(IsValid(FragmentEquippableItem))
+				{
+					FragmentEquippableItem->SetEquip(this, true);
+					const TArray<TSoftObjectPtr<ABaseEquipment>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
+
+					for(TSoftObjectPtr<ABaseEquipment> BaseEquipment : Equipments)
+					{
+						BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &APCCharacter::__OnEquipmentOverlapEventNative);
+					}
+				}
+
+				EquipmentWepaonItemDefinition = InventoryItemDefinition;
 			}
+		}
+	}
+}
+
+void APCCharacter::TryEquipNextWeapon()
+{
+	if(EquipmentWeaponItemDefinitions.Num() > 0)
+	{
+		if(false == EquipmentWepaonItemDefinition.IsValid())
+		{
+			SetEquipInventoryItem(EquipmentWeaponItemDefinitions[0]);			
+		}
+		else
+		{
+			int32 Index = EquipmentWeaponItemDefinitions.Find(EquipmentWepaonItemDefinition);
+
+			if(Index != INDEX_NONE)
+			{
+				Index = (Index + 1) % EquipmentWeaponItemDefinitions.Num();
+
+				SetEquipInventoryItem(EquipmentWeaponItemDefinitions[Index]);
+			}
+		}
+	}
+
+	if(EquipmentWepaonItemDefinition.IsValid())
+	{
+		UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+		if(IsValid(EquipmentFragmentEquippableItem))
+		{
+			PlayerSkillSet = PlayerSkillSetOnWeapons.Find(EquipmentFragmentEquippableItem->GetEquipmentGameplayTag());
 		}
 	}
 }
@@ -128,15 +189,46 @@ void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandAxeTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandMaceTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandShieldTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandSwordTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwinHandBladeTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwinHandDaggerTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwoHandGreatswordTag);
+	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwoHandShieldTag);
+
 	for(int i = 0; i < PlayerSkillAbilityClasses.Num(); ++i)
 	{
-		if(i >= MAX_PC_SKILL_COUNT)
+		FGameplayAbilitySpecHandle GameplayAbilitySpecHandle = InitializeAbility(PlayerSkillAbilityClasses[i], 0);
+
+		if(GameplayAbilitySpecHandle.IsValid())
 		{
-			break;
+			FGameplayAbilitySpec* GameplayAbilitySpec = GASComponent->FindAbilitySpecFromHandle(GameplayAbilitySpecHandle);
+
+			if(nullptr != GameplayAbilitySpec)
+			{
+				UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
+
+				for(auto& PlayerSkillSetOnWeapon : PlayerSkillSetOnWeapons)
+				{
+					if(BaseGameplayAbility->HasTagActivationRequiredTags(PlayerSkillSetOnWeapon.Key))
+					{
+						PlayerSkillSetOnWeapon.Value.Add(GameplayAbilitySpecHandle);
+					}
+				}
+			}
 		}
 
-		PlayerSkillSet.Add(InitializeAbility(PlayerSkillAbilityClasses[i], 0));
+		//PlayerSkillSet.Add();
 	}
+
+	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
+	{
+		EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
+	}
+
+	TryEquipNextWeapon();
 }
 
 // Called every frame
@@ -144,6 +236,22 @@ void APCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void APCCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData)
+{
+	if(OverlapEventData.Caller->IsA(ABaseWeapon::StaticClass()))
+	{
+		//여기서부터 공격이 시작된다.
+		if(OverlapEventData.OtherActor.IsValid())
+		{
+			FGameplayEventData GameplayEventData;
+			GameplayEventData.Target = OverlapEventData.OtherActor.Get();
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
+		}
+	}
+}
+
 
 //bool APCCharacter::HasSkill(uint32_t Index)
 //{
