@@ -28,6 +28,11 @@ void UScreenButtonWidget::NativePreConstruct()
 
 	MainButton = Cast<UButton>(GetWidgetFromName(TEXT("ID_MainButton")));
 	MainIcon = Cast<UImage>(GetWidgetFromName(TEXT("ID_ButtonIcon")));
+
+	if(IsValid(InitIcon))
+	{
+		MainIcon->SetBrushFromTexture(InitIcon);
+	}
 }
 
 void UScreenButtonWidget::NativeConstruct()

@@ -31,6 +31,9 @@ protected:
 	TSoftObjectPtr<UButton>			MainButton;
 	TSoftObjectPtr<class UImage>	MainIcon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
+	UTexture2D*						InitIcon = nullptr;
+
 public :
 	FOnScreenButtonClickedEvent OnClicked;
 
