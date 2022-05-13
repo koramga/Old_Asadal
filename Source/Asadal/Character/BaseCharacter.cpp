@@ -137,6 +137,27 @@ void ABaseCharacter::ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec
 	}
 }
 
+void ABaseCharacter::LinkSubAnimInstance(const FGameplayTag& GameplayTag)
+{
+	TSubclassOf<UAnimInstance>* SubAnimInstanceClass = SubAnimInstanceClassMap.Find(GameplayTag);
+
+	if(nullptr != SubAnimInstanceClass)
+	{
+		GetMesh()->LinkAnimClassLayers((*SubAnimInstanceClass));
+	}
+}
+
+
+void ABaseCharacter::UnLinkSubAnimInstance(const FGameplayTag& GameplayTag)
+{
+	TSubclassOf<UAnimInstance>* SubAnimInstanceClass = SubAnimInstanceClassMap.Find(GameplayTag);
+
+	if(nullptr != SubAnimInstanceClass)
+	{
+		GetMesh()->UnlinkAnimClassLayers((*SubAnimInstanceClass));
+	}
+}
+
 void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }

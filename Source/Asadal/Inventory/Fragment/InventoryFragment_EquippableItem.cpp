@@ -31,6 +31,7 @@ void UInventoryFragment_EquippableItem::SetEquip(TSoftObjectPtr<ABaseCharacter> 
 		}
 
 		BaseCharacter->AddLooseGameplayTag(EquipmentGameplayTag);
+		BaseCharacter->LinkSubAnimInstance(EquipmentGameplayTag);
 	}
 	else
 	{
@@ -41,7 +42,8 @@ void UInventoryFragment_EquippableItem::SetEquip(TSoftObjectPtr<ABaseCharacter> 
 		
 		SpawnEquipmentActors.Empty();
 
-		BaseCharacter->RemoveLooseGameplayTag(EquipmentGameplayTag); 
+		BaseCharacter->RemoveLooseGameplayTag(EquipmentGameplayTag);
+		BaseCharacter->UnLinkSubAnimInstance(EquipmentGameplayTag);
 	}
 }
 

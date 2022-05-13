@@ -31,6 +31,8 @@ public:
 	bool HasMatchingGameplayTag(FGameplayTag Tag) const;
 	void RemoveLooseGameplayTag(FGameplayTag TagToRemove);
 	void ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec, const FGameplayAbilityTargetDataHandle& TargetDataHandle);
+	void LinkSubAnimInstance(const FGameplayTag& GameplayTag);
+	void UnLinkSubAnimInstance(const FGameplayTag& GameplayTag);
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
@@ -71,6 +73,9 @@ protected:
 	
 
 	TArray<TSoftObjectPtr<USceneComponent>>			DamageTextSpawnComponents;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|SubAnimInstance")
+	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>		SubAnimInstanceClassMap;
 
 //private:
 //	UFUNCTION()
