@@ -162,7 +162,7 @@ void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }
 
-void ABaseCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
+void ABaseCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent)
 {
 }
 
@@ -306,6 +306,14 @@ void ABaseCharacter::Tick(float DeltaTime)
 	}
 }
 
+void ABaseCharacter::GEToTarget(AActor* Actor)
+{
+	FGameplayEventData GameplayEventData;
+	GameplayEventData.Target = Actor;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
+}
+
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	//UE_LOG(LogTemp, Display, TEXT("<%s> Health Change From %.2f To %.2f"), *GetName(), Data.OldValue, Data.NewValue);
@@ -378,6 +386,10 @@ void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 }
 
+void ABaseCharacter::OnStrikeToTarget(AActor* Actor)
+{
+}
+
 void ABaseCharacter::UpdateDeath(bool bIsDeath)
 {
 	if(true == bIsDeath)
@@ -389,22 +401,6 @@ void ABaseCharacter::UpdateDeath(bool bIsDeath)
 	else
 	{
 		
-	}
-}
-
-void ABaseCharacter::SetEquipWepaon(bool bIsEquip)
-{
-	for(TSoftObjectPtr<UChildActorComponent> ChildActorComponent : BaseWeapons)
-	{
-		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
-		{
-			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
-
-			if(IsValid(BaseWeapon))
-			{
-				BaseWeapon->SetEquip(bIsEquip);
-			}
-		}
 	}
 }
 

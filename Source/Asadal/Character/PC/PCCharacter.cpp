@@ -107,9 +107,9 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 	return false;
 }
 
-void APCCharacter::SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
+void APCCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent)
 {
-	Super::SetActivateEquipment(GameplayTag, bIsActivate);
+	Super::TryActivateEquipment(GameplayTag, bIsActivate);
 
 	UInventoryFragment_EquippableItem* WeaponFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
 
@@ -244,10 +244,7 @@ void APCCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData Ov
 		//여기서부터 공격이 시작된다.
 		if(OverlapEventData.OtherActor.IsValid())
 		{
-			FGameplayEventData GameplayEventData;
-			GameplayEventData.Target = OverlapEventData.OtherActor.Get();
-
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
+			GEToTarget(OverlapEventData.OtherActor.Get());
 		}
 	}
 }

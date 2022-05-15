@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "UObject/Object.h"
 #include "AnimNotify_SetActivateEquipment.generated.h"
 
@@ -21,8 +22,11 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayTag	ActivateGameplayTag;
+	FGameplayTag	ActivateGameplayTag = UAsadalGameplayTags::ObjectWeaponTag;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool			bIsActivate = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = "bIsActivate", EditConditionHides))
+	bool			bIsImmediatelyProcessEvent = true;
 };

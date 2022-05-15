@@ -19,6 +19,6 @@ void UAnimNotify_SetActivateEquipment::Notify(USkeletalMeshComponent* MeshComp, 
 
 	if(IsValid(BaseCharacter))
 	{
-		BaseCharacter->SetActivateEquipment(ActivateGameplayTag, bIsActivate);
+		BaseCharacter->TryActivateEquipment(ActivateGameplayTag, bIsActivate, true);
 	}
 }

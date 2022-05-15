@@ -36,7 +36,7 @@ public:
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
-	virtual void SetActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate);
+	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent = true);
 	void SetupWeapons();
 	bool IsDeath() const;
 
@@ -48,12 +48,13 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
-	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
-	virtual void UpdateDeath(bool bIsDeath);
+	virtual void GEToTarget(AActor* Actor);
 
 protected:
-	void SetEquipWepaon(bool bIsEquip);
+	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
+	virtual void OnManaChanged(const FOnAttributeChangeData& Data)
+	virtual void OnStrikeToTarget(AActor* Actor);
+	virtual void UpdateDeath(bool bIsDeath);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
