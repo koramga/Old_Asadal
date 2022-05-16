@@ -23,7 +23,7 @@ public :
 public :
 	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
-	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent) override;
+	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate) override;
 	void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
 	void TryEquipNextWeapon();
 	

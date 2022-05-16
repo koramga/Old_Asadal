@@ -107,7 +107,7 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 	return false;
 }
 
-void APCCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent)
+void APCCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
 
@@ -244,7 +244,7 @@ void APCCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData Ov
 		//여기서부터 공격이 시작된다.
 		if(OverlapEventData.OtherActor.IsValid())
 		{
-			GEToTarget(OverlapEventData.OtherActor.Get());
+			GASComponent->GEToTarget(OverlapEventData.OtherActor.Get(), UAsadalGameplayTags::EventAttackBasicTag);
 		}
 	}
 }

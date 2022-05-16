@@ -36,7 +36,7 @@ public:
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
-	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent = true);
+	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate);
 	void SetupWeapons();
 	bool IsDeath() const;
 
@@ -48,11 +48,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void GEToTarget(AActor* Actor);
-
-protected:
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
-	virtual void OnManaChanged(const FOnAttributeChangeData& Data)
+	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
 	virtual void OnStrikeToTarget(AActor* Actor);
 	virtual void UpdateDeath(bool bIsDeath);
 

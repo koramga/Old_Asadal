@@ -14,3 +14,16 @@ FGameplayTag const UAsadalGameplayTags::TwinHandBladeTag = FGameplayTag::Request
 FGameplayTag const UAsadalGameplayTags::TwinHandDaggerTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwinHand.Dagger"));
 FGameplayTag const UAsadalGameplayTags::TwoHandGreatswordTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwoHand.Greatsword"));
 FGameplayTag const UAsadalGameplayTags::TwoHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwoHand.Shield"));
+FGameplayTag const UAsadalGameplayTags::GameTimeDilationTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation"));
+FGameplayTag const UAsadalGameplayTags::GameTimeDilationStrikeTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation.Strike"));
+
+int32 UAsadalGameplayTags::GetDilationPriority(const FGameplayTag& GameplayTag)
+{
+	//Priority는 낮을 수록 높다. [Linux랑 동일]
+	if(GameplayTag.MatchesTag(GameTimeDilationStrikeTag))
+	{
+		return 0;
+	}
+
+	return INT32_MAX;	
+}

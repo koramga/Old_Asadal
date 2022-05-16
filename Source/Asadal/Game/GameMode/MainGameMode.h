@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseGameMode.h"
+#include "GameplayTagContainer.h"
+#include "Asadal/AsadalStructure.h"
 #include "GameFramework/Actor.h"
 #include "MainGameMode.generated.h"
 
@@ -16,12 +18,25 @@ public:
 	// Sets default values for this actor's properties
 	AMainGameMode();
 	
+public :
+	void AddGameplayTag(const FGameplayTag& GameplayTag);
+	bool HasGameplayTag(const FGameplayTag& GameplayTag);
+	void RemoveGameplayTag(const FGameplayTag& GameplayTag);
+
+public :
+	bool SetTimeDilationKeepTime(const FGameplayTag& GameplayTag, const FTimeDilationSettings& TimeDilationSettings);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+protected:
+	FGameplayTagContainer	GameplayTagContainer;
+
+	//TimeDilation
+	FGameplayTag			TimeDilationGameplayTag = FGameplayTag::EmptyTag;
+	float					TimeDilationKeepTime;
+	float					TimeDilationTickTime;
 };

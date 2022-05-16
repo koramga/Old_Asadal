@@ -9,8 +9,29 @@
 /**
  * 
  */
+
+struct FGEToTargetEventItem
+{
+	TSoftObjectPtr<AActor>		Actor;
+	FGameplayTag				EventTag = FGameplayTag::EmptyTag;
+
+	FGEToTargetEventItem() {}
+
+	FGEToTargetEventItem(AActor* Actor, const FGameplayTag& EventTag)
+		: Actor(Actor), EventTag(EventTag) {}
+};
+
+
 UCLASS()
 class ASADAL_API UGASComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
+
+public :
+	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
+	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
+
+protected:
+	TArray<FGEToTargetEventItem>	GEToTargetLatentEventItems;
+	bool	bIsLatentEventToTarget = false;
 };

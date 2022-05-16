@@ -16,7 +16,13 @@ void UAnimNotifyState_StrikeTrail::NotifyBegin(USkeletalMeshComponent* MeshComp,
 
 	if(IsValid(BaseCharacter))
 	{
-		BaseCharacter->TryActivateEquipment(ActivateGameplayTag, true, false);
+		UGASComponent* GASComponent = Cast<UGASComponent>(BaseCharacter->GetAbilitySystemComponent());
+
+		if(IsValid(GASComponent))
+		{
+			GASComponent->SetGEToTargetLatent(true);
+			BaseCharacter->TryActivateEquipment(ActivateGameplayTag, true);	
+		}
 	}
 }
 
@@ -36,6 +42,12 @@ void UAnimNotifyState_StrikeTrail::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 
 	if(IsValid(BaseCharacter))
 	{
-		BaseCharacter->TryActivateEquipment(ActivateGameplayTag, false, false);
+		UGASComponent* GASComponent = Cast<UGASComponent>(BaseCharacter->GetAbilitySystemComponent());
+
+		if(IsValid(GASComponent))
+		{
+			GASComponent->SetGEToTargetLatent(false);
+			BaseCharacter->TryActivateEquipment(ActivateGameplayTag, false);
+		}
 	}
 }

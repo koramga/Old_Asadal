@@ -27,5 +27,10 @@ public :
 	static const FGameplayTag TwinHandDaggerTag;
 	static const FGameplayTag TwoHandGreatswordTag;
 	static const FGameplayTag TwoHandShieldTag;
+	static const FGameplayTag GameTimeDilationTag;
+	static const FGameplayTag GameTimeDilationStrikeTag;
+
+public :
+	static int32 GetDilationPriority(const FGameplayTag& GameplayTag);
 	
 };

@@ -162,7 +162,7 @@ void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }
 
-void ABaseCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate, bool bIsImmediatelyProcessEvent)
+void ABaseCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
 {
 }
 
@@ -304,14 +304,6 @@ void ABaseCharacter::Tick(float DeltaTime)
 			BaseAnimInstance->SetAngle(Angle);
 		}
 	}
-}
-
-void ABaseCharacter::GEToTarget(AActor* Actor)
-{
-	FGameplayEventData GameplayEventData;
-	GameplayEventData.Target = Actor;
-
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, UAsadalGameplayTags::EventAttackBasicTag, GameplayEventData);
 }
 
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
