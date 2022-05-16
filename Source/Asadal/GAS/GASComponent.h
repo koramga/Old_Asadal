@@ -30,6 +30,7 @@ class ASADAL_API UGASComponent : public UAbilitySystemComponent
 public :
 	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
 	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
+	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);
 
 protected:
 	TArray<FGEToTargetEventItem>	GEToTargetLatentEventItems;

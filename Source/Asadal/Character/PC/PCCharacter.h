@@ -40,18 +40,15 @@ protected :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent* SpringArmComponent;
 
-	const TArray<FGameplayAbilitySpecHandle>*				PlayerSkillSet = nullptr;
+	TArray<FGameplayAbilitySpecHandle>				PlayerSkillSet;
 
-	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>>	PlayerSkillSetOnWeapons;
+	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>>	PlayerAnimationOnWeapons;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Temp")
 	TArray<TSubclassOf<class UAsadalInventoryItemDefinition>>		EquipmentWeaponItemDefinitionClasses;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Temp")
-	TArray<TSubclassOf<class UBaseGameplayAbility>>	PlayerSkillAbilityClasses;
 	
 private:
 	UFUNCTION()

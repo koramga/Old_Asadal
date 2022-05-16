@@ -16,7 +16,10 @@ class ASADAL_API UAsadalGameplayTags : public UObject
 	GENERATED_BODY()
 	
 public :
-	static const FGameplayTag DeathGameplayTag;
+	static const FGameplayTag StatusGameplayTag;
+	static const FGameplayTag DeathStatusGameplayTag;
+	static const FGameplayTag HitStatusGameplayTag;
+	static const FGameplayTag AttackStatusGameplayTag;	
 	static const FGameplayTag EventAttackBasicTag;
 	static const FGameplayTag ObjectWeaponTag;
 	static const FGameplayTag OneHandAxeTag;

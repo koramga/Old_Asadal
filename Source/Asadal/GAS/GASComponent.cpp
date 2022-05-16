@@ -46,3 +46,11 @@ void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
 		}
 	}
 }
+
+void UGASComponent::GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs)
+{
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		GameplayAbilitySpecs.Add(&Spec);
+	}
+}

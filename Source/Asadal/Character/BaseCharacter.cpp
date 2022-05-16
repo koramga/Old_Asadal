@@ -12,6 +12,7 @@
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -201,7 +202,7 @@ void ABaseCharacter::SetupWeapons()
 
 bool ABaseCharacter::IsDeath() const
 {
-	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
+	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
 	//return HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
 }
 
@@ -237,6 +238,11 @@ void ABaseCharacter::BeginPlay()
 		
 			DamageTextSpawnComponents.Add(SceneComponent);			
 		}		
+	}
+	
+	for(int i = 0; i < AbilityClasses.Num(); ++i)
+	{
+		InitializeAbility(AbilityClasses[i], 0);
 	}
 
 	SetupWeapons();
@@ -316,7 +322,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(false == IsDeath())
 		{
-			AddLooseGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
+			AddLooseGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
 			UpdateDeath(true);
 		}
 	}
@@ -324,7 +330,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(true == IsDeath())
 		{
-			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathGameplayTag);
+			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
 			UpdateDeath(false);
 		}	
 	}
@@ -390,10 +396,6 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
-{
-}
-
-void ABaseCharacter::OnStrikeToTarget(AActor* Actor)
 {
 }
 

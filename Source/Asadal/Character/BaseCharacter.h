@@ -50,7 +50,6 @@ protected:
 protected:
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
 	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
-	virtual void OnStrikeToTarget(AActor* Actor);
 	virtual void UpdateDeath(bool bIsDeath);
 
 protected:
@@ -74,6 +73,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|SubAnimInstance")
 	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>		SubAnimInstanceClassMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Abilities")
+	TArray<TSubclassOf<class UBaseGameplayAbility>>	AbilityClasses;
 
 //private:
 //	UFUNCTION()

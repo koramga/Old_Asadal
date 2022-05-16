@@ -69,10 +69,9 @@ void APCCharacter::InputMoveRight(float Value)
 
 FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 {
-	if(nullptr != PlayerSkillSet
-		&& PlayerSkillSet->Num() > Index)
+	if(PlayerSkillSet.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = (*PlayerSkillSet)[Index];
+		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
 	
 		if(AbilitySpecHandle.IsValid())
 		{
@@ -85,10 +84,9 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 
 bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 {
-	if(nullptr != PlayerSkillSet
-		&& PlayerSkillSet->Num() > Index)
+	if(PlayerSkillSet.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = (*PlayerSkillSet)[Index];
+		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
 	
 		if(AbilitySpecHandle.IsValid())
 		{
@@ -179,7 +177,25 @@ void APCCharacter::TryEquipNextWeapon()
 
 		if(IsValid(EquipmentFragmentEquippableItem))
 		{
-			PlayerSkillSet = PlayerSkillSetOnWeapons.Find(EquipmentFragmentEquippableItem->GetEquipmentGameplayTag());
+			const TArray<FGameplayAbilitySpecHandle>* SpecOnWeapons = PlayerAnimationOnWeapons.Find(EquipmentFragmentEquippableItem->GetEquipmentGameplayTag());
+
+			for(const FGameplayAbilitySpecHandle& SpecHandle : *SpecOnWeapons)
+			{
+				FGameplayAbilitySpec* GameplayAbilitySpec = GASComponent->FindAbilitySpecFromHandle(SpecHandle);
+
+				if(nullptr != GameplayAbilitySpec)
+				{
+					UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
+
+					if(IsValid(BaseGameplayAbility))
+					{
+						if(BaseGameplayAbility->AbilityTags.HasTag(UAsadalGameplayTags::AttackStatusGameplayTag))
+						{
+							PlayerSkillSet.Add(SpecHandle);
+						}
+					}
+				}				
+			}		
 		}
 	}
 }
@@ -189,38 +205,30 @@ void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandAxeTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandMaceTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandShieldTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::OneHandSwordTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwinHandBladeTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwinHandDaggerTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwoHandGreatswordTag);
-	PlayerSkillSetOnWeapons.Add(UAsadalGameplayTags::TwoHandShieldTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandAxeTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandMaceTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandShieldTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandSwordTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwinHandBladeTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwinHandDaggerTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwoHandGreatswordTag);
+	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwoHandShieldTag);
 
-	for(int i = 0; i < PlayerSkillAbilityClasses.Num(); ++i)
+	TArray<const FGameplayAbilitySpec*> GameplayAbilitySpecs;
+	
+	GASComponent->GetAbilitySpecs(GameplayAbilitySpecs);
+
+	for(const FGameplayAbilitySpec* AbilitySpec : GameplayAbilitySpecs)
 	{
-		FGameplayAbilitySpecHandle GameplayAbilitySpecHandle = InitializeAbility(PlayerSkillAbilityClasses[i], 0);
+		UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(AbilitySpec->Ability);
 
-		if(GameplayAbilitySpecHandle.IsValid())
+		for(auto& PlayerAnimationOnWeapon : PlayerAnimationOnWeapons)
 		{
-			FGameplayAbilitySpec* GameplayAbilitySpec = GASComponent->FindAbilitySpecFromHandle(GameplayAbilitySpecHandle);
-
-			if(nullptr != GameplayAbilitySpec)
+			if(BaseGameplayAbility->HasTagActivationRequiredTags(PlayerAnimationOnWeapon.Key))
 			{
-				UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
-
-				for(auto& PlayerSkillSetOnWeapon : PlayerSkillSetOnWeapons)
-				{
-					if(BaseGameplayAbility->HasTagActivationRequiredTags(PlayerSkillSetOnWeapon.Key))
-					{
-						PlayerSkillSetOnWeapon.Value.Add(GameplayAbilitySpecHandle);
-					}
-				}
+				PlayerAnimationOnWeapon.Value.Add(AbilitySpec->Handle);				
 			}
 		}
-
-		//PlayerSkillSet.Add();
 	}
 
 	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
