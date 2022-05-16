@@ -4,12 +4,14 @@
 #include "BaseCharacter.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
 #include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "Asadal/Actor/DamageText/TextActor.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -217,7 +219,7 @@ void ABaseCharacter::BeginPlay()
 		if(BaseCharacterAttributeSet.IsValid())
 		{
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
-			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
+			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);
 		}		
 	}
 
@@ -328,7 +330,21 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 
 	if(false == IsDeath())
-	{		
+	{
+		if(nullptr != Data.GEModData)
+		{
+			AActor* Actor = Data.GEModData->EffectSpec.GetEffectContext().GetInstigator();
+
+			if(IsValid(Actor))
+			{
+				FVector TargetLocation = Actor->GetActorLocation();
+				FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
+				FRotator NewRotator = FRotator(GetActorRotation().Pitch, LookAtRotator.Yaw, GetActorRotation().Roll);
+			
+				SetActorRotation(NewRotator);
+			}			
+		}
+		
 		float DeltaValue = Data.NewValue - Data.OldValue; 
 
 		if(DamageTextActorClasses.Num() > 0)
@@ -371,7 +387,6 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 			}	
 		}
 	}
-
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
