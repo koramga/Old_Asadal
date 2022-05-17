@@ -49,9 +49,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	TArray<FString>		CollisionComponentNames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	FGameplayTag		WeaponGameplayTag;
-
 	TArray<TSoftObjectPtr<UPrimitiveComponent>>	CollisionComponents;
 	TArray<AActor*>								AlreadyOverlapActors;
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CoreUObject.h"
+#include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AsadalInventoryItemDefinition.generated.h"
 
@@ -29,10 +30,10 @@ class ASADAL_API UAsadalInventoryItemDefinition : public UObject
 public:
 	UAsadalInventoryItemDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display)
-	FText DisplayName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText			DisplayName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display, Instanced)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
 	TArray<UAsadalInventoryItemFragment*> Fragments;
 	
 public:

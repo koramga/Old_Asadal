@@ -4,6 +4,7 @@
 #include "GASComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 
 void UGASComponent::GEToTarget(AActor* Actor, const FGameplayTag& EventTag)
 {
@@ -52,5 +53,62 @@ void UGASComponent::GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& Gamepla
 	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
 	{
 		GameplayAbilitySpecs.Add(&Spec);
+	}
+}
+
+void UGASComponent::SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag)
+{
+	ActivateAbilityActionGroup = AbilityActionGroupMap.Find(GameplayTag);
+}
+
+const FGameplayAbilityActionGroup* UGASComponent::GetActivateAbilityActionGroup() const
+{
+	return ActivateAbilityActionGroup;
+}
+
+void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
+{
+	Super::OnGiveAbility(AbilitySpec);
+
+	FGameplayTag ActionTag;
+	FGameplayTag AbilityTag;
+	
+	for(const FGameplayTag& GameplayTag : AbilitySpec.Ability->AbilityTags)
+	{
+		if(GameplayTag.MatchesTag(UAsadalGameplayTags::ActionGameplayTag))
+		{
+			ActionTag = GameplayTag;
+		}
+		else if(GameplayTag.MatchesTag(UAsadalGameplayTags::AbilityGameplayTag))
+		{
+			AbilityTag = GameplayTag;
+		}		
+	}
+
+	if(ActionTag != FGameplayTag::EmptyTag
+		&& AbilityTag != FGameplayTag::EmptyTag)
+	{
+		FGameplayAbilityActionGroup* ActionGroup = AbilityActionGroupMap.Find(AbilityTag);
+
+		if(nullptr == ActionGroup)
+		{
+			ActionGroup = &AbilityActionGroupMap.Add(AbilityTag);
+		}
+
+		if(nullptr != ActionGroup)
+		{
+			if(UAsadalGameplayTags::AttackActionGameplayTag == ActionTag)
+			{
+				ActionGroup->AttackAbilitiesSpecHandles.Add(AbilitySpec.Handle);
+			}
+			else if(UAsadalGameplayTags::HitActionGameplayTag == ActionTag)
+			{
+				ActionGroup->HitAbilitySpecHandle = AbilitySpec.Handle;
+			}
+			else if(UAsadalGameplayTags::AvoidGameplayTag == ActionTag)
+			{
+				ActionGroup->AvoidAbilitySpecHandle = AbilitySpec.Handle;
+			}
+		}
 	}
 }

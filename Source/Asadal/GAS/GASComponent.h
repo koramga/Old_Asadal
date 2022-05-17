@@ -21,6 +21,12 @@ struct FGEToTargetEventItem
 		: Actor(Actor), EventTag(EventTag) {}
 };
 
+struct FGameplayAbilityActionGroup
+{
+	TArray<FGameplayAbilitySpecHandle>	AttackAbilitiesSpecHandles;
+	FGameplayAbilitySpecHandle			HitAbilitySpecHandle;
+	FGameplayAbilitySpecHandle			AvoidAbilitySpecHandle;
+};
 
 UCLASS()
 class ASADAL_API UGASComponent : public UAbilitySystemComponent
@@ -31,8 +37,17 @@ public :
 	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
 	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
 	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);
+	void SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag);
+	const FGameplayAbilityActionGroup* GetActivateAbilityActionGroup() const;
+
+protected:
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 
 protected:
 	TArray<FGEToTargetEventItem>	GEToTargetLatentEventItems;
 	bool	bIsLatentEventToTarget = false;
+
+	//Base도 Ability안에 포함할 수 있다.
+	TMap<FGameplayTag, FGameplayAbilityActionGroup>	AbilityActionGroupMap;
+	const FGameplayAbilityActionGroup*				ActivateAbilityActionGroup = nullptr;
 };

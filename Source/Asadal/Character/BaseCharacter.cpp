@@ -165,44 +165,13 @@ void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }
 
-void ABaseCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
+void ABaseCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
-}
-
-void ABaseCharacter::SetupWeapons()
-{
-	//SetEquipWepaon(false);
-	//
-	//BaseWeapons.Empty();
-	//
-	//TArray<UActorComponent*> ActorComponents;
-	//GetComponents(UChildActorComponent::StaticClass(),ActorComponents);
-//
-	//for(UActorComponent* ActorComponent : ActorComponents)
-	//{
-	//	UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(ActorComponent);
-//
-	//	if(IsValid(ChildActorComponent))
-	//	{
-	//		if(ChildActorComponent->GetChildActor()->IsA(ABaseWeapon::StaticClass()))
-	//		{
-	//			//우선 Weapon에 담는다.
-	//			BaseWeapons.Add(ChildActorComponent);
-	//			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(ChildActorComponent->GetChildActor());
-//
-	//			if(IsValid(BaseWeapon))
-	//			{
-	//				BaseWeapon->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
-	//			}
-	//		}
-	//	}
-	//}
-	//SetEquipWepaon(true);
 }
 
 bool ABaseCharacter::IsDeath() const
 {
-	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
+	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
 	//return HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death")));
 }
 
@@ -244,8 +213,6 @@ void ABaseCharacter::BeginPlay()
 	{
 		InitializeAbility(AbilityClasses[i], 0);
 	}
-
-	SetupWeapons();
 }
 
 // Called every frame
@@ -322,7 +289,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(false == IsDeath())
 		{
-			AddLooseGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
+			AddLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
 			UpdateDeath(true);
 		}
 	}
@@ -330,7 +297,7 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(true == IsDeath())
 		{
-			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathStatusGameplayTag);
+			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
 			UpdateDeath(false);
 		}	
 	}

@@ -23,7 +23,7 @@ public :
 public :
 	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
-	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate) override;
+	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate) override;
 	void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
 	void TryEquipNextWeapon();
 	
@@ -39,10 +39,6 @@ protected :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent* SpringArmComponent;
-
-	TArray<FGameplayAbilitySpecHandle>				PlayerSkillSet;
-
-	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>>	PlayerAnimationOnWeapons;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

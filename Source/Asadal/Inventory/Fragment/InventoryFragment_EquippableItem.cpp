@@ -6,9 +6,11 @@
 #include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
 #include "Asadal/Character/BaseCharacter.h"
 
-void UInventoryFragment_EquippableItem::SetEquip(TSoftObjectPtr<ABaseCharacter> BaseCharacter, bool bIsEquip)
+void UInventoryFragment_EquippableItem::OnActivate(TSoftObjectPtr<ABaseCharacter> BaseCharacter, bool bIsActivate)
 {
-	if(true == bIsEquip)
+	Super::OnActivate(BaseCharacter, bIsActivate);
+	
+	if(true == bIsActivate)
 	{
 		FActorSpawnParameters ActorSpawnParam;
 
@@ -30,8 +32,7 @@ void UInventoryFragment_EquippableItem::SetEquip(TSoftObjectPtr<ABaseCharacter> 
 			}
 		}
 
-		BaseCharacter->AddLooseGameplayTag(EquipmentGameplayTag);
-		BaseCharacter->LinkSubAnimInstance(EquipmentGameplayTag);
+		BaseCharacter->LinkSubAnimInstance(ItemGameplayTag);
 	}
 	else
 	{
@@ -42,14 +43,8 @@ void UInventoryFragment_EquippableItem::SetEquip(TSoftObjectPtr<ABaseCharacter> 
 		
 		SpawnEquipmentActors.Empty();
 
-		BaseCharacter->RemoveLooseGameplayTag(EquipmentGameplayTag);
-		BaseCharacter->UnLinkSubAnimInstance(EquipmentGameplayTag);
+		BaseCharacter->UnLinkSubAnimInstance(ItemGameplayTag);
 	}
-}
-
-bool UInventoryFragment_EquippableItem::HasGameplayTag(FGameplayTag GameplayTag)
-{
-	return EquipmentGameplayTag.MatchesTag(GameplayTag);
 }
 
 void UInventoryFragment_EquippableItem::SetActivateCollisions(bool bIsActivate)
@@ -58,11 +53,6 @@ void UInventoryFragment_EquippableItem::SetActivateCollisions(bool bIsActivate)
 	{
 		SpawnActor->SetActivateCollision(bIsActivate);
 	}
-}
-
-FGameplayTag UInventoryFragment_EquippableItem::GetEquipmentGameplayTag() const
-{
-	return EquipmentGameplayTag;
 }
 
 const TArray<TSoftObjectPtr<ABaseEquipment>>& UInventoryFragment_EquippableItem::GetSpawnEquipmentActors() const

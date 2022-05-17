@@ -16,24 +16,35 @@ class ASADAL_API UAsadalGameplayTags : public UObject
 	GENERATED_BODY()
 	
 public :
-	static const FGameplayTag StatusGameplayTag;
-	static const FGameplayTag DeathStatusGameplayTag;
-	static const FGameplayTag HitStatusGameplayTag;
-	static const FGameplayTag AttackStatusGameplayTag;	
+	static const FGameplayTag ActionGameplayTag;
+	static const FGameplayTag DeathActionGameplayTag;
+	static const FGameplayTag HitActionGameplayTag;
+	static const FGameplayTag AttackActionGameplayTag;
+	static const FGameplayTag AvoidGameplayTag;
+	static const FGameplayTag AbilityGameplayTag;
+	static const FGameplayTag AbilityOneHandAxeTag;
+	static const FGameplayTag AbilityOneHandMaceTag;
+	static const FGameplayTag AbilityOneHandShieldTag;
+	static const FGameplayTag AbilityOneHandSwordTag;
+	static const FGameplayTag AbilityTwinHandBladeTag;
+	static const FGameplayTag AbilityTwinHandDaggerTag;
+	static const FGameplayTag AbilityTwoHandGreatswordTag;
+	static const FGameplayTag AbilityTwoHandShieldTag;
+	static const FGameplayTag BaseAbilityGameplayTag;
 	static const FGameplayTag EventAttackBasicTag;
-	static const FGameplayTag ObjectWeaponTag;
-	static const FGameplayTag OneHandAxeTag;
-	static const FGameplayTag OneHandMaceTag;
-	static const FGameplayTag OneHandShieldTag;
-	static const FGameplayTag OneHandSwordTag;
-	static const FGameplayTag TwinHandBladeTag;
-	static const FGameplayTag TwinHandDaggerTag;
-	static const FGameplayTag TwoHandGreatswordTag;
-	static const FGameplayTag TwoHandShieldTag;
+	static const FGameplayTag ItemWeaponTag;
+	static const FGameplayTag ItemOneHandAxeTag;
+	static const FGameplayTag ItemOneHandMaceTag;
+	static const FGameplayTag ItemOneHandShieldTag;
+	static const FGameplayTag ItemOneHandSwordTag;
+	static const FGameplayTag ItemTwinHandBladeTag;
+	static const FGameplayTag ItemTwinHandDaggerTag;
+	static const FGameplayTag ItemTwoHandGreatswordTag;
+	static const FGameplayTag ItemTwoHandShieldTag;
 	static const FGameplayTag GameTimeDilationTag;
 	static const FGameplayTag GameTimeDilationStrikeTag;
 
 public :
 	static int32 GetDilationPriority(const FGameplayTag& GameplayTag);
-	
+	static FGameplayTag GetAbilityGameplayTagFromItem(const FGameplayTag& ItemGameplayTag);
 };

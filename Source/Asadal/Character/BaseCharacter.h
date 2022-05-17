@@ -36,8 +36,7 @@ public:
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
-	virtual void TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate);
-	void SetupWeapons();
+	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
 	bool IsDeath() const;
 
 protected:

@@ -3,20 +3,31 @@
 
 #include "AsadalGameplayTags.h"
 
-FGameplayTag const UAsadalGameplayTags::StatusGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Status"));
-FGameplayTag const UAsadalGameplayTags::DeathStatusGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Death"));
-FGameplayTag const UAsadalGameplayTags::HitStatusGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Hit"));
-FGameplayTag const UAsadalGameplayTags::AttackStatusGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Status.Attack"));
+FGameplayTag const UAsadalGameplayTags::ActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action"));
+FGameplayTag const UAsadalGameplayTags::DeathActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Death"));
+FGameplayTag const UAsadalGameplayTags::HitActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Hit"));
+FGameplayTag const UAsadalGameplayTags::AttackActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Attack"));
+FGameplayTag const UAsadalGameplayTags::AvoidGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Avoid"));
+FGameplayTag const UAsadalGameplayTags::AbilityGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability"));
+FGameplayTag const UAsadalGameplayTags::AbilityOneHandAxeTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.OneHand.Axe"));
+FGameplayTag const UAsadalGameplayTags::AbilityOneHandMaceTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.OneHand.Mace"));
+FGameplayTag const UAsadalGameplayTags::AbilityOneHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.OneHand.Shield"));
+FGameplayTag const UAsadalGameplayTags::AbilityOneHandSwordTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.OneHand.Sword"));
+FGameplayTag const UAsadalGameplayTags::AbilityTwinHandBladeTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.TwinHand.Blade"));
+FGameplayTag const UAsadalGameplayTags::AbilityTwinHandDaggerTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.TwinHand.Dagger"));
+FGameplayTag const UAsadalGameplayTags::AbilityTwoHandGreatswordTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.TwoHand.Greatsword"));
+FGameplayTag const UAsadalGameplayTags::AbilityTwoHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.TwoHand.Shield"));
+FGameplayTag const UAsadalGameplayTags::BaseAbilityGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Ability.Base"));
 FGameplayTag const UAsadalGameplayTags::EventAttackBasicTag = FGameplayTag::RequestGameplayTag(TEXT("Event.Attack.Basic"));
-FGameplayTag const UAsadalGameplayTags::ObjectWeaponTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon"));
-FGameplayTag const UAsadalGameplayTags::OneHandAxeTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.OneHand.Axe"));
-FGameplayTag const UAsadalGameplayTags::OneHandMaceTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.OneHand.Mace"));
-FGameplayTag const UAsadalGameplayTags::OneHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.OneHand.Shield"));
-FGameplayTag const UAsadalGameplayTags::OneHandSwordTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.OneHand.Sword"));
-FGameplayTag const UAsadalGameplayTags::TwinHandBladeTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwinHand.Blade"));
-FGameplayTag const UAsadalGameplayTags::TwinHandDaggerTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwinHand.Dagger"));
-FGameplayTag const UAsadalGameplayTags::TwoHandGreatswordTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwoHand.Greatsword"));
-FGameplayTag const UAsadalGameplayTags::TwoHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Object.Weapon.TwoHand.Shield"));
+FGameplayTag const UAsadalGameplayTags::ItemWeaponTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon"));
+FGameplayTag const UAsadalGameplayTags::ItemOneHandAxeTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.OneHand.Axe"));
+FGameplayTag const UAsadalGameplayTags::ItemOneHandMaceTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.OneHand.Mace"));
+FGameplayTag const UAsadalGameplayTags::ItemOneHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.OneHand.Shield"));
+FGameplayTag const UAsadalGameplayTags::ItemOneHandSwordTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.OneHand.Sword"));
+FGameplayTag const UAsadalGameplayTags::ItemTwinHandBladeTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.TwinHand.Blade"));
+FGameplayTag const UAsadalGameplayTags::ItemTwinHandDaggerTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.TwinHand.Dagger"));
+FGameplayTag const UAsadalGameplayTags::ItemTwoHandGreatswordTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.TwoHand.Greatsword"));
+FGameplayTag const UAsadalGameplayTags::ItemTwoHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.TwoHand.Shield"));
 FGameplayTag const UAsadalGameplayTags::GameTimeDilationTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation"));
 FGameplayTag const UAsadalGameplayTags::GameTimeDilationStrikeTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation.Strike"));
 
@@ -29,4 +40,42 @@ int32 UAsadalGameplayTags::GetDilationPriority(const FGameplayTag& GameplayTag)
 	}
 
 	return INT32_MAX;	
+}
+
+FGameplayTag UAsadalGameplayTags::GetAbilityGameplayTagFromItem(const FGameplayTag& ItemGameplayTag)
+{
+	if(ItemOneHandAxeTag == ItemGameplayTag)
+	{
+		return AbilityOneHandAxeTag;	
+	}
+	else if(ItemOneHandMaceTag == ItemGameplayTag)
+	{
+		return AbilityOneHandMaceTag;
+	}
+	else if(ItemOneHandShieldTag == ItemGameplayTag)
+	{
+		return AbilityOneHandShieldTag;
+	}
+	else if(ItemOneHandSwordTag == ItemGameplayTag)
+	{
+		return AbilityOneHandSwordTag;
+	}
+	else if(ItemTwinHandBladeTag == ItemGameplayTag)
+	{
+		return AbilityTwinHandBladeTag;
+	}
+	else if(ItemTwinHandDaggerTag == ItemGameplayTag)
+	{
+		return AbilityTwinHandDaggerTag;
+	}
+	else if(ItemTwoHandGreatswordTag == ItemGameplayTag)
+	{
+		return AbilityTwoHandGreatswordTag;
+	}
+	else if(ItemTwoHandShieldTag == ItemGameplayTag)
+	{
+		return AbilityTwoHandShieldTag;
+	}
+
+	return FGameplayTag::EmptyTag;
 }

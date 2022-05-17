@@ -26,20 +26,6 @@ void ABaseEquipment::SetEquip(bool bIsEquip)
 			OwnerActor = ChildActorComponent->GetOwner();
 		}
 	}
-	
-	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(OwnerActor);
-
-	if(IsValid(BaseCharacter))
-	{
-		if(bIsEquip)
-		{
-			BaseCharacter->AddLooseGameplayTag(WeaponGameplayTag);
-		}
-		else
-		{
-			BaseCharacter->RemoveLooseGameplayTag(WeaponGameplayTag);			
-		}
-	}
 }
 
 void ABaseEquipment::SetActivateCollision(bool bIsActivate)

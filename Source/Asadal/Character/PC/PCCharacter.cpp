@@ -69,9 +69,12 @@ void APCCharacter::InputMoveRight(float Value)
 
 FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 {
-	if(PlayerSkillSet.Num() > Index)
+	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
+	
+	if(nullptr != AbilityActionGroup
+		&& AbilityActionGroup->AttackAbilitiesSpecHandles.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
+		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilityActionGroup->AttackAbilitiesSpecHandles[Index];
 	
 		if(AbilitySpecHandle.IsValid())
 		{
@@ -84,9 +87,12 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 
 bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 {
-	if(PlayerSkillSet.Num() > Index)
+	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
+
+	if(nullptr != AbilityActionGroup
+		&& AbilityActionGroup->AttackAbilitiesSpecHandles.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = PlayerSkillSet[Index];
+		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilityActionGroup->AttackAbilitiesSpecHandles[Index];
 	
 		if(AbilitySpecHandle.IsValid())
 		{
@@ -105,7 +111,7 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 	return false;
 }
 
-void APCCharacter::TryActivateEquipment(FGameplayTag GameplayTag, bool bIsActivate)
+void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
 
@@ -120,7 +126,7 @@ void APCCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefi
 
 	if(IsValid(FragmentEquippableItem))
 	{
-		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ObjectWeaponTag))
+		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ItemWeaponTag))
 		{
 			//Weapon입니다.
 
@@ -130,12 +136,12 @@ void APCCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefi
 				{
 					UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
 
-					EquipmentFragmentEquippableItem->SetEquip(this, false);
+					EquipmentFragmentEquippableItem->SetActivate(this, false);
 				}
 
 				if(IsValid(FragmentEquippableItem))
 				{
-					FragmentEquippableItem->SetEquip(this, true);
+					FragmentEquippableItem->SetActivate(this, true);
 					const TArray<TSoftObjectPtr<ABaseEquipment>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
 
 					for(TSoftObjectPtr<ABaseEquipment> BaseEquipment : Equipments)
@@ -177,7 +183,14 @@ void APCCharacter::TryEquipNextWeapon()
 
 		if(IsValid(EquipmentFragmentEquippableItem))
 		{
-			const TArray<FGameplayAbilitySpecHandle>* SpecOnWeapons = PlayerAnimationOnWeapons.Find(EquipmentFragmentEquippableItem->GetEquipmentGameplayTag());
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipmentFragmentEquippableItem->GetItemGameplayTag());
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				GASComponent->SetActivateAbilityActionGroup(AbilityGameplayTag);
+			}
+			/*
+			const TArray<FGameplayAbilitySpecHandle>* SpecOnWeapons = PlayerAnimationOnWeapons.Find(EquipmentFragmentEquippableItem->GetItemGameplayTag());
 
 			for(const FGameplayAbilitySpecHandle& SpecHandle : *SpecOnWeapons)
 			{
@@ -189,13 +202,14 @@ void APCCharacter::TryEquipNextWeapon()
 
 					if(IsValid(BaseGameplayAbility))
 					{
-						if(BaseGameplayAbility->AbilityTags.HasTag(UAsadalGameplayTags::AttackStatusGameplayTag))
+						if(BaseGameplayAbility->AbilityTags.HasTag(UAsadalGameplayTags::AttackActionGameplayTag))
 						{
 							PlayerSkillSet.Add(SpecHandle);
 						}
 					}
 				}				
-			}		
+			}
+			*/
 		}
 	}
 }
@@ -204,32 +218,6 @@ void APCCharacter::TryEquipNextWeapon()
 void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandAxeTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandMaceTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandShieldTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::OneHandSwordTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwinHandBladeTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwinHandDaggerTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwoHandGreatswordTag);
-	PlayerAnimationOnWeapons.Add(UAsadalGameplayTags::TwoHandShieldTag);
-
-	TArray<const FGameplayAbilitySpec*> GameplayAbilitySpecs;
-	
-	GASComponent->GetAbilitySpecs(GameplayAbilitySpecs);
-
-	for(const FGameplayAbilitySpec* AbilitySpec : GameplayAbilitySpecs)
-	{
-		UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(AbilitySpec->Ability);
-
-		for(auto& PlayerAnimationOnWeapon : PlayerAnimationOnWeapons)
-		{
-			if(BaseGameplayAbility->HasTagActivationRequiredTags(PlayerAnimationOnWeapon.Key))
-			{
-				PlayerAnimationOnWeapon.Value.Add(AbilitySpec->Handle);				
-			}
-		}
-	}
 
 	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
 	{

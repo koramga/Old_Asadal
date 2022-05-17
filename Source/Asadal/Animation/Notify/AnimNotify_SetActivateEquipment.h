@@ -22,7 +22,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayTag	ActivateGameplayTag = UAsadalGameplayTags::ObjectWeaponTag;
+	FGameplayTag	ActivateGameplayTag = UAsadalGameplayTags::ItemWeaponTag;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool			bIsActivate = true;
