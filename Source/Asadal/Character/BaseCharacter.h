@@ -92,4 +92,7 @@ private:
 
 	UFUNCTION()
 	void __OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItem);
+
+	UFUNCTION()
+	void __OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate);
 };

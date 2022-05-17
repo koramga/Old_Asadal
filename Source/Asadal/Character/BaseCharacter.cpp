@@ -265,6 +265,7 @@ void ABaseCharacter::BeginPlay()
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);
 			GASComponent->OnGEToTargetLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
+			GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
 		}		
 	}
 
@@ -503,5 +504,31 @@ void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEve
 	if(LatentEventItem.Num() > 0)
 	{
 		//Latent Event로 무언가 공격을 했다.!
+	}
+}
+
+void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate)
+{
+	if(UAsadalGameplayTags::HitStateGameplayTag == GameplayTag)
+	{
+		if(bIsActivate)
+		{
+			//Material Instance ON
+		}
+		else
+		{
+			//Material Instance OFF
+		}
+	}
+	else if(UAsadalGameplayTags::DeathStateGameplayTag == GameplayTag)
+	{
+		if(bIsActivate)
+		{
+			
+		}
+		else
+		{
+			
+		}
 	}
 }

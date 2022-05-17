@@ -114,3 +114,10 @@ void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 		}
 	}
 }
+
+void UGASComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
+{
+	Super::OnTagUpdated(Tag, TagExists);
+
+	OnTagUpdatedEvent.Broadcast(Tag, TagExists);
+}

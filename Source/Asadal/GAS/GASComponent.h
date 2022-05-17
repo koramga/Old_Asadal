@@ -32,6 +32,7 @@ struct FGameplayAbilityActionGroup
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGEToTargetLatentEvent, const TArray<FGEToTargetEventItem>&, LatentEventItem);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTagUpdatedEvent, const FGameplayTag&, Tag, bool, TagExists);
 
 UCLASS()
 class ASADAL_API UGASComponent : public UAbilitySystemComponent
@@ -40,6 +41,7 @@ class ASADAL_API UGASComponent : public UAbilitySystemComponent
 
 public :
 	FOnGEToTargetLatentEvent	OnGEToTargetLatentEvent;
+	FOnTagUpdatedEvent			OnTagUpdatedEvent;
 	
 	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
 	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
@@ -49,6 +51,7 @@ public :
 
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+	virtual void OnTagUpdated(const FGameplayTag& Tag, bool TagExists) override;
 
 protected:
 	TArray<FGEToTargetEventItem>	GEToTargetLatentEventItems;
