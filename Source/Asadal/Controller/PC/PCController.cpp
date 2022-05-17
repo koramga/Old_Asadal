@@ -11,6 +11,16 @@ APCController::APCController()
 	CheatClass = UBaseCheatManager::StaticClass();
 }
 
+const FTimeDilationSettings& APCController::GetStrikeTimeDilationSettings() const
+{
+	return StrikeTimeDilationSettings;
+}
+
+TSubclassOf<UCameraShakeBase> APCController::GetStrikeCameraShake() const
+{
+	return  StrikeCameraShake;
+}
+
 void APCController::SetupInputComponent()
 {
 	Super::SetupInputComponent();

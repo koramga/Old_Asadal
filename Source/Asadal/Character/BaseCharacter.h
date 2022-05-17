@@ -8,6 +8,7 @@
 #include "../GAS/GASComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
+#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -72,6 +73,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Abilities")
 	TArray<TSubclassOf<class UBaseGameplayAbility>>	AbilityClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
+	TArray<FMaterialInstanceVariable>				HitMaterialInstanceVairables;
+	TArray<TMetaVariable>							BackupHitMaterialInstanceVariables;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

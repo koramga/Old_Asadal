@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Asadal/AsadalStructure.h"
 #include "GameFramework/PlayerController.h"
 #include "PCController.generated.h"
 
@@ -17,12 +18,21 @@ class ASADAL_API APCController : public APlayerController
 public :
 	APCController();
 
+	const FTimeDilationSettings&	GetStrikeTimeDilationSettings() const;
+	TSubclassOf<UCameraShakeBase>	GetStrikeCameraShake() const;
+
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
 	class APCCharacter* PCCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|TimeDilation")
+	FTimeDilationSettings			StrikeTimeDilationSettings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|CameraShake")
+	TSubclassOf<UCameraShakeBase>	StrikeCameraShake;
 	
 private :
 	void __InputMoveRight(float Value);

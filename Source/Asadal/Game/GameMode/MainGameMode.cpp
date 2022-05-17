@@ -47,7 +47,7 @@ bool AMainGameMode::SetTimeDilationKeepTime(const FGameplayTag& GameplayTag,
 		}
 	}
 
-	if(TimeDilationGameplayTag.GetTagName().IsNone())
+	if(TimeDilationGameplayTag == FGameplayTag::EmptyTag)
 	{
 		TimeDilationKeepTime = TimeDilationSettings.KeepTime;
 		TimeDilationTickTime = 0.f;
@@ -72,7 +72,7 @@ void AMainGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(false == TimeDilationGameplayTag.GetTagName().IsNone())
+	if(FGameplayTag::EmptyTag != TimeDilationGameplayTag)
 	{
 		TimeDilationTickTime += DeltaTime / GetWorld()->GetWorldSettings()->TimeDilation;
 

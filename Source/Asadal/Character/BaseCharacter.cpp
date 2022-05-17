@@ -9,11 +9,14 @@
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "Asadal/Actor/DamageText/TextActor.h"
+#include "Asadal/Controller/PC/PCController.h"
+#include "Asadal/Game/GameMode/MainGameMode.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
+#include "GameFramework/GameModeBase.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -302,6 +305,11 @@ void ABaseCharacter::BeginPlay()
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(HasMatchingGameplayTag(UAsadalGameplayTags::HitStateGameplayTag))
+	{
+		
+	}
 	
 	
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -504,7 +512,30 @@ void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEve
 	if(LatentEventItem.Num() > 0)
 	{
 		//Latent Event로 무언가 공격을 했다.!
+
+		APCController* PCController = Cast<APCController>(GetController());
+
+		if(IsValid(PCController)
+			&& PCController == GetWorld()->GetFirstPlayerController())
+		{
+			//플레이어가 직접 조종하고있다면
+			AMainGameMode* MainGameMode = Cast<AMainGameMode>(GetWorld()->GetAuthGameMode());
+
+			if(IsValid(MainGameMode))
+			{
+				MainGameMode->SetTimeDilationKeepTime(UAsadalGameplayTags::GameTimeDilationStrikeTag, PCController->GetStrikeTimeDilationSettings());
+			}
+
+			TSubclassOf<UCameraShakeBase> StrikeCameraShake = PCController->GetStrikeCameraShake();
+
+			if(IsValid(StrikeCameraShake))
+			{
+				PCController->ClientStartCameraShake(StrikeCameraShake);
+			}
+		}
 	}
+
+	UE_LOG(LogTemp, Display, TEXT("GEToTargetLatentEvent : <%d>"), LatentEventItem.Num());
 }
 
 void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate)
@@ -514,10 +545,29 @@ void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, 
 		if(bIsActivate)
 		{
 			//Material Instance ON
+
+			for(const FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			{
+				BackupHitMaterialInstanceVariables.Add(MaterialInstanceVariable.GetMaterialInstanceParameter(GetMesh()));
+				MaterialInstanceVariable.SetMaterialInstanceParameter(GetMesh());
+			}
 		}
 		else
 		{
+			for(int i = 0; i < HitMaterialInstanceVairables.Num(); ++i)
+			{
+				HitMaterialInstanceVairables[i].SetMaterialInstanceParameter(GetMesh(), BackupHitMaterialInstanceVariables[i]);
+			}
+
+			BackupHitMaterialInstanceVariables.Reset();
+			
 			//Material Instance OFF
+			//UMaterialInstanceDynamic* MaterialInstanceDynamic = GetMesh()->CreateDynamicMaterialInstance(0);
+			//
+			//if(IsValid(MaterialInstanceDynamic))
+			//{
+			//	MaterialInstanceDynamic->SetVectorParameterValue(TEXT("OutLineColor"), FLinearColor(1.f, 0.f, 0.f, 0.f));
+			//}		
 		}
 	}
 	else if(UAsadalGameplayTags::DeathStateGameplayTag == GameplayTag)
@@ -531,4 +581,6 @@ void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, 
 			
 		}
 	}
+	
+	UE_LOG(LogTemp, Display, TEXT("<%s> : <%d>"), *GameplayTag.ToString(),bIsActivate);
 }
