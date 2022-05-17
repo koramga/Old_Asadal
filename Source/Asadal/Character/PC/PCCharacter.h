@@ -24,8 +24,6 @@ public :
 	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate) override;
-	void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
-	void TryEquipNextWeapon();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -39,14 +37,4 @@ protected :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent* SpringArmComponent;
-
-	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
-	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Temp")
-	TArray<TSubclassOf<class UAsadalInventoryItemDefinition>>		EquipmentWeaponItemDefinitionClasses;
-	
-private:
-	UFUNCTION()
-	void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
 };

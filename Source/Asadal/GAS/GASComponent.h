@@ -10,8 +10,11 @@
  * 
  */
 
+USTRUCT()
 struct FGEToTargetEventItem
 {
+	GENERATED_BODY()
+
 	TSoftObjectPtr<AActor>		Actor;
 	FGameplayTag				EventTag = FGameplayTag::EmptyTag;
 
@@ -28,12 +31,16 @@ struct FGameplayAbilityActionGroup
 	FGameplayAbilitySpecHandle			AvoidAbilitySpecHandle;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGEToTargetLatentEvent, const TArray<FGEToTargetEventItem>&, LatentEventItem);
+
 UCLASS()
 class ASADAL_API UGASComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
 public :
+	FOnGEToTargetLatentEvent	OnGEToTargetLatentEvent;
+	
 	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
 	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
 	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);

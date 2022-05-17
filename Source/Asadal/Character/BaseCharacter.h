@@ -37,6 +37,8 @@ public:
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
+	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
+	virtual void TryEquipNextWeapon();
 	bool IsDeath() const;
 
 protected:
@@ -50,25 +52,20 @@ protected:
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
 	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
 	virtual void UpdateDeath(bool bIsDeath);
+	virtual void OnHit(const FOnAttributeChangeData& Data);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
 	UGASComponent* GASComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	TArray<TSubclassOf<class ATextActor>>		DamageTextActorClasses;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
+	TArray<TSubclassOf<class ATextActor>>						DamageTextActorClasses;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	TArray<FString>								DamageTextSpawnComponentNames;
-
-	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
-	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
-	float MoveBlendRatio = 1.f;
-
-	TArray<TSoftObjectPtr<UChildActorComponent>>	BaseWeapons;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
+	TArray<FString>												DamageTextSpawnComponentNames;
 	
-
-	TArray<TSoftObjectPtr<USceneComponent>>			DamageTextSpawnComponents;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Equipment")
+	TArray<TSubclassOf<class UAsadalInventoryItemDefinition>>		EquipmentWeaponItemDefinitionClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|SubAnimInstance")
 	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>		SubAnimInstanceClassMap;
@@ -76,11 +73,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Abilities")
 	TArray<TSubclassOf<class UBaseGameplayAbility>>	AbilityClasses;
 
-//private:
-//	UFUNCTION()
-//	virtual void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
+	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
+	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
+
+	TArray<TSoftObjectPtr<USceneComponent>>						DamageTextSpawnComponents;
+
+	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
+	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
+	float MoveBlendRatio = 1.f;	
 	
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);
 	void __OnManaChangedNative(const FOnAttributeChangeData& Data);
+	
+private:
+	UFUNCTION()
+	void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
+
+	UFUNCTION()
+	void __OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItem);
 };

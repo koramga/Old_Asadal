@@ -29,7 +29,7 @@ void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
 		
 		//True였는데 False이니 모두 뿌린다.
 		if(false == InIsLatentEventToTarget)
-		{
+		{			
 			for(const FGEToTargetEventItem& Item : GEToTargetLatentEventItems)
 			{
 				if(Item.Actor.IsValid())
@@ -37,7 +37,9 @@ void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
 					GEToTarget(Item.Actor.Get(), Item.EventTag);
 				}			
 			}
-
+			
+			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems);
+			
 			GEToTargetLatentEventItems.Empty();
 		}
 		//False였는데 True이므로 혹시 모를 LatentEventItems를 날린다.

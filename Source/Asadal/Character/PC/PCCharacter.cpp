@@ -120,111 +120,10 @@ void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bI
 	WeaponFragmentEquippableItem->SetActivateCollisions(bIsActivate);
 }
 
-void APCCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefinition> InventoryItemDefinition)
-{
-	UInventoryFragment_EquippableItem* FragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(InventoryItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
-
-	if(IsValid(FragmentEquippableItem))
-	{
-		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ItemWeaponTag))
-		{
-			//Weapon입니다.
-
-			if(InventoryItemDefinition != EquipmentWepaonItemDefinition)
-			{
-				if(EquipmentWepaonItemDefinition.IsValid())
-				{
-					UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
-
-					EquipmentFragmentEquippableItem->SetActivate(this, false);
-				}
-
-				if(IsValid(FragmentEquippableItem))
-				{
-					FragmentEquippableItem->SetActivate(this, true);
-					const TArray<TSoftObjectPtr<ABaseEquipment>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
-
-					for(TSoftObjectPtr<ABaseEquipment> BaseEquipment : Equipments)
-					{
-						BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &APCCharacter::__OnEquipmentOverlapEventNative);
-					}
-				}
-
-				EquipmentWepaonItemDefinition = InventoryItemDefinition;
-			}
-		}
-	}
-}
-
-void APCCharacter::TryEquipNextWeapon()
-{
-	if(EquipmentWeaponItemDefinitions.Num() > 0)
-	{
-		if(false == EquipmentWepaonItemDefinition.IsValid())
-		{
-			SetEquipInventoryItem(EquipmentWeaponItemDefinitions[0]);			
-		}
-		else
-		{
-			int32 Index = EquipmentWeaponItemDefinitions.Find(EquipmentWepaonItemDefinition);
-
-			if(Index != INDEX_NONE)
-			{
-				Index = (Index + 1) % EquipmentWeaponItemDefinitions.Num();
-
-				SetEquipInventoryItem(EquipmentWeaponItemDefinitions[Index]);
-			}
-		}
-	}
-
-	if(EquipmentWepaonItemDefinition.IsValid())
-	{
-		UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
-
-		if(IsValid(EquipmentFragmentEquippableItem))
-		{
-			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipmentFragmentEquippableItem->GetItemGameplayTag());
-
-			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
-			{
-				GASComponent->SetActivateAbilityActionGroup(AbilityGameplayTag);
-			}
-			/*
-			const TArray<FGameplayAbilitySpecHandle>* SpecOnWeapons = PlayerAnimationOnWeapons.Find(EquipmentFragmentEquippableItem->GetItemGameplayTag());
-
-			for(const FGameplayAbilitySpecHandle& SpecHandle : *SpecOnWeapons)
-			{
-				FGameplayAbilitySpec* GameplayAbilitySpec = GASComponent->FindAbilitySpecFromHandle(SpecHandle);
-
-				if(nullptr != GameplayAbilitySpec)
-				{
-					UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
-
-					if(IsValid(BaseGameplayAbility))
-					{
-						if(BaseGameplayAbility->AbilityTags.HasTag(UAsadalGameplayTags::AttackActionGameplayTag))
-						{
-							PlayerSkillSet.Add(SpecHandle);
-						}
-					}
-				}				
-			}
-			*/
-		}
-	}
-}
-
 // Called when the game starts or when spawned
 void APCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
-	{
-		EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
-	}
-
-	TryEquipNextWeapon();
 }
 
 // Called every frame
@@ -232,19 +131,6 @@ void APCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void APCCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData)
-{
-	if(OverlapEventData.Caller->IsA(ABaseWeapon::StaticClass()))
-	{
-		//여기서부터 공격이 시작된다.
-		if(OverlapEventData.OtherActor.IsValid())
-		{
-			GASComponent->GEToTarget(OverlapEventData.OtherActor.Get(), UAsadalGameplayTags::EventAttackBasicTag);
-		}
-	}
-}
-
 
 //bool APCCharacter::HasSkill(uint32_t Index)
 //{

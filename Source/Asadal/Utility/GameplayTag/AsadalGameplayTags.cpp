@@ -3,6 +3,10 @@
 
 #include "AsadalGameplayTags.h"
 
+FGameplayTag const UAsadalGameplayTags::StateGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.State"));
+FGameplayTag const UAsadalGameplayTags::AttackStateGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Attack"));
+FGameplayTag const UAsadalGameplayTags::HitStateGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Hit"));
+FGameplayTag const UAsadalGameplayTags::DeathStateGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Death"));
 FGameplayTag const UAsadalGameplayTags::ActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action"));
 FGameplayTag const UAsadalGameplayTags::DeathActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Death"));
 FGameplayTag const UAsadalGameplayTags::HitActionGameplayTag = FGameplayTag::RequestGameplayTag(TEXT("Character.Action.Hit"));

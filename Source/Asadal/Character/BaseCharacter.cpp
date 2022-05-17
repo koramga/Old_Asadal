@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
+#include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -169,6 +170,79 @@ void ABaseCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool 
 {
 }
 
+void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefinition> InventoryItemDefinition)
+{
+	UInventoryFragment_EquippableItem* FragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(InventoryItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+	if(IsValid(FragmentEquippableItem))
+	{
+		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ItemWeaponTag))
+		{
+			//Weapon입니다.
+
+			if(InventoryItemDefinition != EquipmentWepaonItemDefinition)
+			{
+				if(EquipmentWepaonItemDefinition.IsValid())
+				{
+					UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+					EquipmentFragmentEquippableItem->SetActivate(this, false);
+				}
+
+				if(IsValid(FragmentEquippableItem))
+				{
+					FragmentEquippableItem->SetActivate(this, true);
+					const TArray<TSoftObjectPtr<ABaseEquipment>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
+
+					for(TSoftObjectPtr<ABaseEquipment> BaseEquipment : Equipments)
+					{
+						BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+					}
+				}
+
+				EquipmentWepaonItemDefinition = InventoryItemDefinition;
+			}
+		}
+	}
+}
+
+void ABaseCharacter::TryEquipNextWeapon()
+{
+	if(EquipmentWeaponItemDefinitions.Num() > 0)
+	{
+		if(false == EquipmentWepaonItemDefinition.IsValid())
+		{
+			SetEquipInventoryItem(EquipmentWeaponItemDefinitions[0]);			
+		}
+		else
+		{
+			int32 Index = EquipmentWeaponItemDefinitions.Find(EquipmentWepaonItemDefinition);
+
+			if(Index != INDEX_NONE)
+			{
+				Index = (Index + 1) % EquipmentWeaponItemDefinitions.Num();
+
+				SetEquipInventoryItem(EquipmentWeaponItemDefinitions[Index]);
+			}
+		}
+	}
+
+	if(EquipmentWepaonItemDefinition.IsValid())
+	{
+		UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+
+		if(IsValid(EquipmentFragmentEquippableItem))
+		{
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipmentFragmentEquippableItem->GetItemGameplayTag());
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				GASComponent->SetActivateAbilityActionGroup(AbilityGameplayTag);
+			}
+		}
+	}
+}
+
 bool ABaseCharacter::IsDeath() const
 {
 	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
@@ -190,6 +264,7 @@ void ABaseCharacter::BeginPlay()
 		{
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
 			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);
+			GASComponent->OnGEToTargetLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
 		}		
 	}
 
@@ -213,6 +288,13 @@ void ABaseCharacter::BeginPlay()
 	{
 		InitializeAbility(AbilityClasses[i], 0);
 	}
+	
+	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
+	{
+		EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
+	}
+
+	TryEquipNextWeapon();
 }
 
 // Called every frame
@@ -304,18 +386,10 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 
 	if(false == IsDeath())
 	{
-		if(nullptr != Data.GEModData)
+		if(nullptr != Data.GEModData
+			&& false == HasMatchingGameplayTag(UAsadalGameplayTags::HitStateGameplayTag))
 		{
-			AActor* Actor = Data.GEModData->EffectSpec.GetEffectContext().GetInstigator();
-
-			if(IsValid(Actor))
-			{
-				FVector TargetLocation = Actor->GetActorLocation();
-				FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
-				FRotator NewRotator = FRotator(GetActorRotation().Pitch, LookAtRotator.Yaw, GetActorRotation().Roll);
-			
-				SetActorRotation(NewRotator);
-			}			
+			OnHit(Data);
 		}
 		
 		float DeltaValue = Data.NewValue - Data.OldValue; 
@@ -380,6 +454,28 @@ void ABaseCharacter::UpdateDeath(bool bIsDeath)
 	}
 }
 
+void ABaseCharacter::OnHit(const FOnAttributeChangeData& Data)
+{
+	const FGameplayAbilityActionGroup* GameplayAbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
+
+	if(nullptr != GameplayAbilityActionGroup)
+	{
+		if(GASComponent->TryActivateAbility(GameplayAbilityActionGroup->HitAbilitySpecHandle))
+		{
+			AActor* Actor = Data.GEModData->EffectSpec.GetEffectContext().GetInstigator();
+
+			if(IsValid(Actor))
+			{
+				FVector TargetLocation = Actor->GetActorLocation();
+				FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
+				FRotator NewRotator = FRotator(GetActorRotation().Pitch, LookAtRotator.Yaw, GetActorRotation().Roll);
+			
+				SetActorRotation(NewRotator);
+			}			
+		}
+	}
+}
+
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
 {	
 	OnHealthChanged(Data);
@@ -388,4 +484,24 @@ void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
 void ABaseCharacter::__OnManaChangedNative(const FOnAttributeChangeData& Data)
 {
 	OnManaChanged(Data);
+}
+
+void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData)
+{
+	if(OverlapEventData.Caller->IsA(ABaseWeapon::StaticClass()))
+	{
+		//여기서부터 공격이 시작된다.
+		if(OverlapEventData.OtherActor.IsValid())
+		{
+			GASComponent->GEToTarget(OverlapEventData.OtherActor.Get(), UAsadalGameplayTags::EventAttackBasicTag);
+		}
+	}
+}
+
+void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItem)
+{
+	if(LatentEventItem.Num() > 0)
+	{
+		//Latent Event로 무언가 공격을 했다.!
+	}
 }
