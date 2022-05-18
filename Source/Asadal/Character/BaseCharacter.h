@@ -76,7 +76,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
 	TArray<FMaterialInstanceVariable>				HitMaterialInstanceVairables;
-	TArray<TMetaVariable>							BackupHitMaterialInstanceVariables;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

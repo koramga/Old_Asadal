@@ -3,6 +3,8 @@
 
 #include "MaterialInstanceVariable.h"
 
+#include "MetaTools/Utility/MetaToolsFunctionLibrary.h"
+
 bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
 {
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = PrimitiveComponent->CreateDynamicMaterialInstance(DynamicMaterialInstanceElementIndex);
@@ -28,9 +30,31 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent
 	return false;
 }
 
+bool FMaterialInstanceVariable::SetMaterialInstanceParameterWithBackup(UPrimitiveComponent* PrimitiveComponent)
+{
+	TMetaVariable NewMetaVariable = GetMaterialInstanceParameter(PrimitiveComponent);
+	
+	ResetDynamicMaterialInstanceMetaVariableMap.Remove(PrimitiveComponent);
+	ResetDynamicMaterialInstanceMetaVariableMap.Add(PrimitiveComponent, NewMetaVariable);
+
+	return SetMaterialInstanceParameter(PrimitiveComponent);
+}
+
+bool FMaterialInstanceVariable::RollbackMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
+{
+	if(ResetDynamicMaterialInstanceMetaVariableMap.Contains(PrimitiveComponent))
+	{
+		TMetaVariable MetaVariable = ResetDynamicMaterialInstanceMetaVariableMap.FindRef(PrimitiveComponent);
+
+		return SetMaterialInstanceParameter(PrimitiveComponent, MetaVariable);
+	}
+	
+	return false;
+}
+
 bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDynamic* MaterialInstanceDynamic) const
 {
-	TMetaVariable MetaVariable = BaseVariableMetaDataGroup.GetMetaVariable();
+	TMetaVariable MetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
 	
 	return SetMaterialInstanceParameter(MaterialInstanceDynamic, MetaVariable);
 
@@ -148,7 +172,7 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 	UMaterialInstanceDynamic* MaterialInstanceDynamic) const
 {
 	TMetaVariable ReturnMetaVariable = TMetaVariable();
-	EMetaVariableType MetaVariableType = BaseVariableMetaDataGroup.GetMetaVariableType();
+	EMetaVariableType MetaVariableType = StartVariableMetaDataGroup.GetMetaVariableType();
 
 	float Sclar;
 	FVector Vector;
@@ -192,4 +216,54 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 	}
 
 	return ReturnMetaVariable;
+}
+
+void FMaterialInstanceVariable::StartUpdate()
+{
+	bIsUpdateLerp = true;
+	LerpDeltaTime = 0.f;
+}
+
+bool FMaterialInstanceVariable::CanUpdate() const
+{
+	if(LerpTime <= 0.f)
+	{
+		return false;
+	}
+	
+	if(StartVariableMetaDataGroup.GetMetaVariableType() != EndVariableMetaDataGroup.GetMetaVariableType())
+	{
+		return false;
+	}
+
+	return bIsUpdateLerp;
+}
+
+void FMaterialInstanceVariable::Update(UPrimitiveComponent* PrimitiveComponent, float DeltaSeconds)
+{
+	if(CanUpdate())
+	{
+		LerpDeltaTime += DeltaSeconds;
+
+		if(LerpDeltaTime > LerpTime)
+		{
+			EndUpdate();
+		}
+		else
+		{
+			float ClampDeltaTime = FMath::Clamp(LerpDeltaTime / LerpTime, 0.f, 1.f);
+
+			const TMetaVariable StartMetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
+			const TMetaVariable EndMetaVariable = EndVariableMetaDataGroup.GetMetaVariable();
+
+			const TMetaVariable UpdateMetaVariable = UMetaToolsFunctionLibrary::LerpVariable(StartMetaVariable, EndMetaVariable, ClampDeltaTime);
+
+			SetMaterialInstanceParameter(PrimitiveComponent, UpdateMetaVariable);
+		}
+	}
+}
+
+void FMaterialInstanceVariable::EndUpdate()
+{
+	bIsUpdateLerp = false;
 }

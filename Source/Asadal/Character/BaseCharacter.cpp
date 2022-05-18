@@ -306,12 +306,12 @@ void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(HasMatchingGameplayTag(UAsadalGameplayTags::HitStateGameplayTag))
+	
+	for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 	{
-		
+		MaterialInstanceVariable.Update(GetMesh(), DeltaTime);
 	}
-	
-	
+		
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	FVector Forward = GetActorForwardVector();
 	FVector Velocity = Movement->Velocity;
@@ -546,20 +546,19 @@ void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, 
 		{
 			//Material Instance ON
 
-			for(const FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 			{
-				BackupHitMaterialInstanceVariables.Add(MaterialInstanceVariable.GetMaterialInstanceParameter(GetMesh()));
-				MaterialInstanceVariable.SetMaterialInstanceParameter(GetMesh());
+				MaterialInstanceVariable.SetMaterialInstanceParameterWithBackup(GetMesh());
+				MaterialInstanceVariable.StartUpdate();
 			}
 		}
 		else
 		{
-			for(int i = 0; i < HitMaterialInstanceVairables.Num(); ++i)
+			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 			{
-				HitMaterialInstanceVairables[i].SetMaterialInstanceParameter(GetMesh(), BackupHitMaterialInstanceVariables[i]);
+				MaterialInstanceVariable.RollbackMaterialInstanceParameter(GetMesh());
+				MaterialInstanceVariable.EndUpdate();
 			}
-
-			BackupHitMaterialInstanceVariables.Reset();
 			
 			//Material Instance OFF
 			//UMaterialInstanceDynamic* MaterialInstanceDynamic = GetMesh()->CreateDynamicMaterialInstance(0);

@@ -17,5 +17,6 @@ class METATOOLS_API UMetaToolsFunctionLibrary : public UBlueprintFunctionLibrary
 	
 public :
 	static TMetaVariable MakeRangeScopeVariable(const TMetaVariable& LMetaVariant, const TMetaVariable& RMetaVariant);
+	static TMetaVariable LerpVariable(const TMetaVariable& LMetaVariant, const TMetaVariable& RMetaVariant, float LerpTime);
 
 };
