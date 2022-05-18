@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/PoseableMeshComponent.h"
 #include "GameFramework/Actor.h"
+#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
 #include "AnimGhostTrailActor.generated.h"
 
 UCLASS()
@@ -17,6 +18,8 @@ public:
 	AAnimGhostTrailActor();
 
 	void SetGhostSkeletalMeshComponent(USkeletalMeshComponent* SkeletalMeshComponent, float LifeTime = 1.f);
+	void SetGhostSkeletalMeshMaterial(int32 ElementIndex, UMaterial* Material);
+	void SetMaterialInstanceVariable(const FMaterialInstanceVariable& MaterialInstanceVariable);
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,5 +30,8 @@ protected:
 protected:
 	UPROPERTY()
 	UPoseableMeshComponent*	PoseableMeshComponent;
+
+	UPROPERTY()
+	TArray<FMaterialInstanceVariable>	MaterialInstanceVariables;
 
 };

@@ -20,9 +20,19 @@ void UAnimNotify_GhostTrail::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	ActorSpawnParameters.Owner = OwnerActor;
 	
-	AAnimGhostTrailActor* AnimGhostTrailActor = MeshComp->GetWorld()->SpawnActor<AAnimGhostTrailActor>(AAnimGhostTrailActor::StaticClass(), OwnerActor->GetTransform(), ActorSpawnParameters);
+	AAnimGhostTrailActor* AnimGhostTrailActor = MeshComp->GetWorld()->SpawnActor<AAnimGhostTrailActor>(AAnimGhostTrailActor::StaticClass(), MeshComp->GetComponentTransform(), ActorSpawnParameters);
 
 	AnimGhostTrailActor->SetGhostSkeletalMeshComponent(MeshComp, LifeTime);
+
+	for(const FGhostTrailMaterial& GhostTrailMaterial : GhostTrailMaterials)
+	{
+		AnimGhostTrailActor->SetGhostSkeletalMeshMaterial(GhostTrailMaterial.ElementIndex, GhostTrailMaterial.Material);
+	}
+
+	for(const FMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
+	{
+		AnimGhostTrailActor->SetMaterialInstanceVariable(MaterialInstanceVariable);
+	}
 }
 
 FString UAnimNotify_GhostTrail::GetNotifyName_Implementation() const

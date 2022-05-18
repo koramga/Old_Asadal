@@ -22,9 +22,23 @@ void AAnimGhostTrailActor::SetGhostSkeletalMeshComponent(USkeletalMeshComponent*
 	{
 		PoseableMeshComponent->SetSkeletalMesh(SkeletalMeshComponent->SkeletalMesh);
 		PoseableMeshComponent->CopyPoseFromSkeletalComponent(SkeletalMeshComponent);
-
 		SetLifeSpan(LifeTime);
 	}
+}
+
+void AAnimGhostTrailActor::SetGhostSkeletalMeshMaterial(int32 ElementIndex, UMaterial* Material)
+{
+	PoseableMeshComponent->SetMaterial(ElementIndex, Material);
+}
+
+void AAnimGhostTrailActor::SetMaterialInstanceVariable(const FMaterialInstanceVariable& MaterialInstanceVariable)
+{
+	MaterialInstanceVariables.Add(MaterialInstanceVariable);
+
+	FMaterialInstanceVariable& NewMaterialInstanceVariable = MaterialInstanceVariables[MaterialInstanceVariables.Num() - 1];
+
+	NewMaterialInstanceVariable.SetMaterialInstanceParameter(PoseableMeshComponent);
+	NewMaterialInstanceVariable.StartUpdate();
 }
 
 // Called when the game starts or when spawned
@@ -37,4 +51,9 @@ void AAnimGhostTrailActor::BeginPlay()
 void AAnimGhostTrailActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	for(FMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
+	{
+		MaterialInstanceVariable.Update(PoseableMeshComponent, DeltaTime);
+	}
 }

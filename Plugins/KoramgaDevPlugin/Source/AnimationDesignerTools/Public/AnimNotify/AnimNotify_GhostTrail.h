@@ -3,13 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
 #include "UObject/Object.h"
 #include "AnimNotify_GhostTrail.generated.h"
 
 /**
  * 
  */
-UCLASS()
+
+USTRUCT(BlueprintType)
+struct FGhostTrailMaterial
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32				ElementIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial*			Material;
+	
+};
+
+UCLASS(editinlinenew, Blueprintable, const, hidecategories = Object, collapsecategories, meta = (ShowWorldContextPin, DisplayName = "GhostTrail"))
 class ANIMATIONDESIGNERTOOLS_API UAnimNotify_GhostTrail : public UAnimNotify
 {
 	GENERATED_BODY()
@@ -24,4 +39,10 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float	LifeTime = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FGhostTrailMaterial>			GhostTrailMaterials;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FMaterialInstanceVariable>	MaterialInstanceVariables;
 };

@@ -27,7 +27,7 @@ public class AnimationDesignerTools : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", "MetaTools",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
