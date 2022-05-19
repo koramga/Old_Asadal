@@ -246,6 +246,14 @@ void ABaseCharacter::TryEquipNextWeapon()
 	}
 }
 
+void ABaseCharacter::TryDash()
+{
+	if(IsValid(GASComponent))
+	{
+		GASComponent->TryAvoidAbilityFromActionGroup();
+	}
+}
+
 bool ABaseCharacter::IsDeath() const
 {
 	return HasMatchingGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
@@ -465,6 +473,21 @@ void ABaseCharacter::UpdateDeath(bool bIsDeath)
 
 void ABaseCharacter::OnHit(const FOnAttributeChangeData& Data)
 {
+	if(GASComponent->TryHitAbilityFromActionGroup())
+	{
+		AActor* Actor = Data.GEModData->EffectSpec.GetEffectContext().GetInstigator();
+
+		if(IsValid(Actor))
+		{
+			FVector TargetLocation = Actor->GetActorLocation();
+			FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
+			FRotator NewRotator = FRotator(GetActorRotation().Pitch, LookAtRotator.Yaw, GetActorRotation().Roll);
+			
+			SetActorRotation(NewRotator);
+		}			
+	}
+	
+	/*
 	const FGameplayAbilityActionGroup* GameplayAbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
 
 	if(nullptr != GameplayAbilityActionGroup)
@@ -483,6 +506,7 @@ void ABaseCharacter::OnHit(const FOnAttributeChangeData& Data)
 			}			
 		}
 	}
+	*/
 }
 
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)

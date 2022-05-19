@@ -39,7 +39,9 @@ public class AnimationDesignerTools : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore", 
+				"GameplayAbilities",
+				"GameplayTags",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

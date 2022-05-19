@@ -48,6 +48,9 @@ public :
 	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);
 	void SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag);
 	const FGameplayAbilityActionGroup* GetActivateAbilityActionGroup() const;
+	bool TryAvoidAbilityFromActionGroup();
+	bool TryHitAbilityFromActionGroup();
+	bool TryAttackAbilityFromActionGroup(int32 ElementIndex);
 
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;

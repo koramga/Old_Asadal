@@ -68,6 +68,71 @@ const FGameplayAbilityActionGroup* UGASComponent::GetActivateAbilityActionGroup(
 	return ActivateAbilityActionGroup;
 }
 
+bool UGASComponent::TryAvoidAbilityFromActionGroup()
+{
+	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
+	
+	if(nullptr == TryAbilityGroup
+		|| false == TryAbilityGroup->AvoidAbilitySpecHandle.IsValid())
+	{
+		//Base로 변경해주고
+		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
+	}
+
+	//Base에도 없다면 실패를 시킨다.
+	if(nullptr == TryAbilityGroup
+		|| false == TryAbilityGroup->AvoidAbilitySpecHandle.IsValid())
+	{
+		return false;
+	}
+
+	return TryActivateAbility(TryAbilityGroup->AvoidAbilitySpecHandle);
+}
+
+bool UGASComponent::TryHitAbilityFromActionGroup()
+{
+	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
+	
+	if(nullptr == TryAbilityGroup
+		|| false == TryAbilityGroup->HitAbilitySpecHandle.IsValid())
+	{
+		//Base로 변경해주고
+		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
+	}
+
+	//Base에도 없다면 실패를 시킨다.
+	if(nullptr == TryAbilityGroup
+		|| false == TryAbilityGroup->HitAbilitySpecHandle.IsValid())
+	{
+		return false;
+	}
+
+	return TryActivateAbility(TryAbilityGroup->HitAbilitySpecHandle);
+}
+
+bool UGASComponent::TryAttackAbilityFromActionGroup(int32 ElementIndex)
+{
+	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
+	
+	if(nullptr == TryAbilityGroup
+		|| TryAbilityGroup->AttackAbilitiesSpecHandles.Num() <= ElementIndex
+		|| false == TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex].IsValid())
+	{
+		//Base로 변경해주고
+		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
+	}
+
+	//Base에도 없다면 실패를 시킨다.
+	if(nullptr == TryAbilityGroup
+		|| TryAbilityGroup->AttackAbilitiesSpecHandles.Num() <= ElementIndex
+		|| false == TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex].IsValid())
+	{
+		return false;
+	}
+
+	return TryActivateAbility(TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex]);
+}
+
 void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnGiveAbility(AbilitySpec);

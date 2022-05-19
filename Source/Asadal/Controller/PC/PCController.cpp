@@ -33,6 +33,7 @@ void APCController::SetupInputComponent()
 	InputComponent->BindAction("InputPCSkill3", IE_Pressed, this, &APCController::__InputPressedPCSkill3);
 	InputComponent->BindAction("InputPCSkill4", IE_Pressed, this, &APCController::__InputPressedPCSkill4);
 	InputComponent->BindAction("InputSwapWeapon", IE_Pressed, this, &APCController::__InputSwapWeapon);
+	InputComponent->BindAction("InputDash", IE_Pressed, this, &APCController::__InputPressedDash);
 }
 
 void APCController::OnPossess(APawn* InPawn)
@@ -103,5 +104,13 @@ void APCController::__InputSwapWeapon()
 	if(IsValid(PCCharacter))
 	{
 		PCCharacter->TryEquipNextWeapon();
+	}
+}
+
+void APCController::__InputPressedDash()
+{
+	if(IsValid(PCCharacter))
+	{
+		PCCharacter->TryDash();
 	}
 }

@@ -13,5 +13,8 @@ UCLASS()
 class ASADAL_API ANPCController : public AAIController
 {
 	GENERATED_BODY()
+
+public :
+	ANPCController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	
 };

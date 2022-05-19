@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(editinlinenew, Blueprintable, const, hidecategories = Object, collapsecategories, meta = (ShowWorldContextPin, DisplayName = "Dash"))
 class ANIMATIONDESIGNERTOOLS_API UAnimNotify_DashCharacter : public UAnimNotify
 {
 	GENERATED_BODY()

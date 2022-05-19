@@ -44,7 +44,7 @@ private :
 	void __InputPressedPCSkill3();
 	void __InputPressedPCSkill4();
 	void __InputSwapWeapon();
-	
+	void __InputPressedDash();
 };
 
 

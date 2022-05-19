@@ -8,7 +8,7 @@ public class Asadal : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "GameplayAbilities", "GameplayTasks", "SlateCore", "UMG", "MetaTools" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "GameplayAbilities", "GameplayTasks", "SlateCore", "UMG", "MetaTools", "AIModule" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
