@@ -40,7 +40,7 @@ public :
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
 	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
 	virtual void TryEquipNextWeapon();
-	virtual void TryDash();
+	virtual void TryAvoid();
 	bool IsDeath() const;
 
 protected:

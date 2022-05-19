@@ -21,7 +21,8 @@ public :
 
 public :
 	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;
-	FOnSwapWeaponChangeClickEvent	SwapWeaponChangeClickEvent;
+	FOnScreenSkillButtonClickEvent	SwapWeaponChangeClickEvent;
+	FOnScreenSkillButtonClickEvent	AvoidClickEvent;
 	
 protected:
 	virtual void NativePreConstruct() override;

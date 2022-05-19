@@ -246,7 +246,7 @@ void ABaseCharacter::TryEquipNextWeapon()
 	}
 }
 
-void ABaseCharacter::TryDash()
+void ABaseCharacter::TryAvoid()
 {
 	if(IsValid(GASComponent))
 	{

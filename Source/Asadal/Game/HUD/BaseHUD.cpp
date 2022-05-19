@@ -20,6 +20,7 @@ void ABaseHUD::BeginPlay()
 			BaseHUDWidget->AddToViewport();
 			BaseHUDWidget->SkillSetButtonClickedEvent.AddDynamic(this, &ABaseHUD::__OnSkillSetButtonClickNative);
 			BaseHUDWidget->SwapWeaponChangeClickEvent.AddDynamic(this, &ABaseHUD::__OnSwapWeaponButtonClickNative);
+			BaseHUDWidget->AvoidClickEvent.AddDynamic(this, &ABaseHUD::__OnAvoidButtonClickNative);
 		}	
 	}
 
@@ -64,5 +65,13 @@ void ABaseHUD::__OnSwapWeaponButtonClickNative()
 	if(PCCharacter.IsValid())
 	{
 		PCCharacter->TryEquipNextWeapon();
+	}
+}
+
+void ABaseHUD::__OnAvoidButtonClickNative()
+{
+	if(PCCharacter.IsValid())
+	{
+		PCCharacter->TryAvoid();
 	}
 }

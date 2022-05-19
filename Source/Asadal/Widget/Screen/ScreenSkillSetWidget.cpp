@@ -32,12 +32,13 @@ void UScreenSkillSetWidget::NativePreConstruct()
 
 	for(int i = 0; i < MAX_PC_SKILL_COUNT; ++i)
 	{
-		FString ButtonName = FString::Printf(TEXT("ButtonPCSkill%d"), i);
+		FString ButtonName = FString::Printf(TEXT("ButtonPCSkill%d"), i + 1);
 
 		PCSkillButtons.Add(Cast<UScreenButtonWidget>(GetWidgetFromName(FName(ButtonName))));	
 	}
 	
 	WeaponSwapButton = Cast<UScreenButtonWidget>(GetWidgetFromName(FName(TEXT("ID_ButtonPCSwapWeapon"))));
+	AvoidButton = Cast<UScreenButtonWidget>(GetWidgetFromName(FName(TEXT("ButtonPCAvoid"))));
 }
 
 void UScreenSkillSetWidget::NativeConstruct()
@@ -55,6 +56,11 @@ void UScreenSkillSetWidget::NativeConstruct()
 	if(WeaponSwapButton.IsValid())
 	{
 		WeaponSwapButton->OnClicked.AddDynamic(this, &UScreenSkillSetWidget::__OnWeaponChangeButtonClickNative);
+	}
+
+	if(AvoidButton.IsValid())
+	{
+		AvoidButton->OnClicked.AddDynamic(this, &UScreenSkillSetWidget::__OnAvoidButtonClickNative);
 	}
 }
 
@@ -78,4 +84,9 @@ void UScreenSkillSetWidget::__OnSkillButtonClickNative(UScreenButtonWidget* Scre
 void UScreenSkillSetWidget::__OnWeaponChangeButtonClickNative(UScreenButtonWidget* ScreenButtonWidget)
 {
 	SwapWeaponChangeClickEvent.Broadcast();
+}
+
+void UScreenSkillSetWidget::__OnAvoidButtonClickNative(UScreenButtonWidget* ScreenButtonWidget)
+{
+	AvoidClickEvent.Broadcast();
 }

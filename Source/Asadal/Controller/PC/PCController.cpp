@@ -111,6 +111,6 @@ void APCController::__InputPressedDash()
 {
 	if(IsValid(PCCharacter))
 	{
-		PCCharacter->TryDash();
+		PCCharacter->TryAvoid();
 	}
 }

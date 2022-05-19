@@ -13,7 +13,7 @@
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillSetButtonClickedEvent, int32, Index);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSwapWeaponChangeClickEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnScreenSkillButtonClickEvent);
 
 UCLASS()
 class ASADAL_API UScreenSkillSetWidget : public UBaseScreenWidget
@@ -25,7 +25,8 @@ public :
 
 public :
 	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;
-	FOnSwapWeaponChangeClickEvent	SwapWeaponChangeClickEvent;
+	FOnScreenSkillButtonClickEvent	SwapWeaponChangeClickEvent;
+	FOnScreenSkillButtonClickEvent	AvoidClickEvent;
 	
 protected:
 	virtual void NativePreConstruct() override;
@@ -36,6 +37,7 @@ protected:
 protected:
 	TArray<TSoftObjectPtr<class UScreenButtonWidget>>	PCSkillButtons;
 	TSoftObjectPtr<class UScreenButtonWidget>			WeaponSwapButton;
+	TSoftObjectPtr<class UScreenButtonWidget>			AvoidButton;
 
 private:
 	UFUNCTION()
@@ -43,4 +45,7 @@ private:
 
 	UFUNCTION()
 	void __OnWeaponChangeButtonClickNative(UScreenButtonWidget* ScreenButtonWidget);
+
+	UFUNCTION()
+	void __OnAvoidButtonClickNative(UScreenButtonWidget* ScreenButtonWidget);
 };

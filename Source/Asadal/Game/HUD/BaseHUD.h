@@ -30,4 +30,7 @@ private:
 
 	UFUNCTION()
 	void __OnSwapWeaponButtonClickNative();
+
+	UFUNCTION()
+	void __OnAvoidButtonClickNative();
 };

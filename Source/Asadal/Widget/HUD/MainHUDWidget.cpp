@@ -29,6 +29,7 @@ void UMainHUDWidget::NativeConstruct()
 	{
 		ScreenSkillSetWidget->SkillSetButtonClickedEvent.AddDynamic(this, &UMainHUDWidget::__OnSkillSetButtonClickNative);
 		ScreenSkillSetWidget->SwapWeaponChangeClickEvent.AddDynamic(this, &UMainHUDWidget::__OnSwapWeaponButtonClickNative);
+		ScreenSkillSetWidget->AvoidClickEvent.AddDynamic(this, &UMainHUDWidget::__OnAvoidButtonClickNative);
 	}
 }
 
@@ -50,4 +51,9 @@ void UMainHUDWidget::__OnSkillSetButtonClickNative(int32 Index)
 void UMainHUDWidget::__OnSwapWeaponButtonClickNative()
 {
 	SwapWeaponChangeClickEvent.Broadcast();
+}
+
+void UMainHUDWidget::__OnAvoidButtonClickNative()
+{
+	AvoidClickEvent.Broadcast();
 }
