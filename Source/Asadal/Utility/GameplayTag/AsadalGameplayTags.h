@@ -20,6 +20,8 @@ public :
 	static const FGameplayTag AttackStateGameplayTag;
 	static const FGameplayTag HitStateGameplayTag;
 	static const FGameplayTag DeathStateGameplayTag;
+	static const FGameplayTag InvincibleStateGameplayTag;
+	static const FGameplayTag AvoidStateGameplayTag;
 	static const FGameplayTag ActionGameplayTag;
 	static const FGameplayTag DeathActionGameplayTag;
 	static const FGameplayTag HitActionGameplayTag;

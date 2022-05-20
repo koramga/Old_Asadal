@@ -307,6 +307,11 @@ void ABaseCharacter::BeginPlay()
 	}
 
 	TryEquipNextWeapon();
+
+	for(const FGameplayTag& LooseGameplayTag : AddLooseGameplayTagContainer)
+	{
+		AddLooseGameplayTag(LooseGameplayTag);
+	}
 }
 
 // Called every frame
@@ -402,18 +407,21 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 
 	if(false == IsDeath())
-	{
-		if(nullptr != Data.GEModData
-			&& false == HasMatchingGameplayTag(UAsadalGameplayTags::HitStateGameplayTag))
-		{
-			OnHit(Data);
-		}
-		
+	{		
 		float DeltaValue = Data.NewValue - Data.OldValue; 
 
 		if(DamageTextActorClasses.Num() > 0)
 		{
-			if(DeltaValue != 0)
+			if(DeltaValue < 0)
+			{				
+				if(nullptr != Data.GEModData
+					&& false == HasMatchingGameplayTag(UAsadalGameplayTags::HitStateGameplayTag))
+				{
+					OnHit(Data);
+				}
+			}
+
+			if(false == FMath::IsNearlyEqual(DeltaValue, 0.f))
 			{
 				int32 Index =  FMath::RandRange(0, DamageTextActorClasses.Num() - 1);
 		
@@ -440,15 +448,16 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 				if(IsValid(TextActor))
 				{
 					FColor Color = FColor::Red;
-		
+					FString Text = FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue));
+
 					if(DeltaValue > 0)
 					{
 						Color = FColor::Blue;
 					}
 
-					TextActor->SetText(FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue)), Color);
-				}
-			}	
+					TextActor->SetText(Text, Color);				
+				}				
+			}			
 		}
 	}
 }
@@ -526,7 +535,13 @@ void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData 
 		//여기서부터 공격이 시작된다.
 		if(OverlapEventData.OtherActor.IsValid())
 		{
-			GASComponent->GEToTarget(OverlapEventData.OtherActor.Get(), UAsadalGameplayTags::EventAttackBasicTag);
+
+			if(OverlapEventData.OtherActor->GetClass()->ImplementsInterface(UAbilitySystemInterface::StaticClass()))
+			{
+				IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OverlapEventData.OtherActor.Get());
+
+				GASComponent->GEToTarget(AbilitySystemInterface->GetAbilitySystemComponent(), UAsadalGameplayTags::EventAttackBasicTag);
+			}
 		}
 	}
 }

@@ -4,21 +4,35 @@
 #include "GASComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemInterface.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 
-void UGASComponent::GEToTarget(AActor* Actor, const FGameplayTag& EventTag)
+bool UGASComponent::GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag)
 {
+	if(nullptr == TargetAbilitySystemComponent)
+	{
+		return false;
+	}
+
+	if(TargetAbilitySystemComponent->HasMatchingGameplayTag(UAsadalGameplayTags::AvoidStateGameplayTag))
+	{
+		//회피중이였다.
+		return false;
+	}
+	
 	if(bIsLatentEventToTarget)
 	{
-		GEToTargetLatentEventItems.Add(FGEToTargetEventItem(Actor, EventTag));
+		GEToTargetLatentEventItems.Add(FGEToTargetEventItem(TargetAbilitySystemComponent, EventTag));
 	}
 	else
 	{
 		FGameplayEventData GameplayEventData;
-		GameplayEventData.Target = Actor;
+		GameplayEventData.Target = TargetAbilitySystemComponent->GetOwner();
 
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EventTag, GameplayEventData);
-	}	
+	}
+
+	return true;
 }
 
 void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
@@ -34,7 +48,7 @@ void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
 			{
 				if(Item.Actor.IsValid())
 				{
-					GEToTarget(Item.Actor.Get(), Item.EventTag);
+					GEToTarget(Item.AbilitySystemComponent.Get(), Item.EventTag);
 				}			
 			}
 			

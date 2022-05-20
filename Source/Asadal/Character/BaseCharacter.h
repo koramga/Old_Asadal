@@ -57,7 +57,7 @@ protected:
 	virtual void OnHit(const FOnAttributeChangeData& Data);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseCharacter")
+	UPROPERTY()
 	UGASComponent* GASComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
@@ -77,6 +77,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
 	TArray<FMaterialInstanceVariable>				HitMaterialInstanceVairables;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
+	FGameplayTagContainer							AddLooseGameplayTagContainer;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

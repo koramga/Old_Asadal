@@ -23,6 +23,7 @@ class ASADAL_API UBaseCharacterAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public :
+	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 public :

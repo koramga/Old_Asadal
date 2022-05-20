@@ -15,13 +15,14 @@ struct FGEToTargetEventItem
 {
 	GENERATED_BODY()
 
-	TSoftObjectPtr<AActor>		Actor;
-	FGameplayTag				EventTag = FGameplayTag::EmptyTag;
+	TSoftObjectPtr<AActor>					Actor;
+	TSoftObjectPtr<UAbilitySystemComponent>	AbilitySystemComponent;
+	FGameplayTag							EventTag = FGameplayTag::EmptyTag;
 
 	FGEToTargetEventItem() {}
 
-	FGEToTargetEventItem(AActor* Actor, const FGameplayTag& EventTag)
-		: Actor(Actor), EventTag(EventTag) {}
+	FGEToTargetEventItem(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& EventTag)
+		: Actor(AbilitySystemComponent->GetOwner()), AbilitySystemComponent(AbilitySystemComponent), EventTag(EventTag) {}
 };
 
 struct FGameplayAbilityActionGroup
@@ -43,7 +44,7 @@ public :
 	FOnGEToTargetLatentEvent	OnGEToTargetLatentEvent;
 	FOnTagUpdatedEvent			OnTagUpdatedEvent;
 	
-	void GEToTarget(AActor* Actor, const FGameplayTag& EventTag);
+	bool GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag);
 	void SetGEToTargetLatent(bool InIsLatentEventToTarget);
 	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);
 	void SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag);
