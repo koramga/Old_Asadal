@@ -87,6 +87,7 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 
 bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 {
+	return GASComponent->TryAttackAbilityFromActionGroup(Index);
 	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
 
 	if(nullptr != AbilityActionGroup

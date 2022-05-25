@@ -12,6 +12,8 @@ void UBaseGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                            const FGameplayEventData* TriggerEventData)
 {
+	SetCritical(false);
+	
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
@@ -30,4 +32,19 @@ void UBaseGameplayAbility::EndAbility(bool bWasCancelled, bool bReplicateEndAbil
 bool UBaseGameplayAbility::HasTagActivationRequiredTags(FGameplayTag GameplayTag)
 {
 	return ActivationRequiredTags.HasTag(GameplayTag);
+}
+
+bool UBaseGameplayAbility::IsCritical() const
+{
+	return bIsCritical;
+}
+
+void UBaseGameplayAbility::SetCritical(bool InIsCritical)
+{
+	if(InIsCritical)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Break Point"));
+	}
+	
+	bIsCritical = InIsCritical;
 }

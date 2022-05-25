@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemInterface.h"
+#include "Ability/BaseGameplayAbility.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 
 bool UGASComponent::GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag)
@@ -52,7 +53,7 @@ void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
 				}			
 			}
 			
-			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems);
+			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems, IsCriticalAbilityFromActionGroup());
 			
 			GEToTargetLatentEventItems.Empty();
 		}
@@ -80,6 +81,24 @@ void UGASComponent::SetActivateAbilityActionGroup(const FGameplayTag& GameplayTa
 const FGameplayAbilityActionGroup* UGASComponent::GetActivateAbilityActionGroup() const
 {
 	return ActivateAbilityActionGroup;
+}
+
+bool UGASComponent::IsCriticalAbilityFromActionGroup()
+{
+	if(nullptr != ActivateAbilityActionGroup
+		&& ActivateAbilityActionGroup->AttackElementIndex >= 0)
+	{
+		FGameplayAbilitySpec* GameplayAbilitySpec = FindAbilitySpecFromHandle(ActivateAbilityActionGroup->AttackAbilitiesSpecHandles[ActivateAbilityActionGroup->AttackElementIndex]);
+
+		UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
+
+		if(IsValid(BaseGameplayAbility))
+		{
+			return BaseGameplayAbility->IsCritical();
+		}
+	}
+
+	return false;
 }
 
 bool UGASComponent::TryAvoidAbilityFromActionGroup()
@@ -126,7 +145,7 @@ bool UGASComponent::TryHitAbilityFromActionGroup()
 
 bool UGASComponent::TryAttackAbilityFromActionGroup(int32 ElementIndex)
 {
-	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
+	FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
 	
 	if(nullptr == TryAbilityGroup
 		|| TryAbilityGroup->AttackAbilitiesSpecHandles.Num() <= ElementIndex
@@ -143,8 +162,14 @@ bool UGASComponent::TryAttackAbilityFromActionGroup(int32 ElementIndex)
 	{
 		return false;
 	}
+	
+	if(TryActivateAbility(TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex]))
+	{
+		TryAbilityGroup->AttackElementIndex = ElementIndex;
+		return true;
+	}
 
-	return TryActivateAbility(TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex]);
+	return false;
 }
 
 void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)

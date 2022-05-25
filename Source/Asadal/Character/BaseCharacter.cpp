@@ -462,16 +462,25 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 				}
 
 				ATextActor* TextActor = GetWorld()->SpawnActor<ATextActor>(DamageTextActorClasses[Index], DamageTextLocation, FRotator::ZeroRotator, ActorSpawnParam);
+
+				bool bIsCritical = GASComponent->IsCriticalAbilityFromActionGroup();
 			
 				if(IsValid(TextActor))
 				{
 					FColor Color = FColor::Red;
 					FString Text = FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue));
 
-					if(DeltaValue > 0)
+					if(bIsCritical)
 					{
-						Color = FColor::Blue;
+						Text = FString::Printf(TEXT("Critical"));
 					}
+					else
+					{
+						if(DeltaValue > 0)
+						{
+							Color = FColor::Blue;
+						}						
+					}					
 
 					TextActor->SetText(Text, Color);				
 				}				
@@ -564,9 +573,9 @@ void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData 
 	}
 }
 
-void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItem)
+void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItems, bool bIsCritical)
 {
-	if(LatentEventItem.Num() > 0)
+	if(LatentEventItems.Num() > 0)
 	{
 		//Latent Event로 무언가 공격을 했다.!
 
@@ -583,16 +592,25 @@ void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEve
 				MainGameMode->SetTimeDilationKeepTime(UAsadalGameplayTags::GameTimeDilationStrikeTag, PCController->GetStrikeTimeDilationSettings());
 			}
 
-			TSubclassOf<UCameraShakeBase> StrikeCameraShake = PCController->GetStrikeCameraShake();
-
-			if(IsValid(StrikeCameraShake))
+			if(bIsCritical)
 			{
-				PCController->ClientStartCameraShake(StrikeCameraShake);
+				UE_LOG(LogTemp, Display, TEXT("Critical On"));
+				
+				TSubclassOf<UCameraShakeBase> StrikeCameraShake = PCController->GetStrikeCameraShake();
+
+				if(IsValid(StrikeCameraShake))
+				{
+					PCController->ClientStartCameraShake(StrikeCameraShake);
+				}				
+			}
+			else
+			{
+				UE_LOG(LogTemp, Display, TEXT("Critical Off"));
 			}
 		}
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("GEToTargetLatentEvent : <%d>"), LatentEventItem.Num());
+	//UE_LOG(LogTemp, Display, TEXT("GEToTargetLatentEvent : <%d>"), LatentEventItem.Num());
 }
 
 void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate)

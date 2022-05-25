@@ -25,9 +25,13 @@ protected:
 
 public :
 	bool HasTagActivationRequiredTags(FGameplayTag GameplayTag);
+	bool IsCritical() const;
+	void SetCritical(bool InIsCritical);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	UTexture2D*	IconTexture;
+
+	bool		bIsCritical = false;
 	
 };
