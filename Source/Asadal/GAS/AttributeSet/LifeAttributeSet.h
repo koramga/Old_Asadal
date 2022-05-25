@@ -38,4 +38,8 @@ public :
 	UPROPERTY()
 	FGameplayAttributeData  MaxMana;
 	ATTRIBUTE_ACCESSORS(ULifeAttributeSet, MaxMana);
+	
+	UPROPERTY()
+	FGameplayAttributeData  Shield;
+	ATTRIBUTE_ACCESSORS(ULifeAttributeSet, Shield);
 };

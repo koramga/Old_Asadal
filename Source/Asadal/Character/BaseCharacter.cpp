@@ -7,6 +7,9 @@
 #include "GameplayEffectExtension.h"
 #include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/AttributeSet/BaseCharacterAttributeSet.h"
+#include "Asadal/GAS/AttributeSet/OffenseAttributeSet.h"
+#include "Asadal/GAS/AttributeSet/DefenseAttributeSet.h"
+#include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "Asadal/Actor/DamageText/TextActor.h"
 #include "Asadal/Controller/PC/PCController.h"
@@ -15,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
+#include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
 #include "GameFramework/GameModeBase.h"
 
@@ -51,37 +55,37 @@ FGameplayAbilitySpecHandle ABaseCharacter::InitializeAbility(TSubclassOf<UGamepl
 
 void ABaseCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
-	if(BaseCharacterAttributeSet.IsValid())
+	if(LifeAttributeSet.IsValid())
 	{
-		Health = BaseCharacterAttributeSet->GetHealth();
-		MaxHealth = BaseCharacterAttributeSet->GetMaxHealth();		
+		Health = LifeAttributeSet->GetHealth();
+		MaxHealth = LifeAttributeSet->GetMaxHealth();		
 	}
 }
 
 void ABaseCharacter::SetHealthValues(float NewHealth, float NewMaxHealth)
 {
-	if(IsValid(GASComponent))
+	if(LifeAttributeSet.IsValid())
 	{
-		GASComponent->ApplyModToAttribute(BaseCharacterAttributeSet->GetHealthAttribute(), EGameplayModOp::Override, NewHealth);
-		GASComponent->ApplyModToAttribute(BaseCharacterAttributeSet->GetMaxHealthAttribute(), EGameplayModOp::Override, NewMaxHealth);		
+		GASComponent->ApplyModToAttribute(LifeAttributeSet->GetHealthAttribute(), EGameplayModOp::Override, NewHealth);
+		GASComponent->ApplyModToAttribute(LifeAttributeSet->GetMaxHealthAttribute(), EGameplayModOp::Override, NewMaxHealth);		
 	}
 }
 
 void ABaseCharacter::GetManaValues(float& Mana, float& MaxMana)
 {
-	if(BaseCharacterAttributeSet.IsValid())
+	if(LifeAttributeSet.IsValid())
 	{
-		Mana = BaseCharacterAttributeSet->GetMana();
-		MaxMana = BaseCharacterAttributeSet->GetMaxMana();		
+		Mana = LifeAttributeSet->GetMana();
+		MaxMana = LifeAttributeSet->GetMaxMana();		
 	}
 }
 
 void ABaseCharacter::SetManaValues(float NewMana, float NewMaxMana)
 {
-	if(IsValid(GASComponent))
+	if(LifeAttributeSet.IsValid())
 	{
-		GASComponent->ApplyModToAttribute(BaseCharacterAttributeSet->GetManaAttribute(), EGameplayModOp::Override, NewMana);
-		GASComponent->ApplyModToAttribute(BaseCharacterAttributeSet->GetMaxManaAttribute(), EGameplayModOp::Override, NewMaxMana);		
+		GASComponent->ApplyModToAttribute(LifeAttributeSet->GetManaAttribute(), EGameplayModOp::Override, NewMana);
+		GASComponent->ApplyModToAttribute(LifeAttributeSet->GetMaxManaAttribute(), EGameplayModOp::Override, NewMaxMana);		
 	}
 }
 
@@ -265,19 +269,33 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	
 	BaseAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance());
 	
 	if(IsValid(GASComponent))
 	{
-		BaseCharacterAttributeSet = GASComponent->GetSet<UBaseCharacterAttributeSet>();
-
-		if(BaseCharacterAttributeSet.IsValid())
+		GASComponent->OnGEToTargetLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
+		GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
+		
+		// Init starting data
+		for (int32 i=0; i < AttributeSets.Num(); ++i)
 		{
-			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
-			GASComponent->GetGameplayAttributeValueChangeDelegate(BaseCharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);
-			GASComponent->OnGEToTargetLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
-			GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
-		}		
+			if (AttributeSets[i].Attributes && AttributeSets[i].DefaultStartingTable)
+			{
+				const UAttributeSet* Attributes = GASComponent->InitStats(AttributeSets[i].Attributes, AttributeSets[i].DefaultStartingTable);
+			}
+		}
+		
+		LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
+
+		if(LifeAttributeSet.IsValid())
+		{
+			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
+			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
+		}
+		
+		OffenseAttributeSet = GASComponent->GetSet<UOffenseAttributeSet>();
+		DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();
 	}
 
 	DamageTextSpawnComponents.Empty();

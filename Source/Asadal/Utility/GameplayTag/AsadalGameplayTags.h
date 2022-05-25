@@ -49,7 +49,10 @@ public :
 	static const FGameplayTag ItemTwoHandShieldTag;
 	static const FGameplayTag GameTimeDilationTag;
 	static const FGameplayTag GameTimeDilationStrikeTag;
-
+	static const FGameplayTag AttributeOffenseFireDamageTag;
+	static const FGameplayTag AttributeOffenseWaterDamageTag;
+	static const FGameplayTag AttributeOffenseTreeDamageTag;
+	
 public :
 	static int32 GetDilationPriority(const FGameplayTag& GameplayTag);
 	static FGameplayTag GetAbilityGameplayTagFromItem(const FGameplayTag& ItemGameplayTag);

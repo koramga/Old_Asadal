@@ -35,7 +35,7 @@ struct FGameplayAbilityActionGroup
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGEToTargetLatentEvent, const TArray<FGEToTargetEventItem>&, LatentEventItem);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTagUpdatedEvent, const FGameplayTag&, Tag, bool, TagExists);
 
-UCLASS()
+UCLASS(ClassGroup=AbilitySystem, hidecategories=(Object,LOD,Lighting,Transform,Sockets,TextureStreaming), editinlinenew, meta=(BlueprintSpawnableComponent))
 class ASADAL_API UGASComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()

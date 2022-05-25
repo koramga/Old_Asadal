@@ -36,6 +36,9 @@ FGameplayTag const UAsadalGameplayTags::ItemTwoHandGreatswordTag = FGameplayTag:
 FGameplayTag const UAsadalGameplayTags::ItemTwoHandShieldTag = FGameplayTag::RequestGameplayTag(TEXT("Item.Weapon.TwoHand.Shield"));
 FGameplayTag const UAsadalGameplayTags::GameTimeDilationTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation"));
 FGameplayTag const UAsadalGameplayTags::GameTimeDilationStrikeTag = FGameplayTag::RequestGameplayTag(TEXT("Game.TimeDilation.Strike"));
+FGameplayTag const UAsadalGameplayTags::AttributeOffenseFireDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Offense.Fire.Damage"));
+FGameplayTag const UAsadalGameplayTags::AttributeOffenseWaterDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Offense.Water.Damage"));
+FGameplayTag const UAsadalGameplayTags::AttributeOffenseTreeDamageTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Offense.Tree.Damage"));
 
 int32 UAsadalGameplayTags::GetDilationPriority(const FGameplayTag& GameplayTag)
 {

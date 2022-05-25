@@ -80,13 +80,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
 	FGameplayTagContainer							AddLooseGameplayTagContainer;
+	
+	UPROPERTY(EditAnywhere, Category="Setup|Attribute")
+	TArray<FAttributeDefaults>						AttributeSets;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
 
 	TArray<TSoftObjectPtr<USceneComponent>>						DamageTextSpawnComponents;
 
-	TSoftObjectPtr<const class UBaseCharacterAttributeSet>	BaseCharacterAttributeSet;
+	TSoftObjectPtr<const class UOffenseAttributeSet>		OffenseAttributeSet;
+	TSoftObjectPtr<const class UDefenseAttributeSet>		DefenseAttributeSet;
+	TSoftObjectPtr<const class ULifeAttributeSet>			LifeAttributeSet;
 	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
 	float MoveBlendRatio = 1.f;	
 	
