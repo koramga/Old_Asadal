@@ -2,6 +2,8 @@
 
 
 #include "BaseGEExec.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "../AttributeSet/LifeAttributeSet.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/DefenseAttributeSet.h"
@@ -164,4 +166,27 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 			BaseGameplayAbility->SetCritical(bIsCritical);
 		}		
 	}
+
+	FGameplayTag CueGameplayTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Normal");
+
+	
+	FGameplayCueParameters Parameters(GameplayEffectContextHandle);
+
+	Parameters.Instigator = GameplayEffectContextHandle.GetInstigator();
+	Parameters.RawMagnitude = OffenseDamage;
+
+	if(nullptr != GameplayEffectContextHandle.GetHitResult())
+	{
+		Parameters.Location = GameplayEffectContextHandle.GetHitResult()->Location;
+		Parameters.Normal = GameplayEffectContextHandle.GetHitResult()->Normal;		
+	}
+	
+	Parameters.AbilityLevel = GameplayEffectContextHandle.GetAbilityLevel();
+	Parameters.EffectCauser = GameplayEffectContextHandle.GetEffectCauser();
+	Parameters.EffectContext = GameplayEffectContextHandle;
+	Parameters.NormalizedMagnitude = 0.f;
+	Parameters.OriginalTag = CueGameplayTag;
+	Parameters.GameplayEffectLevel = GameplayEffectSpec.GetLevel();
+		
+	ExecutionParams.GetTargetAbilitySystemComponent()->ExecuteGameplayCue(CueGameplayTag, Parameters);
 }
