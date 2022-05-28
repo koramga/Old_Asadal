@@ -115,10 +115,14 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
+	
+	if(EquipmentWepaonItemDefinition.IsValid())
+	{
+	    UInventoryFragment_EquippableItem* WeaponFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
 
-	UInventoryFragment_EquippableItem* WeaponFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+	    WeaponFragmentEquippableItem->SetActivateCollisions(bIsActivate);
+	}
 
-	WeaponFragmentEquippableItem->SetActivateCollisions(bIsActivate);
 }
 
 // Called when the game starts or when spawned
