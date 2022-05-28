@@ -9,11 +9,31 @@
 
 /**
  * 
- */
+*/
+UCLASS()
+class ASADAL_API UGEExecResult : public UObject
+{
+	GENERATED_BODY()
+
+public :
+	void SetCritical(bool InIsCritical);	 
+	bool IsCritical() const;
+	void SetDamage(const FGameplayTag& GameplayTag, float Damage);
+	float GetDamage(const FGameplayTag& GameplayTag) const;
+
+private:
+	bool bIsCritical = false;
+	TMap<FGameplayTag, float> DamageFromTag;
+};
+
+
 UCLASS()
 class ASADAL_API UBaseGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+
+public :
+	UBaseGameplayAbility();
 
 public :
 	UTexture2D* GetIconTexture() const;
@@ -25,13 +45,15 @@ protected:
 
 public :
 	bool HasTagActivationRequiredTags(FGameplayTag GameplayTag);
-	bool IsCritical() const;
-	void SetCritical(bool InIsCritical);
-
+	const TArray<UGEExecResult*>& GetAbilityGEExecInfos() const;
+	void AddAbilityGEExecInfo(UGEExecResult* GEExecResult);
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	UTexture2D*	IconTexture;
 
-	bool		bIsCritical = false;
-	
+	UPROPERTY()
+	TArray<UGEExecResult*>			AbilityGEExecResults;
+
+	//TMap<FGameplayEffectContextHandle, FAbilityGEExecInfo>	AbilityGEExecInfoMap;
 };

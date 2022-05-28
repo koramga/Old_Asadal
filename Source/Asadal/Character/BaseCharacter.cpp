@@ -441,6 +441,15 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 
 			if(false == FMath::IsNearlyEqual(DeltaValue, 0.f))
 			{
+				const UBaseGameplayAbility* GameplayAbility = Cast<UBaseGameplayAbility>(Data.GEModData->EffectSpec.GetEffectContext().GetAbilityInstance_NotReplicated());
+
+				UGEExecResult* ExecResult = nullptr;
+				
+				if(IsValid(GameplayAbility))
+				{
+					ExecResult = Cast<UGEExecResult>(Data.GEModData->EffectSpec.GetEffectContext().GetSourceObject());
+				}
+				
 				int32 Index =  FMath::RandRange(0, DamageTextActorClasses.Num() - 1);
 		
 				FActorSpawnParameters ActorSpawnParam;
@@ -463,16 +472,35 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 
 				ATextActor* TextActor = GetWorld()->SpawnActor<ATextActor>(DamageTextActorClasses[Index], DamageTextLocation, FRotator::ZeroRotator, ActorSpawnParam);
 
-				bool bIsCritical = GASComponent->IsCriticalAbilityFromActionGroup();
-			
+					
+				FColor Color = FColor::Black;
+				FString Text = FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue));
+				
 				if(IsValid(TextActor))
 				{
-					FColor Color = FColor::Red;
-					FString Text = FString::Printf(TEXT("%.0f"), FMath::Abs(DeltaValue));
-
-					if(bIsCritical)
+					if(IsValid(ExecResult))
 					{
-						Text = FString::Printf(TEXT("Critical"));
+						if(ExecResult->IsCritical())
+						{
+							Text = FString::Printf(TEXT("Critical"));
+						}
+
+						float FireDamage = ExecResult->GetDamage(UAsadalGameplayTags::AttributePropertyFireTag);
+						float WaterDamage = ExecResult->GetDamage(UAsadalGameplayTags::AttributePropertyWaterTag);
+						float TreeDamage = ExecResult->GetDamage(UAsadalGameplayTags::AttributePropertyTreeTag);
+
+						Color = FColor::Red;
+						
+						if(WaterDamage > FireDamage
+							&& WaterDamage > TreeDamage)
+						{
+							Color = FColor::Blue;
+						}
+						else if(TreeDamage > FireDamage
+							&& TreeDamage > WaterDamage)
+						{
+							Color = FColor::Green;
+						}						
 					}
 					else
 					{
@@ -480,10 +508,10 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 						{
 							Color = FColor::Blue;
 						}						
-					}					
-
-					TextActor->SetText(Text, Color);				
-				}				
+					}
+					
+					TextActor->SetText(Text, Color);			
+				}	
 			}			
 		}
 	}
@@ -594,18 +622,12 @@ void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEve
 
 			if(bIsCritical)
 			{
-				UE_LOG(LogTemp, Display, TEXT("Critical On"));
-				
 				TSubclassOf<UCameraShakeBase> StrikeCameraShake = PCController->GetStrikeCameraShake();
 
 				if(IsValid(StrikeCameraShake))
 				{
 					PCController->ClientStartCameraShake(StrikeCameraShake);
 				}				
-			}
-			else
-			{
-				UE_LOG(LogTemp, Display, TEXT("Critical Off"));
 			}
 		}
 	}

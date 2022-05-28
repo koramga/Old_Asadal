@@ -89,14 +89,27 @@ bool UGASComponent::IsCriticalAbilityFromActionGroup()
 		&& ActivateAbilityActionGroup->AttackElementIndex >= 0)
 	{
 		FGameplayAbilitySpec* GameplayAbilitySpec = FindAbilitySpecFromHandle(ActivateAbilityActionGroup->AttackAbilitiesSpecHandles[ActivateAbilityActionGroup->AttackElementIndex]);
-
-		UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
-
-		if(IsValid(BaseGameplayAbility))
+		
+		bool bIsCritical = false;
+		
+		for(UGameplayAbility* GameplayAbilityInstance : GameplayAbilitySpec->NonReplicatedInstances)
 		{
-			return BaseGameplayAbility->IsCritical();
+			const UBaseGameplayAbility* BaseGameplayAbilityInstance = Cast<UBaseGameplayAbility>(GameplayAbilityInstance);
+
+			if(IsValid(BaseGameplayAbilityInstance))
+			{				
+				const TArray<UGEExecResult*>& ExecResults = BaseGameplayAbilityInstance->GetAbilityGEExecInfos();
+
+				for(const UGEExecResult* ExecResult : ExecResults)
+				{
+					if(ExecResult->IsCritical())
+					{
+						return true;
+					}
+				}
+			}
 		}
-	}
+	}	
 
 	return false;
 }

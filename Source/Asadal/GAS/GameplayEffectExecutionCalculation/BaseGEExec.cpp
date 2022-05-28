@@ -42,9 +42,9 @@ UBaseGEExec::UBaseGEExec()
 	RelevantAttributesToCapture.Add(TreeDamageBuffDef);
 	RelevantAttributesToCapture.Add(CriticalRateDef);
 
-	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributeOffenseFireDamageTag);
-	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributeOffenseWaterDamageTag);
-	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributeOffenseTreeDamageTag);
+	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributePropertyFireTag);
+	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributePropertyTreeTag);
+	ValidTransientAggregatorIdentifiers.AddTag(UAsadalGameplayTags::AttributePropertyWaterTag);
 }
 
 void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -53,17 +53,14 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 	Super::Execute_Implementation(ExecutionParams, OutExecutionOutput);
 
 	const FGameplayEffectSpec& GameplayEffectSpec = ExecutionParams.GetOwningSpec();
-
-	const FGameplayEffectContextHandle& GameplayEffectContextHandle = GameplayEffectSpec.GetEffectContext();
-
-	const UBaseGameplayAbility* ConstBaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayEffectContextHandle.GetAbility());
+	FGameplayEffectContextHandle GameplayEffectContextHandle = GameplayEffectSpec.GetContext();
+	const UBaseGameplayAbility* ConstBaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayEffectContextHandle.GetAbilityInstance_NotReplicated());
 	UBaseGameplayAbility* BaseGameplayAbility = const_cast<UBaseGameplayAbility*>(ConstBaseGameplayAbility);
 
 	float Shield = 0.f;
 	float Health = 0.f;
 	float Mana = 0.f;
 	
-	float OffenseDamage = 0.f;
 	float FireDamage = 0.f;
 	float WaterDamage = 0.f;
 	float TreeDamage = 0.f;
@@ -102,9 +99,9 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(FireDamageBuffDef, FAggregatorEvaluateParameters(), FireDamageBuff);
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CriticalRateDef, FAggregatorEvaluateParameters(), CriticalRate);
 	
-	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributeOffenseFireDamageTag, FAggregatorEvaluateParameters(), FireDamage);
-	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributeOffenseWaterDamageTag, FAggregatorEvaluateParameters(), WaterDamage);
-	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributeOffenseTreeDamageTag, FAggregatorEvaluateParameters(), TreeDamage);
+	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributePropertyFireTag, FAggregatorEvaluateParameters(), FireDamage);
+	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributePropertyWaterTag, FAggregatorEvaluateParameters(), WaterDamage);
+	ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(UAsadalGameplayTags::AttributePropertyTreeTag, FAggregatorEvaluateParameters(), TreeDamage);
 
 	if(!FMath::IsNearlyEqual(BaseDamageBuff, 0.f))
 	{
@@ -127,8 +124,10 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 	{
 		TreeBuffDamage += (TreeDamage * TreeDamageBuff);
 	}
-	
-	OffenseDamage = FireDamage + FireDamageBuff + WaterDamage + WaterDamageBuff + TreeDamage + TreeDamageBuff;
+
+	float FinalFireDamage = FMath::Clamp(FireDamage + FireBuffDamage - FireResistance - BaseResistance, 0.f, FLT_MAX);
+	float FinalWaterDamage = FMath::Clamp(WaterDamage + WaterBuffDamage - WaterResistance - BaseResistance, 0.f, FLT_MAX);
+	float FinalTreeDamage = FMath::Clamp(TreeDamage + TreeBuffDamage - TreeResistance - BaseResistance, 0.f, FLT_MAX);
 
 	bool bIsCritical = false;
 
@@ -141,8 +140,12 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 
 	if(bIsCritical)
 	{
-		OffenseDamage *= 2.f;
+		FinalFireDamage *= 2.f;
+		FinalWaterDamage *= 2.f;
+		FinalTreeDamage *= 2.f;
 	}
+
+	float OffenseDamage = FinalFireDamage + FinalWaterDamage + FinalTreeDamage;
 	
 	OutShield = Shield - OffenseDamage;
 
@@ -161,12 +164,20 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 
 	if(IsValid(BaseGameplayAbility))
 	{
-		if(bIsCritical)
-		{
-			BaseGameplayAbility->SetCritical(bIsCritical);
-		}		
+		FGameplayEffectContext* EffectContext = GameplayEffectContextHandle.Get();
+
+		UGEExecResult* GEExecResult = NewObject<UGEExecResult>();
+		
+		EffectContext->AddSourceObject(GEExecResult);
+		GEExecResult->SetCritical(bIsCritical);
+		GEExecResult->SetDamage(UAsadalGameplayTags::AttributePropertyFireTag, FinalFireDamage);
+		GEExecResult->SetDamage(UAsadalGameplayTags::AttributePropertyWaterTag, FinalWaterDamage);
+		GEExecResult->SetDamage(UAsadalGameplayTags::AttributePropertyTreeTag, FinalTreeDamage);
+
+		BaseGameplayAbility->AddAbilityGEExecInfo(GEExecResult);
 	}
 
+	/*
 	FGameplayTag CueGameplayTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Normal");
 
 	
@@ -189,4 +200,5 @@ void UBaseGEExec::Execute_Implementation(const FGameplayEffectCustomExecutionPar
 	Parameters.GameplayEffectLevel = GameplayEffectSpec.GetLevel();
 		
 	ExecutionParams.GetTargetAbilitySystemComponent()->ExecuteGameplayCue(CueGameplayTag, Parameters);
+	*/
 }
