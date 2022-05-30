@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "GAS/GASAIToolsComponent.h"
 #include "GASComponent.generated.h"
 
 /**
@@ -37,7 +38,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGEToTargetLatentEvent, const TAr
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTagUpdatedEvent, const FGameplayTag&, Tag, bool, TagExists);
 
 UCLASS(ClassGroup=AbilitySystem, hidecategories=(Object,LOD,Lighting,Transform,Sockets,TextureStreaming), editinlinenew, meta=(BlueprintSpawnableComponent))
-class ASADAL_API UGASComponent : public UAbilitySystemComponent
+class ASADAL_API UGASComponent : public UGASAIToolsComponent
 {
 	GENERATED_BODY()
 

@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "KoramgaDevPlugin",
+	"FriendlyName": "KRGDevKit",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "koramga",
@@ -37,6 +37,11 @@
 		},
 		{
 			"Name": "MetaTools",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GASAITools",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
