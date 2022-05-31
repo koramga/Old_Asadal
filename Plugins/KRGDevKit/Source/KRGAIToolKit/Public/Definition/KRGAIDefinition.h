@@ -12,7 +12,7 @@
  */
 
 UCLASS(Blueprintable, Const, Abstract)
-class KRGAITOOLKIT_API UKRGAIDefinition : public UObject
+class KRGAITOOLKIT_API UKRGAIDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
