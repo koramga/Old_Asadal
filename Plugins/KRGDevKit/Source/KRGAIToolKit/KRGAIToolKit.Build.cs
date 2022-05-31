@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class GASAITools : ModuleRules
+public class KRGAIToolKit : ModuleRules
 {
-	public GASAITools(ReadOnlyTargetRules Target) : base(Target)
+	public KRGAIToolKit(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -27,10 +27,10 @@ public class GASAITools : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
+				"AIModule",
 				"GameplayTags", 
 				"GameplayAbilities", 
 				"GameplayTasks",
-				"AIModule"
 			}
 			);
 			
@@ -42,7 +42,8 @@ public class GASAITools : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
+				// ... add private dependencies that you statically link with here ...
+				
 			}
 			);
 		

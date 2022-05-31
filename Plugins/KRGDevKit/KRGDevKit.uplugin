@@ -41,7 +41,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "GASAITools",
+			"Name": "KRGAIToolKit",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

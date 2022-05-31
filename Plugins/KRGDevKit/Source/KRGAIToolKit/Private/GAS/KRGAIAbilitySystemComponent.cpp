@@ -1,11 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GAS/GASAIToolsComponent.h"
-
-
 // Sets default values for this component's properties
-UGASAIToolsComponent::UGASAIToolsComponent()
+#include "GAS/KRGAIAbilitySystemComponent.h"
+
+UKRGAIAbilitySystemComponent::UKRGAIAbilitySystemComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -16,21 +15,10 @@ UGASAIToolsComponent::UGASAIToolsComponent()
 
 
 // Called when the game starts
-void UGASAIToolsComponent::BeginPlay()
+void UKRGAIAbilitySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ...
 	
 }
-
-
-// Called every frame
-void UGASAIToolsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                         FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
