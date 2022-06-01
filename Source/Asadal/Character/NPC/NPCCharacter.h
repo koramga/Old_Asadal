@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "Asadal/Character/BaseCharacter.h"
 #include "GameFramework/Character.h"
-#include "Interface/KRGAICharacterInterface.h"
+#include "SoundDesignerTools/Public/SoundTool/SoundToolDataAsset.h"
+#include "SoundTool/SoundWaveToolDataAsset.h"
+#include "SoundTool/SoundWaveToolDataAsset.h"
 #include "NPCCharacter.generated.h"
 
 UCLASS()
-class ASADAL_API ANPCCharacter : public ABaseCharacter, public IKRGAICharacterInterface
+class ASADAL_API ANPCCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	ANPCCharacter();
-
-	virtual UKRGAIDefinition* GetKRGAIDefinition() const override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,6 +33,11 @@ protected:
 protected:
 	TSoftObjectPtr<class UScreenNPCStatusWidget>	ScreenNPCStatusWidget;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|AIDefinition")
+	TSubclassOf<UKRGAIDefinition>					KRGAIDefinitionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|AIDefinition")
 	UKRGAIDefinition*								KRGAIDefinition;
+	*/
 };

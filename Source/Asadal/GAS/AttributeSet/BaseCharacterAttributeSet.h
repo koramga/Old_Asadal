@@ -6,6 +6,7 @@
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "Asadal/Asadal.h"
+#include "GAS/AttributeSet/KRGAttributeSet.h"
 #include "BaseCharacterAttributeSet.generated.h"
 
 
@@ -14,7 +15,7 @@
  * 
  */
 UCLASS()
-class ASADAL_API UBaseCharacterAttributeSet : public UAttributeSet
+class ASADAL_API UBaseCharacterAttributeSet : public UKRGAttributeSet
 {
 	GENERATED_BODY()
 

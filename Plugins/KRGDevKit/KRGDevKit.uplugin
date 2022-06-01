@@ -41,7 +41,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "KRGAIToolKit",
+			"Name": "KRGGASToolkit",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

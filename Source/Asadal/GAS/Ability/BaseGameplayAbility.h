@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "GAS/Ability/KRGGameplayAbility.h"
 #include "UObject/Object.h"
 #include "BaseGameplayAbility.generated.h"
 
@@ -28,7 +29,7 @@ private:
 
 
 UCLASS()
-class ASADAL_API UBaseGameplayAbility : public UGameplayAbility
+class ASADAL_API UBaseGameplayAbility : public UKRGGameplayAbility
 {
 	GENERATED_BODY()
 

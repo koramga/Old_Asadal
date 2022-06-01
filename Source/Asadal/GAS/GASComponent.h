@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "KRGAIToolKit/Public/GAS/KRGAIAbilitySystemComponent.h"
+#include "KRGGASToolkit/Public/GAS/KRGAbilitySystemComponent.h"
 #include "GASComponent.generated.h"
 
 /**
@@ -37,7 +37,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGEToTargetLatentEvent, const TAr
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTagUpdatedEvent, const FGameplayTag&, Tag, bool, TagExists);
 
 UCLASS(ClassGroup=AbilitySystem, hidecategories=(Object,LOD,Lighting,Transform,Sockets,TextureStreaming), editinlinenew, meta=(BlueprintSpawnableComponent))
-class ASADAL_API UGASComponent : public UKRGAIAbilitySystemComponent
+class ASADAL_API UGASComponent : public UKRGAbilitySystemComponent
 {
 	GENERATED_BODY()
 

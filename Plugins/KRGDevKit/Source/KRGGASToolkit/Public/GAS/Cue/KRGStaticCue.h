@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameplayCueNotify_Static.h"
-#include "GAS/Cue/KRGStaticCue.h"
-#include "BaseGameplayCue.generated.h"
+#include "UObject/Object.h"
+#include "KRGStaticCue.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ASADAL_API UBaseGameplayCue : public UKRGStaticCue
+class KRGGASTOOLKIT_API UKRGStaticCue : public UGameplayCueNotify_Static
 {
 	GENERATED_BODY()
 };
