@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Definition/KRGGASDefinition.h"
 #include "KRGAbilitySystemComponent.generated.h"
 
 USTRUCT()
@@ -43,18 +44,23 @@ public:
 	UKRGAbilitySystemComponent();
 
 public :
-	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent);
 	bool GEExecToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag);
 	void SetGEExecLatent(bool InIsLatentGEExec);
 
 public :
 	//We need to update for it.
 	virtual bool IsCriticalAbility();
+	void SetKRGGASDefinition(UKRGGASDefinition*	InKRGGASDefinition);
+	void UpdateFromKRGGASDefinition();
 	
 public :
 	FOnGEExecLatentEvent		OnGEExecLatentEvent;
 	FOnTagUpdatedEvent			OnTagUpdatedEvent;
 
+protected:
+	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent);
+	virtual void UpdateAbilitiesFromFragment(class UKRGGASFragment_Abilities* AbilitiesFragment);
+	
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnTagUpdated(const FGameplayTag& Tag, bool TagExists) override;
@@ -62,6 +68,8 @@ protected:
 protected:
 	TArray<FGEEExecEvent>		GEExecEvents;
 	bool						bIsLatentGEExec = false;
+
+	TSoftObjectPtr<UKRGGASDefinition>	KRGGASDefinition;
 
 	//TMap<FGameplayTag, FKRGAbilitySpec>	KRGAbilitySpecMap;
 	//FKRGAbilitySpec*					ActivateKRGAbilitySpec;

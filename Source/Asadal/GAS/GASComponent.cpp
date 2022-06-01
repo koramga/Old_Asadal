@@ -154,6 +154,23 @@ bool UGASComponent::TryAttackAbilityFromActionGroup(int32 ElementIndex)
 	return false;
 }
 
+bool UGASComponent::CanGEExec(UAbilitySystemComponent* AbilitySystemComponent,
+	UAbilitySystemComponent* TargetAbilitySystemComponent)
+{
+	if(false == Super::CanGEExec(AbilitySystemComponent, TargetAbilitySystemComponent))
+	{
+		return false;
+	}
+
+	if(TargetAbilitySystemComponent->HasMatchingGameplayTag(UAsadalGameplayTags::AvoidStateGameplayTag))
+	{
+		//회피중이였다.
+		return false;
+	}
+
+	return true;
+}
+
 void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnGiveAbility(AbilitySpec);
@@ -203,33 +220,35 @@ void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 
 bool UGASComponent::IsCriticalAbility()
 {
-	if(nullptr != ActivateAbilityActionGroup
-		&& ActivateAbilityActionGroup->AttackElementIndex >= 0)
+	TArray<FGameplayAbilitySpec> ActivateGameplayAbilities = GetActivatableAbilities();
+
+	for(const FGameplayAbilitySpec& ActivateGameplayAbilitySpec : ActivateGameplayAbilities)
 	{
-		FGameplayAbilitySpec* GameplayAbilitySpec = FindAbilitySpecFromHandle(ActivateAbilityActionGroup->AttackAbilitiesSpecHandles[ActivateAbilityActionGroup->AttackElementIndex]);
-		
-		bool bIsCritical = false;
-		
-		for(UGameplayAbility* GameplayAbilityInstance : GameplayAbilitySpec->NonReplicatedInstances)
+		UGameplayAbility* GameplayAbility = ActivateGameplayAbilitySpec.Ability;
+
+		if(GameplayAbility->AbilityTags.HasTag(UAsadalGameplayTags::AttackActionGameplayTag))
 		{
-			const UBaseGameplayAbility* BaseGameplayAbilityInstance = Cast<UBaseGameplayAbility>(GameplayAbilityInstance);
+			for(UGameplayAbility* GameplayAbilityInstance : ActivateGameplayAbilitySpec.NonReplicatedInstances)
+			{
+				const UBaseGameplayAbility* BaseGameplayAbilityInstance = Cast<UBaseGameplayAbility>(GameplayAbilityInstance);
 
-			if(IsValid(BaseGameplayAbilityInstance))
-			{				
-				const TArray<UKRGGEExecResult*>& ExecResults = BaseGameplayAbilityInstance->GetAbilityGEExecInfos();
+				if(IsValid(BaseGameplayAbilityInstance))
+				{				
+					const TArray<UKRGGEExecResult*>& ExecResults = BaseGameplayAbilityInstance->GetAbilityGEExecInfos();
 
-				for(const UKRGGEExecResult* KRGExecResult : ExecResults)
-				{
-					const UGEExecResult* ExecResult = Cast<UGEExecResult>(KRGExecResult);
-					
-					if(ExecResult->IsCritical())
+					for(const UKRGGEExecResult* KRGExecResult : ExecResults)
 					{
-						return true;
+						const UGEExecResult* ExecResult = Cast<UGEExecResult>(KRGExecResult);
+					
+						if(ExecResult->IsCritical())
+						{
+							return true;
+						}
 					}
 				}
 			}
 		}
-	}	
+	}
 
 	return false;
 }

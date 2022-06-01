@@ -4,6 +4,9 @@
 #include "KRGGASToolkit/Public/GAS/KRGAbilitySystemComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Definition/Fragment/KRGGASFragment_Abilities.h"
+#include "Definition/Fragment/KRGGASFragment_AttributeSets.h"
+#include "Definition/Fragment/KRGGASFragment_PersonalInfo.h"
 
 
 // Sets default values for this component's properties
@@ -20,6 +23,14 @@ bool UKRGAbilitySystemComponent::CanGEExec(UAbilitySystemComponent* AbilitySyste
 	UAbilitySystemComponent* TargetAbilitySystemComponent)
 {
 	return true;
+}
+
+void UKRGAbilitySystemComponent::UpdateAbilitiesFromFragment(UKRGGASFragment_Abilities* AbilitiesFragment)
+{
+	if(IsValid(AbilitiesFragment))
+	{
+		
+	}
 }
 
 bool UKRGAbilitySystemComponent::GEExecToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent,
@@ -88,6 +99,21 @@ void UKRGAbilitySystemComponent::SetGEExecLatent(bool InIsLatentGEExec)
 bool UKRGAbilitySystemComponent::IsCriticalAbility()
 {
 	return false;
+}
+
+void UKRGAbilitySystemComponent::SetKRGGASDefinition(UKRGGASDefinition* InKRGGASDefinition)
+{
+	KRGGASDefinition = InKRGGASDefinition;
+}
+
+void UKRGAbilitySystemComponent::UpdateFromKRGGASDefinition()
+{
+	if(KRGGASDefinition.IsValid())
+	{
+		UpdateAbilitiesFromFragment(KRGGASDefinition->FindFragment<UKRGGASFragment_Abilities>());
+		UKRGGASFragment_AttributeSets* AttributeSetsFragment = KRGGASDefinition->FindFragment<UKRGGASFragment_AttributeSets>();
+		UKRGGASFragment_PersonalInfo* PersonalInfo = KRGGASDefinition->FindFragment<UKRGGASFragment_PersonalInfo>();
+	}
 }
 
 void UKRGAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)

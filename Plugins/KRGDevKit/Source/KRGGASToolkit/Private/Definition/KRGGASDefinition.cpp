@@ -9,15 +9,15 @@ UKRGGASDefinition::UKRGGASDefinition(const FObjectInitializer& ObjectInitializer
 	
 }
 
-UKRGGASFragment* UKRGGASDefinition::FindFragmentByClass(TSubclassOf<UKRGGASFragment> FragmentClass)
-{
-	for(UKRGGASFragment* Fragment : Fragments)
-	{
-		if(Fragment->IsA(FragmentClass))
-		{
-			return Fragment;
-		}
-	}
-
-	return nullptr;
-}
+//UKRGGASFragment* UKRGGASDefinition::FindFragmentByClass(TSubclassOf<UKRGGASFragment> FragmentClass)
+//{
+//	for(UKRGGASFragment* Fragment : Fragments)
+//	{
+//		if(Fragment->IsA(FragmentClass))
+//		{
+//			return Fragment;
+//		}
+//	}
+//
+//	return nullptr;
+//}

@@ -23,5 +23,19 @@ protected:
 	TArray<UKRGGASFragment*>	Fragments;
 
 public :
-	UKRGGASFragment* FindFragmentByClass(TSubclassOf<UKRGGASFragment> FragmentClass);
+	//UKRGGASFragment* FindFragmentByClass(TSubclassOf<UKRGGASFragment> FragmentClass);
+
+	template<typename TFragment>
+	TFragment* FindFragment()
+	{
+		for(UKRGGASFragment* Fragment : Fragments)
+		{
+			if(Fragment->IsA(TFragment::StaticClass()))
+			{
+				return Cast<TFragment>(Fragment);
+			}
+		}
+
+		return nullptr;		
+	}
 };

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(DefaultToInstanced, EditInlineNew, Abstract)
 class KRGGASTOOLKIT_API UKRGGASFragment : public UObject
 {
 	GENERATED_BODY()

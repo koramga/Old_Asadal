@@ -34,6 +34,7 @@ public :
 	bool TryAttackAbilityFromActionGroup(int32 ElementIndex);
 
 protected:
+	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent) override;
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual bool IsCriticalAbility() override;
 	
