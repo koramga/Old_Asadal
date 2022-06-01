@@ -274,7 +274,7 @@ void ABaseCharacter::BeginPlay()
 	
 	if(IsValid(GASComponent))
 	{
-		GASComponent->OnGEToTargetLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
+		GASComponent->OnGEExecLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
 		GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
 		
 		// Init starting data
@@ -595,15 +595,15 @@ void ABaseCharacter::__OnEquipmentOverlapEventNative(FEquipmentOverlapEventData 
 			{
 				IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OverlapEventData.OtherActor.Get());
 
-				GASComponent->GEToTarget(AbilitySystemInterface->GetAbilitySystemComponent(), UAsadalGameplayTags::EventAttackBasicTag);
+				GASComponent->GEExecToTarget(AbilitySystemInterface->GetAbilitySystemComponent(), UAsadalGameplayTags::EventAttackBasicTag);
 			}
 		}
 	}
 }
 
-void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItems, bool bIsCritical)
+void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEEExecEvent>& GEExecEvents, bool bIsCritical)
 {
-	if(LatentEventItems.Num() > 0)
+	if(GEExecEvents.Num() > 0)
 	{
 		//Latent Event로 무언가 공격을 했다.!
 

@@ -8,62 +8,62 @@
 #include "Ability/BaseGameplayAbility.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 
-bool UGASComponent::GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag)
-{
-	if(nullptr == TargetAbilitySystemComponent)
-	{
-		return false;
-	}
-
-	if(TargetAbilitySystemComponent->HasMatchingGameplayTag(UAsadalGameplayTags::AvoidStateGameplayTag))
-	{
-		//회피중이였다.
-		return false;
-	}
-	
-	if(bIsLatentEventToTarget)
-	{
-		GEToTargetLatentEventItems.Add(FGEToTargetEventItem(TargetAbilitySystemComponent, EventTag));
-	}
-	else
-	{
-		FGameplayEventData GameplayEventData;
-		GameplayEventData.Target = TargetAbilitySystemComponent->GetOwner();
-
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EventTag, GameplayEventData);
-	}
-
-	return true;
-}
-
-void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
-{
-	if(bIsLatentEventToTarget != InIsLatentEventToTarget)
-	{
-		bIsLatentEventToTarget = InIsLatentEventToTarget;
-		
-		//True였는데 False이니 모두 뿌린다.
-		if(false == InIsLatentEventToTarget)
-		{			
-			for(const FGEToTargetEventItem& Item : GEToTargetLatentEventItems)
-			{
-				if(Item.Actor.IsValid())
-				{
-					GEToTarget(Item.AbilitySystemComponent.Get(), Item.EventTag);
-				}			
-			}
-			
-			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems, IsCriticalAbilityFromActionGroup());
-			
-			GEToTargetLatentEventItems.Empty();
-		}
-		//False였는데 True이므로 혹시 모를 LatentEventItems를 날린다.
-		else
-		{
-			GEToTargetLatentEventItems.Empty();
-		}
-	}
-}
+//bool UGASComponent::GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag)
+//{
+//	if(nullptr == TargetAbilitySystemComponent)
+//	{
+//		return false;
+//	}
+//
+//	if(TargetAbilitySystemComponent->HasMatchingGameplayTag(UAsadalGameplayTags::AvoidStateGameplayTag))
+//	{
+//		//회피중이였다.
+//		return false;
+//	}
+//	
+//	if(bIsLatentEventToTarget)
+//	{
+//		GEToTargetLatentEventItems.Add(FGEToTargetEventItem(TargetAbilitySystemComponent, EventTag));
+//	}
+//	else
+//	{
+//		FGameplayEventData GameplayEventData;
+//		GameplayEventData.Target = TargetAbilitySystemComponent->GetOwner();
+//
+//		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EventTag, GameplayEventData);
+//	}
+//
+//	return true;
+//}
+//
+//void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
+//{
+//	if(bIsLatentEventToTarget != InIsLatentEventToTarget)
+//	{
+//		bIsLatentEventToTarget = InIsLatentEventToTarget;
+//		
+//		//True였는데 False이니 모두 뿌린다.
+//		if(false == InIsLatentEventToTarget)
+//		{			
+//			for(const FGEToTargetEventItem& Item : GEToTargetLatentEventItems)
+//			{
+//				if(Item.Actor.IsValid())
+//				{
+//					GEToTarget(Item.AbilitySystemComponent.Get(), Item.EventTag);
+//				}			
+//			}
+//			
+//			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems, IsCriticalAbilityFromActionGroup());
+//			
+//			GEToTargetLatentEventItems.Empty();
+//		}
+//		//False였는데 True이므로 혹시 모를 LatentEventItems를 날린다.
+//		else
+//		{
+//			GEToTargetLatentEventItems.Empty();
+//		}
+//	}
+//}
 
 void UGASComponent::GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs)
 {
@@ -81,37 +81,6 @@ void UGASComponent::SetActivateAbilityActionGroup(const FGameplayTag& GameplayTa
 const FGameplayAbilityActionGroup* UGASComponent::GetActivateAbilityActionGroup() const
 {
 	return ActivateAbilityActionGroup;
-}
-
-bool UGASComponent::IsCriticalAbilityFromActionGroup()
-{
-	if(nullptr != ActivateAbilityActionGroup
-		&& ActivateAbilityActionGroup->AttackElementIndex >= 0)
-	{
-		FGameplayAbilitySpec* GameplayAbilitySpec = FindAbilitySpecFromHandle(ActivateAbilityActionGroup->AttackAbilitiesSpecHandles[ActivateAbilityActionGroup->AttackElementIndex]);
-		
-		bool bIsCritical = false;
-		
-		for(UGameplayAbility* GameplayAbilityInstance : GameplayAbilitySpec->NonReplicatedInstances)
-		{
-			const UBaseGameplayAbility* BaseGameplayAbilityInstance = Cast<UBaseGameplayAbility>(GameplayAbilityInstance);
-
-			if(IsValid(BaseGameplayAbilityInstance))
-			{				
-				const TArray<UGEExecResult*>& ExecResults = BaseGameplayAbilityInstance->GetAbilityGEExecInfos();
-
-				for(const UGEExecResult* ExecResult : ExecResults)
-				{
-					if(ExecResult->IsCritical())
-					{
-						return true;
-					}
-				}
-			}
-		}
-	}	
-
-	return false;
 }
 
 bool UGASComponent::TryAvoidAbilityFromActionGroup()
@@ -232,9 +201,35 @@ void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 	}
 }
 
-void UGASComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
+bool UGASComponent::IsCriticalAbility()
 {
-	Super::OnTagUpdated(Tag, TagExists);
+	if(nullptr != ActivateAbilityActionGroup
+		&& ActivateAbilityActionGroup->AttackElementIndex >= 0)
+	{
+		FGameplayAbilitySpec* GameplayAbilitySpec = FindAbilitySpecFromHandle(ActivateAbilityActionGroup->AttackAbilitiesSpecHandles[ActivateAbilityActionGroup->AttackElementIndex]);
+		
+		bool bIsCritical = false;
+		
+		for(UGameplayAbility* GameplayAbilityInstance : GameplayAbilitySpec->NonReplicatedInstances)
+		{
+			const UBaseGameplayAbility* BaseGameplayAbilityInstance = Cast<UBaseGameplayAbility>(GameplayAbilityInstance);
 
-	OnTagUpdatedEvent.Broadcast(Tag, TagExists);
+			if(IsValid(BaseGameplayAbilityInstance))
+			{				
+				const TArray<UKRGGEExecResult*>& ExecResults = BaseGameplayAbilityInstance->GetAbilityGEExecInfos();
+
+				for(const UKRGGEExecResult* KRGExecResult : ExecResults)
+				{
+					const UGEExecResult* ExecResult = Cast<UGEExecResult>(KRGExecResult);
+					
+					if(ExecResult->IsCritical())
+					{
+						return true;
+					}
+				}
+			}
+		}
+	}	
+
+	return false;
 }

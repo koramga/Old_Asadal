@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectExecutionCalculation.h"
+#include "GAS/GEExecutionCalculation/KRGGEExec.h"
 #include "BaseGEExec.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ASADAL_API UBaseGEExec : public UGameplayEffectExecutionCalculation
+class ASADAL_API UBaseGEExec : public UKRGGEExec
 {
 	GENERATED_BODY()
 

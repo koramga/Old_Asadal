@@ -20,7 +20,7 @@ void UAnimNotifyState_StrikeTrail::NotifyBegin(USkeletalMeshComponent* MeshComp,
 
 		if(IsValid(GASComponent))
 		{
-			GASComponent->SetGEToTargetLatent(true);
+			GASComponent->SetGEExecLatent(true);
 			BaseCharacter->TryActivateEquipment(ActivateGameplayTag, true);	
 		}
 	}
@@ -46,7 +46,7 @@ void UAnimNotifyState_StrikeTrail::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 
 		if(IsValid(GASComponent))
 		{
-			GASComponent->SetGEToTargetLatent(false);
+			GASComponent->SetGEExecLatent(false);
 			BaseCharacter->TryActivateEquipment(ActivateGameplayTag, false);
 		}
 	}

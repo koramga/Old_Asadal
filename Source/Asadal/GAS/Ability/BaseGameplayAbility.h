@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "GAS/Ability/KRGGameplayAbility.h"
+#include "GAS/GEExecutionCalculation/ExecResult/KRGGEExecResult.h"
 #include "UObject/Object.h"
 #include "BaseGameplayAbility.generated.h"
 
@@ -12,7 +13,7 @@
  * 
 */
 UCLASS()
-class ASADAL_API UGEExecResult : public UObject
+class ASADAL_API UGEExecResult : public UKRGGEExecResult
 {
 	GENERATED_BODY()
 
@@ -40,21 +41,11 @@ public :
 	UTexture2D* GetIconTexture() const;
 	
 protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	virtual void EndAbility(bool bWasCancelled = false, bool bReplicateEndAbility = true);
-
-public :
-	bool HasTagActivationRequiredTags(FGameplayTag GameplayTag);
-	const TArray<UGEExecResult*>& GetAbilityGEExecInfos() const;
-	void AddAbilityGEExecInfo(UGEExecResult* GEExecResult);
-	
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
 	UTexture2D*	IconTexture;
 
-	UPROPERTY()
-	TArray<UGEExecResult*>			AbilityGEExecResults;
+	//UPROPERTY()
+	//TArray<UGEExecResult*>			AbilityGEExecResults;
 
 	//TMap<FGameplayEffectContextHandle, FAbilityGEExecInfo>	AbilityGEExecInfoMap;
 };

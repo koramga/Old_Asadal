@@ -104,7 +104,7 @@ private:
 	void __OnEquipmentOverlapEventNative(FEquipmentOverlapEventData OverlapEventData);
 
 	UFUNCTION()
-	void __OnGEToTargetLatentEventNative(const TArray<FGEToTargetEventItem>& LatentEventItems, bool bIsCritical);
+	void __OnGEToTargetLatentEventNative(const TArray<FGEEExecEvent>& GEExecEvents, bool bIsCritical);
 
 	UFUNCTION()
 	void __OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate);
