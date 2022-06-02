@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "Definition/KRGGASDefinition.h"
+#include "Definition/Fragment/KRGGASFragment_Abilities.h"
+#include "Definition/Fragment/KRGGASFragment_AttributeSets.h"
+#include "Definition/Fragment/KRGGASFragment_PersonalInfo.h"
 #include "KRGAbilitySystemComponent.generated.h"
 
 USTRUCT()
@@ -51,7 +54,9 @@ public :
 	//We need to update for it.
 	virtual bool IsCriticalAbility();
 	void SetKRGGASDefinition(UKRGGASDefinition*	InKRGGASDefinition);
-	void UpdateFromKRGGASDefinition();
+	bool UpdateFromKRGGASDefinition();
+	bool ActivateFragmentAbility(const FGameplayTag& GameplayTag);
+	bool ActivateFragmentAttributeSet(const FGameplayTag& GameplayTag);
 	
 public :
 	FOnGEExecLatentEvent		OnGEExecLatentEvent;
@@ -60,10 +65,15 @@ public :
 protected:
 	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent);
 	virtual void UpdateAbilitiesFromFragment(class UKRGGASFragment_Abilities* AbilitiesFragment);
+	virtual void UpdateAttributeSets(class UKRGGASFragment_AttributeSets* AttributeSetFragment);
 	
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnTagUpdated(const FGameplayTag& Tag, bool TagExists) override;
+
+protected:
+	void ClearAbilityFromActivateFragment();
+	void ClearAttributeFromActivateFragement();
 
 protected:
 	TArray<FGEEExecEvent>		GEExecEvents;
@@ -71,6 +81,14 @@ protected:
 
 	TSoftObjectPtr<UKRGGASDefinition>	KRGGASDefinition;
 
+	TMap<FGameplayTag, TArray<FKRGGASAbilityInfo>>		FragmentAbilityMap;
+	TMap<FGameplayTag, TArray<FKRGGASAttributeSetInfo>>	FragmentAttributeSetMap;
+
+	TArray<FKRGGASFragmentAbilityHandle>		ActivateAbilityFragmentHandles;
+	TArray<FKRGGASFragmentAttributeSetHandle>	ActivateAttributeSetFragmentHandles;
+
 	//TMap<FGameplayTag, FKRGAbilitySpec>	KRGAbilitySpecMap;
 	//FKRGAbilitySpec*					ActivateKRGAbilitySpec;
 };
+
+

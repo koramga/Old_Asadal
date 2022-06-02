@@ -15,8 +15,7 @@ USTRUCT(BlueprintType)
 struct FKRGGASAttributeSetInfo
 {
 	GENERATED_BODY()
-
-
+	
 public :
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTagContainer	ActivateGameplayTagContainer;
@@ -25,10 +24,35 @@ public :
 	FAttributeDefaults		AttributeDefaults;
 };
 
+
+USTRUCT()
+struct FKRGGASFragmentAttributeSetHandle
+{
+	GENERATED_BODY()
+
+public :
+
+	FKRGGASFragmentAttributeSetHandle()
+		: AttributeSet(nullptr), KRGGASAttributeSetInfo(nullptr) {}
+	
+	FKRGGASFragmentAttributeSetHandle(const UAttributeSet* AttributeSet, const FKRGGASAttributeSetInfo* KRGGASAttributeSetInfo) //const UAttributeSet* AttributeSet)
+		: AttributeSet(AttributeSet), KRGGASAttributeSetInfo(KRGGASAttributeSetInfo)
+	{
+		
+	}
+
+public :
+	const UAttributeSet*			AttributeSet;
+	const FKRGGASAttributeSetInfo*	KRGGASAttributeSetInfo;
+};
+
 UCLASS()
 class KRGGASTOOLKIT_API UKRGGASFragment_AttributeSets : public UKRGGASFragment
 {
 	GENERATED_BODY()
+
+public :
+	const TArray<FKRGGASAttributeSetInfo>& GetAttributeSetInfos() const; 
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

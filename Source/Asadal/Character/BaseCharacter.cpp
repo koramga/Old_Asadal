@@ -278,24 +278,32 @@ void ABaseCharacter::BeginPlay()
 		GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
 		
 		// Init starting data
-		for (int32 i=0; i < AttributeSets.Num(); ++i)
-		{
-			if (AttributeSets[i].Attributes && AttributeSets[i].DefaultStartingTable)
-			{
-				const UAttributeSet* Attributes = GASComponent->InitStats(AttributeSets[i].Attributes, AttributeSets[i].DefaultStartingTable);
-			}
-		}
-		
-		LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
+		//for (int32 i=0; i < AttributeSets.Num(); ++i)
+		//{
+		//	if (AttributeSets[i].Attributes && AttributeSets[i].DefaultStartingTable)
+		//	{
+		//		const UAttributeSet* Attributes = GASComponent->InitStats(AttributeSets[i].Attributes, AttributeSets[i].DefaultStartingTable);
+		//	}
+		//}
 
-		if(LifeAttributeSet.IsValid())
+		if(IsValid(KRGGASDefinition))
 		{
-			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
-			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
-		}
+			GASComponent->SetKRGGASDefinition(Cast<UKRGGASDefinition>(KRGGASDefinition));
+
+			if(GASComponent->UpdateFromKRGGASDefinition())
+			{
+				LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
+
+				if(LifeAttributeSet.IsValid())
+				{
+					GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
+					GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
+				}
 		
-		OffenseAttributeSet = GASComponent->GetSet<UOffenseAttributeSet>();
-		DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();
+				OffenseAttributeSet = GASComponent->GetSet<UOffenseAttributeSet>();
+				DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();				
+			}
+		}		
 	}
 
 	DamageTextSpawnComponents.Empty();
@@ -314,10 +322,10 @@ void ABaseCharacter::BeginPlay()
 		}		
 	}
 	
-	for(int i = 0; i < AbilityClasses.Num(); ++i)
-	{
-		InitializeAbility(AbilityClasses[i], 0);
-	}
+	//for(int i = 0; i < AbilityClasses.Num(); ++i)
+	//{
+	//	InitializeAbility(AbilityClasses[i], 0);
+	//}
 	
 	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
 	{

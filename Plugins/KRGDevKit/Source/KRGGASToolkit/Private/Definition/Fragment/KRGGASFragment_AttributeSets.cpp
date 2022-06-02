@@ -2,3 +2,8 @@
 
 
 #include "Definition/Fragment/KRGGASFragment_AttributeSets.h"
+
+const TArray<FKRGGASAttributeSetInfo>& UKRGGASFragment_AttributeSets::GetAttributeSetInfos() const
+{
+	return AttributeSetInfos;
+}

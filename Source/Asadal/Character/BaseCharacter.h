@@ -9,6 +9,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
 #include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
+#include "KRGGASToolkit/Public/Definition/KRGGASDefinition.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -83,6 +84,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="Setup|Attribute")
 	TArray<FAttributeDefaults>						AttributeSets;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
+	UDataAsset*														KRGGASDefinition;
 
 	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
