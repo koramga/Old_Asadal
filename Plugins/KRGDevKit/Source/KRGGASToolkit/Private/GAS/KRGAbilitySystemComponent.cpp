@@ -185,7 +185,7 @@ bool UKRGAbilitySystemComponent::UpdateFromKRGGASDefinition()
 		UpdateAbilitiesFromFragment(KRGGASDefinition->FindFragment<UKRGGASFragment_Abilities>());
 		UpdateAttributeSets(KRGGASDefinition->FindFragment<UKRGGASFragment_AttributeSets>());
 		//UKRGGASFragment_AttributeSets* AttributeSetsFragment = KRGGASDefinition->FindFragment<UKRGGASFragment_AttributeSets>();
-		UKRGGASFragment_PersonalInfo* PersonalInfo = KRGGASDefinition->FindFragment<UKRGGASFragment_PersonalInfo>();
+		//UKRGGASFragment_PersonalInfo* PersonalInfo = KRGGASDefinition->FindFragment<UKRGGASFragment_PersonalInfo>();
 
 		return true;
 	}

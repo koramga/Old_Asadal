@@ -39,7 +39,7 @@ public:
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
-	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UAsadalInventoryItemDefinition> InventoryItemDefinition);
+	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefinition);
 	virtual void TryEquipNextWeapon();
 	virtual void TryAvoid();
 	bool IsDeath() const;
@@ -67,14 +67,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
 	TArray<FString>												DamageTextSpawnComponentNames;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Equipment")
-	TArray<TSubclassOf<class UAsadalInventoryItemDefinition>>		EquipmentWeaponItemDefinitionClasses;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|SubAnimInstance")
 	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>		SubAnimInstanceClassMap;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Abilities")
-	TArray<TSubclassOf<class UBaseGameplayAbility>>	AbilityClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
 	TArray<FMaterialInstanceVariable>				HitMaterialInstanceVairables;
@@ -82,14 +76,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
 	FGameplayTagContainer							AddLooseGameplayTagContainer;
 	
-	UPROPERTY(EditAnywhere, Category="Setup|Attribute")
-	TArray<FAttributeDefaults>						AttributeSets;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
 	UDataAsset*														KRGGASDefinition;
 
-	TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
-	TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
+	TArray<UDataAsset*>												KRGGASItemDefinitions;
+
+	TSoftObjectPtr<class UKRGGASDefinition>							ActivateWeaponDefinition;
+
+	//TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
+	//TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
 
 	TArray<TSoftObjectPtr<USceneComponent>>						DamageTextSpawnComponents;
 

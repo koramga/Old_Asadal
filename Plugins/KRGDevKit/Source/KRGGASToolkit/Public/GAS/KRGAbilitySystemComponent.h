@@ -7,7 +7,6 @@
 #include "Definition/KRGGASDefinition.h"
 #include "Definition/Fragment/KRGGASFragment_Abilities.h"
 #include "Definition/Fragment/KRGGASFragment_AttributeSets.h"
-#include "Definition/Fragment/KRGGASFragment_PersonalInfo.h"
 #include "KRGAbilitySystemComponent.generated.h"
 
 USTRUCT()
@@ -53,6 +52,8 @@ public :
 public :
 	//We need to update for it.
 	virtual bool IsCriticalAbility();
+
+public :
 	virtual void OnUpdateActivateFragmentAbility();
 	virtual void OnUpdateActivateFragmentAttributeSet();
 
@@ -90,9 +91,6 @@ protected:
 
 	TArray<FKRGGASFragmentAbilityHandle>		ActivateAbilityFragmentHandles;
 	TArray<FKRGGASFragmentAttributeSetHandle>	ActivateAttributeSetFragmentHandles;
-
-	//TMap<FGameplayTag, FKRGAbilitySpec>	KRGAbilitySpecMap;
-	//FKRGAbilitySpec*					ActivateKRGAbilitySpec;
 };
 
 

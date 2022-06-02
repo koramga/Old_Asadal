@@ -7,11 +7,10 @@
 #include "Asadal/Asadal.h"
 #include "Asadal/Actor/Object/Equipment/Weapon/BaseWeapon.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
-#include "Asadal/Inventory/AsadalInventoryItemDefinition.h"
-#include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "KRGGASItem/Public/Fragment/KRGGASFragment_EquipableItem.h"
 
 
 // Sets default values
@@ -89,11 +88,21 @@ void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bI
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
 	
-	if(EquipmentWepaonItemDefinition.IsValid())
+	if(ActivateWeaponDefinition.IsValid())
 	{
-	    UInventoryFragment_EquippableItem* WeaponFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+	    UKRGGASFragment_EquipableItem* WeaponFragmentEquippableItem = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
 
-	    WeaponFragmentEquippableItem->SetActivateCollisions(bIsActivate);
+		const TArray<TSoftObjectPtr<AActor>>& SpawnEquipmentActors = WeaponFragmentEquippableItem->GetSpawnEquipmentActors();
+
+		for(TSoftObjectPtr<AActor> SpawnEquipmentActor : SpawnEquipmentActors)
+		{
+			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(SpawnEquipmentActor.Get());
+
+			if(IsValid(BaseWeapon))
+			{
+				BaseWeapon->SetActivateCollision(bIsActivate);
+			}
+		}
 	}
 
 }

@@ -44,6 +44,11 @@
 			"Name": "KRGGASToolkit",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "KRGGASItem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"			
 		}
 	],
 	"Plugins" : [

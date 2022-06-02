@@ -19,8 +19,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
-#include "Asadal/Inventory/Fragment/InventoryFragment_EquippableItem.h"
 #include "GameFramework/GameModeBase.h"
+#include "KRGGASItem/Public/Fragment/KRGGASFragment_EquipableItem.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -177,9 +177,14 @@ void ABaseCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool 
 {
 }
 
-void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDefinition> InventoryItemDefinition)
+void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefition)
 {
-	UInventoryFragment_EquippableItem* FragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(InventoryItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+	if(false == KRGGASDefition.IsValid())
+	{
+		return;
+	}
+	
+	UKRGGASFragment_EquipableItem* FragmentEquippableItem = KRGGASDefition->FindFragment<UKRGGASFragment_EquipableItem>();
 
 	if(IsValid(FragmentEquippableItem))
 	{
@@ -187,27 +192,34 @@ void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDe
 		{
 			//Weapon입니다.
 
-			if(InventoryItemDefinition != EquipmentWepaonItemDefinition)
+			if(KRGGASDefition != ActivateWeaponDefinition)
 			{
-				if(EquipmentWepaonItemDefinition.IsValid())
+				if(ActivateWeaponDefinition.IsValid())
 				{
-					UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+					UKRGGASFragment_EquipableItem* EquipmentFragmentEquippableItem = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
 
-					EquipmentFragmentEquippableItem->SetActivate(this, false);
+					EquipmentFragmentEquippableItem->SetActivate(GASComponent, false);
+					UnLinkSubAnimInstance(EquipmentFragmentEquippableItem->GetItemGameplayTag());
 				}
 
 				if(IsValid(FragmentEquippableItem))
 				{
-					FragmentEquippableItem->SetActivate(this, true);
-					const TArray<TSoftObjectPtr<ABaseEquipment>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
+					FragmentEquippableItem->SetActivate(GASComponent, true);
+					LinkSubAnimInstance(FragmentEquippableItem->GetItemGameplayTag());
+					const TArray<TSoftObjectPtr<AActor>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
 
-					for(TSoftObjectPtr<ABaseEquipment> BaseEquipment : Equipments)
+					for(const TSoftObjectPtr<AActor>& Equipment : Equipments)
 					{
-						BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+						ABaseEquipment* BaseEquipment = Cast<ABaseEquipment>(Equipment.Get());
+
+						if(IsValid(BaseEquipment))
+						{
+							BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+						}						
 					}
 				}
 
-				EquipmentWepaonItemDefinition = InventoryItemDefinition;
+				ActivateWeaponDefinition = KRGGASDefition;
 			}
 		}
 	}
@@ -215,32 +227,37 @@ void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<UAsadalInventoryItemDe
 
 void ABaseCharacter::TryEquipNextWeapon()
 {
-	if(EquipmentWeaponItemDefinitions.Num() > 0)
+	if(IsDeath())
 	{
-		if(false == EquipmentWepaonItemDefinition.IsValid())
+		return;
+	}
+	
+	if(KRGGASItemDefinitions.Num() > 0)
+	{
+		if(false == ActivateWeaponDefinition.IsValid())
 		{
-			SetEquipInventoryItem(EquipmentWeaponItemDefinitions[0]);			
+			SetEquipInventoryItem(KRGGASItemDefinitions[0]);
 		}
 		else
 		{
-			int32 Index = EquipmentWeaponItemDefinitions.Find(EquipmentWepaonItemDefinition);
+			int32 Index = KRGGASItemDefinitions.Find(ActivateWeaponDefinition.Get());
 
 			if(Index != INDEX_NONE)
-			{
-				Index = (Index + 1) % EquipmentWeaponItemDefinitions.Num();
+			{				
+				Index = (Index + 1) % KRGGASItemDefinitions.Num();
 
-				SetEquipInventoryItem(EquipmentWeaponItemDefinitions[Index]);
+				SetEquipInventoryItem(KRGGASItemDefinitions[Index]);
 			}
 		}
 	}
-
-	if(EquipmentWepaonItemDefinition.IsValid())
+	
+	if(ActivateWeaponDefinition.IsValid())
 	{
-		UInventoryFragment_EquippableItem* EquipmentFragmentEquippableItem = Cast<UInventoryFragment_EquippableItem>(EquipmentWepaonItemDefinition->FindFragmentByClass(UInventoryFragment_EquippableItem::StaticClass()));
+		UKRGGASFragment_EquipableItem* EquipableItemFragment = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
 
-		if(IsValid(EquipmentFragmentEquippableItem))
+		if(IsValid(EquipableItemFragment))
 		{
-			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipmentFragmentEquippableItem->GetItemGameplayTag());
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipableItemFragment->GetItemGameplayTag());
 
 			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
 			{
@@ -328,10 +345,10 @@ void ABaseCharacter::BeginPlay()
 	//	InitializeAbility(AbilityClasses[i], 0);
 	//}
 	
-	for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
-	{
-		EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
-	}
+	//for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
+	//{
+	//	EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
+	//}
 
 	TryEquipNextWeapon();
 
