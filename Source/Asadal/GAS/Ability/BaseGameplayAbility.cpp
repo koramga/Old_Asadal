@@ -32,8 +32,3 @@ UBaseGameplayAbility::UBaseGameplayAbility()
 {
 	//InstancingPolicy = EGameplayAbilityInstancingPolicy::Type::InstancedPerActor;
 }
-
-UTexture2D* UBaseGameplayAbility::GetIconTexture() const
-{
-	return IconTexture;
-}

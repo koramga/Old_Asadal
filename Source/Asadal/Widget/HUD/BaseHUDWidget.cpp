@@ -3,7 +3,7 @@
 
 #include "BaseHUDWidget.h"
 
-void UBaseHUDWidget::SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec)
+void UBaseHUDWidget::SetPCSkillIcon(uint32 Index, UTexture2D* IconTexture)
 {
 	
 }

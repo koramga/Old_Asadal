@@ -21,7 +21,7 @@ public :
 	void InputMoveRight(float Value);
 
 public :
-	FGameplayAbilitySpec* GetPCSkillAbilitySpecByIndex(int32 Index);
+	UTexture2D* GetPCSkillIconByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate) override;
 	

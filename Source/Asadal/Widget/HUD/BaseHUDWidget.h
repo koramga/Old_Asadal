@@ -17,7 +17,7 @@ class ASADAL_API UBaseHUDWidget : public UBaseUserWidget
 	GENERATED_BODY()
 
 public :
-	virtual void SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec);
+	virtual void SetPCSkillIcon(uint32 Index, UTexture2D* IconTexture);
 
 public :
 	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;

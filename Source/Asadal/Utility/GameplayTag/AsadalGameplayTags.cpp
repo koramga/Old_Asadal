@@ -39,6 +39,7 @@ FGameplayTag const UAsadalGameplayTags::GameTimeDilationStrikeTag = FGameplayTag
 FGameplayTag const UAsadalGameplayTags::AttributePropertyFireTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Property.Fire"));
 FGameplayTag const UAsadalGameplayTags::AttributePropertyWaterTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Property.Water"));
 FGameplayTag const UAsadalGameplayTags::AttributePropertyTreeTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Property.Tree"));
+FGameplayTag const UAsadalGameplayTags::AttributeFragmentDefaultTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Fragment.Default"));
 
 int32 UAsadalGameplayTags::GetDilationPriority(const FGameplayTag& GameplayTag)
 {

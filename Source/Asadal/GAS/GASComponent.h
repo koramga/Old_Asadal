@@ -12,10 +12,16 @@
 
 struct FGameplayAbilityActionGroup
 {
-	TArray<FGameplayAbilitySpecHandle>	AttackAbilitiesSpecHandles;
-	FGameplayAbilitySpecHandle			HitAbilitySpecHandle;
-	FGameplayAbilitySpecHandle			AvoidAbilitySpecHandle;
-	int32 AttackElementIndex = -1;
+	TArray<FKRGGASFragmentAbilityHandle>	AttackAbilityFragmentHandles;
+	FKRGGASFragmentAbilityHandle			HitAbilityFragmentHandle;
+	FKRGGASFragmentAbilityHandle			AvoidAbilityFragmentHandle;
+
+	void Clear()
+	{
+		AttackAbilityFragmentHandles.Empty();
+		HitAbilityFragmentHandle.Clear();
+		AvoidAbilityFragmentHandle.Clear();
+	}
 };
 
 UCLASS(ClassGroup=AbilitySystem, hidecategories=(Object,LOD,Lighting,Transform,Sockets,TextureStreaming), editinlinenew, meta=(BlueprintSpawnableComponent))
@@ -27,7 +33,6 @@ public :
 	//bool GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag);
 	//void SetGEToTargetLatent(bool InIsLatentEventToTarget);
 	void GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs);
-	void SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag);
 	const FGameplayAbilityActionGroup* GetActivateAbilityActionGroup() const;
 	bool TryAvoidAbilityFromActionGroup();
 	bool TryHitAbilityFromActionGroup();
@@ -37,9 +42,9 @@ protected:
 	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent) override;
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual bool IsCriticalAbility() override;
+	virtual void OnUpdateActivateFragmentAbility() override;
+	virtual void OnUpdateActivateFragmentAttributeSet() override;
 	
 protected:
-	//Base도 Ability안에 포함할 수 있다.
-	TMap<FGameplayTag, FGameplayAbilityActionGroup>	AbilityActionGroupMap;
-	FGameplayAbilityActionGroup*					ActivateAbilityActionGroup = nullptr;
+	FGameplayAbilityActionGroup						ActivateAbilityActionGroup;
 };

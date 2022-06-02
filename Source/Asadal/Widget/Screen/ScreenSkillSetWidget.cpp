@@ -6,23 +6,11 @@
 #include "Asadal/Asadal.h"
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 
-void UScreenSkillSetWidget::SetPCSkill(int32 Index, FGameplayAbilitySpec* GameplayAbilitySpec)
+void UScreenSkillSetWidget::SetPCSkillIcon(int32 Index, UTexture2D* IconTexture)
 {
 	if(PCSkillButtons.Num() > Index)
 	{
-		if(nullptr == GameplayAbilitySpec)
-		{
-			PCSkillButtons[Index]->SetIconTexture(nullptr);
-		}
-		else
-		{
-			UBaseGameplayAbility* BaseGameplayAbility = Cast<UBaseGameplayAbility>(GameplayAbilitySpec->Ability);
-
-			if(IsValid(BaseGameplayAbility))
-			{
-				PCSkillButtons[Index]->SetIconTexture(BaseGameplayAbility->GetIconTexture());
-			}
-		}		
+		PCSkillButtons[Index]->SetIconTexture(IconTexture);
 	}
 }
 

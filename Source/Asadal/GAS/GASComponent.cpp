@@ -8,63 +8,6 @@
 #include "Ability/BaseGameplayAbility.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 
-//bool UGASComponent::GEToTarget(UAbilitySystemComponent* TargetAbilitySystemComponent, const FGameplayTag& EventTag)
-//{
-//	if(nullptr == TargetAbilitySystemComponent)
-//	{
-//		return false;
-//	}
-//
-//	if(TargetAbilitySystemComponent->HasMatchingGameplayTag(UAsadalGameplayTags::AvoidStateGameplayTag))
-//	{
-//		//회피중이였다.
-//		return false;
-//	}
-//	
-//	if(bIsLatentEventToTarget)
-//	{
-//		GEToTargetLatentEventItems.Add(FGEToTargetEventItem(TargetAbilitySystemComponent, EventTag));
-//	}
-//	else
-//	{
-//		FGameplayEventData GameplayEventData;
-//		GameplayEventData.Target = TargetAbilitySystemComponent->GetOwner();
-//
-//		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EventTag, GameplayEventData);
-//	}
-//
-//	return true;
-//}
-//
-//void UGASComponent::SetGEToTargetLatent(bool InIsLatentEventToTarget)
-//{
-//	if(bIsLatentEventToTarget != InIsLatentEventToTarget)
-//	{
-//		bIsLatentEventToTarget = InIsLatentEventToTarget;
-//		
-//		//True였는데 False이니 모두 뿌린다.
-//		if(false == InIsLatentEventToTarget)
-//		{			
-//			for(const FGEToTargetEventItem& Item : GEToTargetLatentEventItems)
-//			{
-//				if(Item.Actor.IsValid())
-//				{
-//					GEToTarget(Item.AbilitySystemComponent.Get(), Item.EventTag);
-//				}			
-//			}
-//			
-//			OnGEToTargetLatentEvent.Broadcast(GEToTargetLatentEventItems, IsCriticalAbilityFromActionGroup());
-//			
-//			GEToTargetLatentEventItems.Empty();
-//		}
-//		//False였는데 True이므로 혹시 모를 LatentEventItems를 날린다.
-//		else
-//		{
-//			GEToTargetLatentEventItems.Empty();
-//		}
-//	}
-//}
-
 void UGASComponent::GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& GameplayAbilitySpecs)
 {
 	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
@@ -73,81 +16,41 @@ void UGASComponent::GetAbilitySpecs(TArray<const FGameplayAbilitySpec*>& Gamepla
 	}
 }
 
-void UGASComponent::SetActivateAbilityActionGroup(const FGameplayTag& GameplayTag)
-{
-	ActivateAbilityActionGroup = AbilityActionGroupMap.Find(GameplayTag);
-}
-
 const FGameplayAbilityActionGroup* UGASComponent::GetActivateAbilityActionGroup() const
 {
-	return ActivateAbilityActionGroup;
+	return &ActivateAbilityActionGroup;
 }
 
 bool UGASComponent::TryAvoidAbilityFromActionGroup()
 {
-	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
-	
-	if(nullptr == TryAbilityGroup
-		|| false == TryAbilityGroup->AvoidAbilitySpecHandle.IsValid())
+	if(ActivateAbilityActionGroup.AvoidAbilityFragmentHandle.IsValid())
 	{
-		//Base로 변경해주고
-		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
+		return TryActivateAbility(ActivateAbilityActionGroup.AvoidAbilityFragmentHandle.GameplayAbilitySpecHandle);
 	}
 
-	//Base에도 없다면 실패를 시킨다.
-	if(nullptr == TryAbilityGroup
-		|| false == TryAbilityGroup->AvoidAbilitySpecHandle.IsValid())
-	{
-		return false;
-	}
-
-	return TryActivateAbility(TryAbilityGroup->AvoidAbilitySpecHandle);
+	return false;
 }
 
 bool UGASComponent::TryHitAbilityFromActionGroup()
 {
-	const FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
-	
-	if(nullptr == TryAbilityGroup
-		|| false == TryAbilityGroup->HitAbilitySpecHandle.IsValid())
+	if(ActivateAbilityActionGroup.HitAbilityFragmentHandle.IsValid())
 	{
-		//Base로 변경해주고
-		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
+		return TryActivateAbility(ActivateAbilityActionGroup.HitAbilityFragmentHandle.GameplayAbilitySpecHandle);
 	}
 
-	//Base에도 없다면 실패를 시킨다.
-	if(nullptr == TryAbilityGroup
-		|| false == TryAbilityGroup->HitAbilitySpecHandle.IsValid())
-	{
-		return false;
-	}
-
-	return TryActivateAbility(TryAbilityGroup->HitAbilitySpecHandle);
+	return false;	
 }
 
 bool UGASComponent::TryAttackAbilityFromActionGroup(int32 ElementIndex)
 {
-	FGameplayAbilityActionGroup* TryAbilityGroup = ActivateAbilityActionGroup;
-	
-	if(nullptr == TryAbilityGroup
-		|| TryAbilityGroup->AttackAbilitiesSpecHandles.Num() <= ElementIndex
-		|| false == TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex].IsValid())
-	{
-		//Base로 변경해주고
-		TryAbilityGroup = AbilityActionGroupMap.Find(UAsadalGameplayTags::BaseAbilityGameplayTag);
-	}
-
-	//Base에도 없다면 실패를 시킨다.
-	if(nullptr == TryAbilityGroup
-		|| TryAbilityGroup->AttackAbilitiesSpecHandles.Num() <= ElementIndex
-		|| false == TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex].IsValid())
+	if(ActivateAbilityActionGroup.AttackAbilityFragmentHandles.Num() <= ElementIndex
+		|| false == ActivateAbilityActionGroup.AttackAbilityFragmentHandles[ElementIndex].IsValid())
 	{
 		return false;
 	}
 	
-	if(TryActivateAbility(TryAbilityGroup->AttackAbilitiesSpecHandles[ElementIndex]))
+	if(TryActivateAbility(ActivateAbilityActionGroup.AttackAbilityFragmentHandles[ElementIndex].GameplayAbilitySpecHandle))
 	{
-		TryAbilityGroup->AttackElementIndex = ElementIndex;
 		return true;
 	}
 
@@ -174,48 +77,6 @@ bool UGASComponent::CanGEExec(UAbilitySystemComponent* AbilitySystemComponent,
 void UGASComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnGiveAbility(AbilitySpec);
-
-	FGameplayTag ActionTag;
-	FGameplayTag AbilityTag;
-	
-	for(const FGameplayTag& GameplayTag : AbilitySpec.Ability->AbilityTags)
-	{
-		if(GameplayTag.MatchesTag(UAsadalGameplayTags::ActionGameplayTag))
-		{
-			ActionTag = GameplayTag;
-		}
-		else if(GameplayTag.MatchesTag(UAsadalGameplayTags::AbilityGameplayTag))
-		{
-			AbilityTag = GameplayTag;
-		}		
-	}
-
-	if(ActionTag != FGameplayTag::EmptyTag
-		&& AbilityTag != FGameplayTag::EmptyTag)
-	{
-		FGameplayAbilityActionGroup* ActionGroup = AbilityActionGroupMap.Find(AbilityTag);
-
-		if(nullptr == ActionGroup)
-		{
-			ActionGroup = &AbilityActionGroupMap.Add(AbilityTag);
-		}
-
-		if(nullptr != ActionGroup)
-		{
-			if(UAsadalGameplayTags::AttackActionGameplayTag == ActionTag)
-			{
-				ActionGroup->AttackAbilitiesSpecHandles.Add(AbilitySpec.Handle);
-			}
-			else if(UAsadalGameplayTags::HitActionGameplayTag == ActionTag)
-			{
-				ActionGroup->HitAbilitySpecHandle = AbilitySpec.Handle;
-			}
-			else if(UAsadalGameplayTags::AvoidGameplayTag == ActionTag)
-			{
-				ActionGroup->AvoidAbilitySpecHandle = AbilitySpec.Handle;
-			}
-		}
-	}
 }
 
 bool UGASComponent::IsCriticalAbility()
@@ -251,4 +112,56 @@ bool UGASComponent::IsCriticalAbility()
 	}
 
 	return false;
+}
+
+void UGASComponent::OnUpdateActivateFragmentAbility()
+{
+	Super::OnUpdateActivateFragmentAbility();
+
+	ActivateAbilityActionGroup.Clear();
+
+	for(const FKRGGASFragmentAbilityHandle& KRGGASFragmentAbilityHandle : ActivateAbilityFragmentHandles)
+	{
+		FGameplayTag ActionTag;
+		FGameplayTag AbilityTag;
+
+		FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(KRGGASFragmentAbilityHandle.GameplayAbilitySpecHandle);
+
+		if(nullptr != AbilitySpec)
+		{	
+			for(const FGameplayTag& GameplayTag : AbilitySpec->Ability->AbilityTags)
+			{
+				if(GameplayTag.MatchesTag(UAsadalGameplayTags::ActionGameplayTag))
+				{
+					ActionTag = GameplayTag;
+				}
+				else if(GameplayTag.MatchesTag(UAsadalGameplayTags::AbilityGameplayTag))
+				{
+					AbilityTag = GameplayTag;
+				}		
+			}
+
+			if(ActionTag != FGameplayTag::EmptyTag
+				&& AbilityTag != FGameplayTag::EmptyTag)
+			{			
+				if(UAsadalGameplayTags::AttackActionGameplayTag == ActionTag)
+				{
+					ActivateAbilityActionGroup.AttackAbilityFragmentHandles.Add(KRGGASFragmentAbilityHandle);
+				}
+				else if(UAsadalGameplayTags::HitActionGameplayTag == ActionTag)
+				{
+					ActivateAbilityActionGroup.HitAbilityFragmentHandle = KRGGASFragmentAbilityHandle;
+				}
+				else if(UAsadalGameplayTags::AvoidGameplayTag == ActionTag)
+				{
+					ActivateAbilityActionGroup.AvoidAbilityFragmentHandle = KRGGASFragmentAbilityHandle;
+				}
+			}			
+		}
+	}
+}
+
+void UGASComponent::OnUpdateActivateFragmentAttributeSet()
+{
+	Super::OnUpdateActivateFragmentAttributeSet();
 }

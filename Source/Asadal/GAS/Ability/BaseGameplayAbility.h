@@ -36,16 +36,4 @@ class ASADAL_API UBaseGameplayAbility : public UKRGGameplayAbility
 
 public :
 	UBaseGameplayAbility();
-
-public :
-	UTexture2D* GetIconTexture() const;
-	
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup")
-	UTexture2D*	IconTexture;
-
-	//UPROPERTY()
-	//TArray<UGEExecResult*>			AbilityGEExecResults;
-
-	//TMap<FGameplayEffectContextHandle, FAbilityGEExecInfo>	AbilityGEExecInfoMap;
 };

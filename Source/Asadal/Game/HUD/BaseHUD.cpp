@@ -42,13 +42,10 @@ void ABaseHUD::Tick(float DeltaSeconds)
 
 		for(uint32 Index = 0; Index < MAX_PC_SKILL_COUNT; ++Index)
 		{
-			FGameplayAbilitySpec* GameplayAbilitySpec = PCCharacter->GetPCSkillAbilitySpecByIndex(Index);
+			UTexture2D* IconTexture = PCCharacter->GetPCSkillIconByIndex(Index);
 
-			BaseHUDWidget->SetPCSkill(Index, GameplayAbilitySpec);
+			BaseHUDWidget->SetPCSkillIcon(Index, IconTexture);
 		}
-		
-		
-		//UE_LOG(LogTemp, Display, TEXT("Has Skill <%d>"), PCCharacter->HasSkill(0));
 	}
 }
 

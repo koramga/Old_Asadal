@@ -67,19 +67,14 @@ void APCCharacter::InputMoveRight(float Value)
 	}
 }
 
-FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
+UTexture2D* APCCharacter::GetPCSkillIconByIndex(int32 Index)
 {
 	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
 	
 	if(nullptr != AbilityActionGroup
-		&& AbilityActionGroup->AttackAbilitiesSpecHandles.Num() > Index)
+		&& AbilityActionGroup->AttackAbilityFragmentHandles.Num() > Index)
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilityActionGroup->AttackAbilitiesSpecHandles[Index];
-	
-		if(AbilitySpecHandle.IsValid())
-		{
-			return GASComponent->FindAbilitySpecFromHandle(AbilitySpecHandle);
-		}
+		return AbilityActionGroup->AttackAbilityFragmentHandles[Index].KRGGASAbilityInfo->IconTexture;
 	}
 
 	return nullptr;
@@ -88,28 +83,6 @@ FGameplayAbilitySpec* APCCharacter::GetPCSkillAbilitySpecByIndex(int32 Index)
 bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 {
 	return GASComponent->TryAttackAbilityFromActionGroup(Index);
-	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
-
-	if(nullptr != AbilityActionGroup
-		&& AbilityActionGroup->AttackAbilitiesSpecHandles.Num() > Index)
-	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilityActionGroup->AttackAbilitiesSpecHandles[Index];
-	
-		if(AbilitySpecHandle.IsValid())
-		{
-			if(GASComponent->TryActivateAbility(AbilitySpecHandle))
-			{
-				UE_LOG(LogTemp, Display, TEXT("TryActivateAbility Success"));
-				return true;
-			}
-			else
-			{
-				UE_LOG(LogTemp, Display, TEXT("TryActivateAbility Failed"));
-			}
-		}
-	}
-
-	return false;
 }
 
 void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)

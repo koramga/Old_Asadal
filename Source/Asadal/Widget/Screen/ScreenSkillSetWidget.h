@@ -21,7 +21,7 @@ class ASADAL_API UScreenSkillSetWidget : public UBaseScreenWidget
 	GENERATED_BODY()
 	
 public :
-	void SetPCSkill(int32 Index, FGameplayAbilitySpec* GameplayAbilitySpec);
+	void SetPCSkillIcon(int32 Index, UTexture2D* IconTexture);
 
 public :
 	FOnSkillSetButtonClickedEvent	SkillSetButtonClickedEvent;

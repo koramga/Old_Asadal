@@ -163,6 +163,16 @@ bool UKRGAbilitySystemComponent::IsCriticalAbility()
 	return false;
 }
 
+void UKRGAbilitySystemComponent::OnUpdateActivateFragmentAbility()
+{
+	
+}
+
+void UKRGAbilitySystemComponent::OnUpdateActivateFragmentAttributeSet()
+{
+	
+}
+
 void UKRGAbilitySystemComponent::SetKRGGASDefinition(UKRGGASDefinition* InKRGGASDefinition)
 {
 	KRGGASDefinition = InKRGGASDefinition;
@@ -216,6 +226,8 @@ bool UKRGAbilitySystemComponent::ActivateFragmentAbility(const FGameplayTag& Gam
 		}
 	}
 
+	OnUpdateActivateFragmentAbility();
+
 	return true;
 }
 
@@ -244,6 +256,8 @@ bool UKRGAbilitySystemComponent::ActivateFragmentAttributeSet(const FGameplayTag
 			return false;
 		}
 	}
+
+	OnUpdateActivateFragmentAttributeSet();
 
 	return true;
 }

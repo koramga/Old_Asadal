@@ -4,13 +4,13 @@
 #include "MainHUDWidget.h"
 #include "Asadal/Widget/Screen/ScreenSkillSetWidget.h"
 
-void UMainHUDWidget::SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec)
+void UMainHUDWidget::SetPCSkillIcon(uint32 Index, UTexture2D* IconTexture)
 {
-	Super::SetPCSkill(Index, GameplayAbilitySpec);
+	Super::SetPCSkillIcon(Index, IconTexture);
 
 	if(ScreenSkillSetWidget.IsValid())
 	{
-		ScreenSkillSetWidget->SetPCSkill(Index, GameplayAbilitySpec);
+		ScreenSkillSetWidget->SetPCSkillIcon(Index, IconTexture);
 	}
 }
 

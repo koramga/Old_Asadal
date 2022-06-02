@@ -53,6 +53,10 @@ public :
 public :
 	//We need to update for it.
 	virtual bool IsCriticalAbility();
+	virtual void OnUpdateActivateFragmentAbility();
+	virtual void OnUpdateActivateFragmentAttributeSet();
+
+public :
 	void SetKRGGASDefinition(UKRGGASDefinition*	InKRGGASDefinition);
 	bool UpdateFromKRGGASDefinition();
 	bool ActivateFragmentAbility(const FGameplayTag& GameplayTag);

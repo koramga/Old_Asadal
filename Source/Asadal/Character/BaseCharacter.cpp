@@ -244,7 +244,7 @@ void ABaseCharacter::TryEquipNextWeapon()
 
 			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
 			{
-				GASComponent->SetActivateAbilityActionGroup(AbilityGameplayTag);
+				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
 			}
 		}
 	}
@@ -292,6 +292,7 @@ void ABaseCharacter::BeginPlay()
 
 			if(GASComponent->UpdateFromKRGGASDefinition())
 			{
+				GASComponent->ActivateFragmentAttributeSet(UAsadalGameplayTags::AttributeFragmentDefaultTag);
 				LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
 
 				if(LifeAttributeSet.IsValid())

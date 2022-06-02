@@ -16,7 +16,7 @@ class ASADAL_API UMainHUDWidget : public UBaseHUDWidget
 	GENERATED_BODY()
 
 public :
-	virtual void SetPCSkill(uint32 Index, FGameplayAbilitySpec* GameplayAbilitySpec) override;
+	virtual void SetPCSkillIcon(uint32 Index, UTexture2D* IconTexture) override;
 	
 protected:
 	virtual void NativePreConstruct() override;

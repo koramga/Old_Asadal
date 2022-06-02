@@ -47,6 +47,23 @@ struct FKRGGASFragmentAbilityHandle
 		
 	}
 
+	bool IsValid() const
+	{
+		if(GameplayAbilitySpecHandle.IsValid()
+			&& nullptr != KRGGASAbilityInfo)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	void Clear()
+	{
+		GameplayAbilitySpecHandle = FGameplayAbilitySpecHandle();
+		KRGGASAbilityInfo = nullptr;
+	}
+
 public :
 	FGameplayAbilitySpecHandle	GameplayAbilitySpecHandle;
 	const FKRGGASAbilityInfo*	KRGGASAbilityInfo;
