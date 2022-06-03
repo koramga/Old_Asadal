@@ -38,4 +38,24 @@ public :
 
 		return nullptr;		
 	}
+
+	template<typename TFragment>
+	TArray<TFragment*> FindFragments()
+	{
+		TArray<TFragment*> FindFragments;
+	
+		for(UKRGGASFragment* Fragment : Fragments)
+		{
+			if(Fragment->IsA(TFragment::StaticClass()))
+			{
+				TFragment* FindFragment = Cast<TFragment>(Fragment);
+
+				FindFragments.Add(FindFragment);
+				
+				//FindFragments.Add(Cast<TFragment>(Fragment));
+			}
+		}
+
+		return FindFragments;
+	}
 };

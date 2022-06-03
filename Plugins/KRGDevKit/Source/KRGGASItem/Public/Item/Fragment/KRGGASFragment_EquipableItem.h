@@ -31,13 +31,15 @@ class KRGGASITEM_API UKRGGASFragment_EquipableItem : public UKRGGASFragment_Item
 {
 	GENERATED_BODY()
 
+public :
+	const TArray<FKRGEquipmentItemFragmentDefinition>& GetEquipmentItemDefinitions() const;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FKRGEquipmentItemFragmentDefinition>				EquipmentItemDefinitions;
 
-protected:
-	TArray<TSoftObjectPtr<class AActor>>					SpawnEquipmentActors;
-
+	TArray<TSoftObjectPtr<AActor>> Temp;
+	
 protected:
 	virtual void OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate) override;
 

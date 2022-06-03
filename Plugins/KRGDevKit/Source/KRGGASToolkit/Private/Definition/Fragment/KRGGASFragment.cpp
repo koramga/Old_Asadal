@@ -2,3 +2,8 @@
 
 
 #include "Definition/Fragment/KRGGASFragment.h"
+
+bool UKRGGASFragment::IsValidFragment() const
+{
+	return true;
+}

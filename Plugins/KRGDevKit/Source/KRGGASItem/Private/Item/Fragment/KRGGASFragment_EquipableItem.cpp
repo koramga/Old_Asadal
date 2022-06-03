@@ -5,10 +5,15 @@
 #include "GameFramework/Character.h"
 #include "GAS/KRGAbilitySystemComponent.h"
 
+const TArray<FKRGEquipmentItemFragmentDefinition>& UKRGGASFragment_EquipableItem::GetEquipmentItemDefinitions() const
+{
+	return EquipmentItemDefinitions;
+}
+
 void UKRGGASFragment_EquipableItem::OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)
 {
 	Super::OnActivate(AbilitySystemComponent, bIsActivate);
-	
+	/*
 	if(true == bIsActivate)
 	{
 		FActorSpawnParameters ActorSpawnParam;
@@ -46,6 +51,7 @@ void UKRGGASFragment_EquipableItem::OnActivate(UKRGAbilitySystemComponent* Abili
 
 		//BaseCharacter->UnLinkSubAnimInstance(ItemGameplayTag);
 	}
+	*/
 }
 
 //void UKRGGASFragment_EquipableItem::SetActivateCollisions(bool bIsActivate)
@@ -58,5 +64,5 @@ void UKRGGASFragment_EquipableItem::OnActivate(UKRGAbilitySystemComponent* Abili
 
 const TArray<TSoftObjectPtr<AActor>>& UKRGGASFragment_EquipableItem::GetSpawnEquipmentActors() const
 {
-	return SpawnEquipmentActors;
+	return Temp;
 }

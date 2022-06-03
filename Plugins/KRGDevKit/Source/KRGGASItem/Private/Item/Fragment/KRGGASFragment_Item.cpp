@@ -4,6 +4,26 @@
 #include "Item/Fragment/KRGGASFragment_Item.h"
 #include "GAS/KRGAbilitySystemComponent.h"
 
+const FGameplayTag& UKRGGASFragment_Item::GetItemGameplayTag() const
+{
+	return ItemGameplayTag;
+}
+
+bool UKRGGASFragment_Item::CanCounting() const
+{
+	return bCanCounting;
+}
+
+int32 UKRGGASFragment_Item::GetMaxCount() const
+{
+	return MaxCount;
+}
+
+FName UKRGGASFragment_Item::GetDisplayName() const
+{
+	return DisplayName;
+}
+
 void UKRGGASFragment_Item::OnActivate(UKRGAbilitySystemComponent* KRGAbilitySystemComponent, bool bIsActivate)
 {
 	if(true == bIsActivate)
@@ -37,9 +57,4 @@ void UKRGGASFragment_Item::SetActivate(UKRGAbilitySystemComponent* AbilitySystem
 bool UKRGGASFragment_Item::HasGameplayTag(const FGameplayTag& GameplayTag)
 {
 	return ItemGameplayTag.MatchesTag(GameplayTag);
-}
-
-const FGameplayTag& UKRGGASFragment_Item::GetItemGameplayTag() const
-{
-	return ItemGameplayTag;
 }
