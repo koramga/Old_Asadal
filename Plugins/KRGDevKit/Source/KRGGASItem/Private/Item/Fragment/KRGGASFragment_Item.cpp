@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Fragment/KRGGASFragment_Item.h"
+#include "Item/Fragment/KRGGASFragment_Item.h"
 #include "GAS/KRGAbilitySystemComponent.h"
 
 void UKRGGASFragment_Item::OnActivate(UKRGAbilitySystemComponent* KRGAbilitySystemComponent, bool bIsActivate)

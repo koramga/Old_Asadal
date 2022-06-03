@@ -10,7 +10,7 @@
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "KRGGASItem/Public/Fragment/KRGGASFragment_EquipableItem.h"
+#include "KRGGASItem/Public/Item/Fragment/KRGGASFragment_EquipableItem.h"
 
 
 // Sets default values

@@ -20,7 +20,7 @@
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "GameFramework/GameModeBase.h"
-#include "KRGGASItem/Public/Fragment/KRGGASFragment_EquipableItem.h"
+#include "KRGGASItem/Public/Item/Fragment/KRGGASFragment_EquipableItem.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
