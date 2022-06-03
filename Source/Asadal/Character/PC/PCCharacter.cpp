@@ -87,7 +87,7 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
-	
+	/*
 	if(ActivateWeaponDefinition.IsValid())
 	{
 	    UKRGGASFragment_EquipableItem* WeaponFragmentEquippableItem = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
@@ -104,7 +104,7 @@ void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bI
 			}
 		}
 	}
-
+	*/
 }
 
 // Called when the game starts or when spawned

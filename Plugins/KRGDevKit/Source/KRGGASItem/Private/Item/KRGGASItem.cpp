@@ -95,10 +95,14 @@ bool UKRGGASItem::IsActivate() const
 	return IsActivateItem;
 }
 
-void UKRGGASItem::SetActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)
+bool UKRGGASItem::SetActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)
 {
 	if(CanActivate(AbilitySystemComponent, bIsActivate))
 	{
 		OnActivate(AbilitySystemComponent, bIsActivate);
+
+		return true;
 	}
+
+	return false;
 }

@@ -25,7 +25,7 @@ protected:
 public :
 	virtual bool CanActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate) const;
 	bool IsActivate() const;
-	void SetActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
+	bool SetActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
 	
 protected:
 	TSoftObjectPtr<UKRGGASDefinition>				KRGGASDefinition;

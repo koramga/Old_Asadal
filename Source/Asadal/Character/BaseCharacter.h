@@ -82,7 +82,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
 	TArray<UDataAsset*>												KRGGASItemDefinitions;
 
-	TSoftObjectPtr<class UKRGGASDefinition>							ActivateWeaponDefinition;
+	TSoftObjectPtr<const class UKRGGASItemHandle>					ActivateWeaponHandle;
+	TArray<TSoftObjectPtr<const class UKRGGASItemHandle>>			WeaponHandles;
+
+	TSoftObjectPtr<class UKRGBaseInventory>							BaseInventory;
 
 	//TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	//TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

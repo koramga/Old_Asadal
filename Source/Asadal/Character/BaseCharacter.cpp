@@ -20,6 +20,7 @@
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "GameFramework/GameModeBase.h"
+#include "Inventory/KRGBaseInventory.h"
 #include "KRGGASItem/Public/Item/Fragment/KRGGASFragment_EquipableItem.h"
 
 // Sets default values
@@ -183,7 +184,7 @@ void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinitio
 	{
 		return;
 	}
-	
+	/*
 	UKRGGASFragment_EquipableItem* FragmentEquippableItem = KRGGASDefition->FindFragment<UKRGGASFragment_EquipableItem>();
 
 	if(IsValid(FragmentEquippableItem))
@@ -223,6 +224,7 @@ void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinitio
 			}
 		}
 	}
+	*/
 }
 
 void ABaseCharacter::TryEquipNextWeapon()
@@ -231,7 +233,8 @@ void ABaseCharacter::TryEquipNextWeapon()
 	{
 		return;
 	}
-	
+
+	/*
 	if(KRGGASItemDefinitions.Num() > 0)
 	{
 		if(false == ActivateWeaponDefinition.IsValid())
@@ -265,6 +268,7 @@ void ABaseCharacter::TryEquipNextWeapon()
 			}
 		}
 	}
+	*/
 }
 
 void ABaseCharacter::TryAvoid()
@@ -285,7 +289,8 @@ bool ABaseCharacter::IsDeath() const
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	BaseInventory = NewObject<UKRGBaseInventory>();	
 	
 	BaseAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance());
 	
@@ -339,16 +344,18 @@ void ABaseCharacter::BeginPlay()
 			DamageTextSpawnComponents.Add(SceneComponent);			
 		}		
 	}
-	
-	//for(int i = 0; i < AbilityClasses.Num(); ++i)
-	//{
-	//	InitializeAbility(AbilityClasses[i], 0);
-	//}
-	
-	//for(TSubclassOf<UAsadalInventoryItemDefinition> AsadalInventoryItemDefinitionClass : EquipmentWeaponItemDefinitionClasses)
-	//{
-	//	EquipmentWeaponItemDefinitions.Add(NewObject<UAsadalInventoryItemDefinition>(this, AsadalInventoryItemDefinitionClass));
-	//}
+
+	/*
+	for(UDataAsset* DataAsset : KRGGASItemDefinitions)
+	{
+		UKRGGASDefinition* KRGGASDefinition = Cast<UKRGGASDefinition>(DataAsset);
+
+		if(IsValid(KRGGASDefinition))
+		{
+			WeaponHandles.Add(BaseInventory->AddItem(KRGGASDefinition));
+		}
+	}
+	*/
 
 	TryEquipNextWeapon();
 
