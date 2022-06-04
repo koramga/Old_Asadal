@@ -68,6 +68,9 @@ public :
 	FOnTagUpdatedEvent			OnTagUpdatedEvent;
 
 protected:
+	virtual void BeginPlay() override;
+
+protected:
 	virtual bool CanGEExec(UAbilitySystemComponent* AbilitySystemComponent, UAbilitySystemComponent* TargetAbilitySystemComponent);
 	virtual void UpdateAbilitiesFromFragment(class UKRGGASFragment_Abilities* AbilitiesFragment);
 	virtual void UpdateAttributeSets(class UKRGGASFragment_AttributeSets* AttributeSetFragment);
@@ -81,6 +84,9 @@ protected:
 	void ClearAttributeFromActivateFragement();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
+	UDataAsset*												AbilityDefinition;
+	
 	TArray<FGEEExecEvent>		GEExecEvents;
 	bool						bIsLatentGEExec = false;
 

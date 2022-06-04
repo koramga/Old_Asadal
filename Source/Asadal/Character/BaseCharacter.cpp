@@ -20,7 +20,6 @@
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "GameFramework/GameModeBase.h"
-#include "Inventory/KRGBaseInventory.h"
 #include "KRGGASItem/Public/Item/Fragment/KRGGASFragment_EquipableItem.h"
 
 // Sets default values
@@ -29,7 +28,21 @@ ABaseCharacter::ABaseCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GASComponent = CreateDefaultSubobject<UGASComponent>("GASComponent"); 
+	GASComponent = CreateDefaultSubobject<UGASComponent>("GASComponent");
+	BaseEquipmentComponent = CreateDefaultSubobject<UBaseEquipmentComponent>("EquipmentComponent");
+	BaseInventoryComponent = CreateDefaultSubobject<UBaseInventoryComponent>("InventoryComponent");
+	
+	if(IsValid(GASComponent))
+	{
+		BaseEquipmentComponent->SetKRGAbilitySystemComponent(GASComponent);
+		BaseInventoryComponent->SetKRGAbilitySystemComponent(GASComponent);
+	}
+
+	if(IsValid(GASComponent))
+	{
+		
+	}
+	
 }
 
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
@@ -290,8 +303,6 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BaseInventory = NewObject<UKRGBaseInventory>();	
-	
 	BaseAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance());
 	
 	if(IsValid(GASComponent))
@@ -308,25 +319,17 @@ void ABaseCharacter::BeginPlay()
 		//	}
 		//}
 
-		if(IsValid(KRGGASDefinition))
+		GASComponent->ActivateFragmentAttributeSet(UAsadalGameplayTags::AttributeFragmentDefaultTag);
+		LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
+
+		if(LifeAttributeSet.IsValid())
 		{
-			GASComponent->SetKRGGASDefinition(Cast<UKRGGASDefinition>(KRGGASDefinition));
-
-			if(GASComponent->UpdateFromKRGGASDefinition())
-			{
-				GASComponent->ActivateFragmentAttributeSet(UAsadalGameplayTags::AttributeFragmentDefaultTag);
-				LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
-
-				if(LifeAttributeSet.IsValid())
-				{
-					GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
-					GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
-				}
+			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetHealthAttribute()).AddUObject(this, &ABaseCharacter::__OnHealthChangedNative);
+			GASComponent->GetGameplayAttributeValueChangeDelegate(LifeAttributeSet->GetManaAttribute()).AddUObject(this, &ABaseCharacter::__OnManaChangedNative);			
+		}
 		
-				OffenseAttributeSet = GASComponent->GetSet<UOffenseAttributeSet>();
-				DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();				
-			}
-		}		
+		OffenseAttributeSet = GASComponent->GetSet<UOffenseAttributeSet>();
+		DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();
 	}
 
 	DamageTextSpawnComponents.Empty();
@@ -344,18 +347,6 @@ void ABaseCharacter::BeginPlay()
 			DamageTextSpawnComponents.Add(SceneComponent);			
 		}		
 	}
-
-	/*
-	for(UDataAsset* DataAsset : KRGGASItemDefinitions)
-	{
-		UKRGGASDefinition* KRGGASDefinition = Cast<UKRGGASDefinition>(DataAsset);
-
-		if(IsValid(KRGGASDefinition))
-		{
-			WeaponHandles.Add(BaseInventory->AddItem(KRGGASDefinition));
-		}
-	}
-	*/
 
 	TryEquipNextWeapon();
 

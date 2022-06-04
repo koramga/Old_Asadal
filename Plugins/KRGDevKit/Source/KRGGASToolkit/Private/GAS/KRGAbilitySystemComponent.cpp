@@ -17,8 +17,21 @@ UKRGAbilitySystemComponent::UKRGAbilitySystemComponent()
 	// ...
 }
 
+void UKRGAbilitySystemComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+	if(IsValid(AbilityDefinition))
+	{
+		SetKRGGASDefinition(Cast<UKRGGASDefinition>(AbilityDefinition));
+
+		UpdateFromKRGGASDefinition();
+	}
+}
+
 bool UKRGAbilitySystemComponent::CanGEExec(UAbilitySystemComponent* AbilitySystemComponent,
-	UAbilitySystemComponent* TargetAbilitySystemComponent)
+                                           UAbilitySystemComponent* TargetAbilitySystemComponent)
 {
 	return true;
 }

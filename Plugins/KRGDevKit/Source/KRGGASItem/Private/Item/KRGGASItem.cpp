@@ -18,6 +18,18 @@ void UKRGGASItem::SetDefinition(UKRGGASDefinition* Definition)
 	KRGGASDefinition = Definition;
 }
 
+FGameplayTag UKRGGASItem::GetItemGameplayTag() const
+{
+	UKRGGASFragment_Item* Item = KRGGASDefinition->FindFragment<UKRGGASFragment_Item>();
+
+	if(IsValid(Item))
+	{
+		return Item->GetItemGameplayTag();
+	}
+
+	return FGameplayTag::EmptyTag;
+}
+
 void UKRGGASItem::OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)
 {
 	if(bIsActivate)

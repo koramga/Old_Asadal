@@ -8,6 +8,8 @@
 #include "../GAS/GASComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
+#include "Asadal/GAS/Equipment/BaseEquipmentComponent.h"
+#include "Asadal/GAS/Inventory/BaseInventoryComponent.h"
 #include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
 #include "KRGGASToolkit/Public/Definition/KRGGASDefinition.h"
 #include "BaseCharacter.generated.h"
@@ -58,8 +60,14 @@ protected:
 	virtual void OnHit(const FOnAttributeChangeData& Data);
 
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UGASComponent* GASComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBaseEquipmentComponent*	BaseEquipmentComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBaseInventoryComponent*	BaseInventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
 	TArray<TSubclassOf<class ATextActor>>						DamageTextActorClasses;
@@ -75,17 +83,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
 	FGameplayTagContainer							AddLooseGameplayTagContainer;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
-	UDataAsset*														KRGGASDefinition;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
-	TArray<UDataAsset*>												KRGGASItemDefinitions;
-
-	TSoftObjectPtr<const class UKRGGASItemHandle>					ActivateWeaponHandle;
-	TArray<TSoftObjectPtr<const class UKRGGASItemHandle>>			WeaponHandles;
-
-	TSoftObjectPtr<class UKRGBaseInventory>							BaseInventory;
 
 	//TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	//TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;

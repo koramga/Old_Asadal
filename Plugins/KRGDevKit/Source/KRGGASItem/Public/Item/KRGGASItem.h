@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Definition/KRGGASDefinition.h"
 #include "UObject/Object.h"
 #include "KRGGASItem.generated.h"
@@ -17,6 +18,7 @@ class KRGGASITEM_API UKRGGASItem : public UObject
 	
 public :
 	void SetDefinition(UKRGGASDefinition* Definition);
+	FGameplayTag GetItemGameplayTag() const;
 	
 protected:
 	virtual void OnActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
