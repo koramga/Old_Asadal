@@ -34,11 +34,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = "CanCounting", EditConditionHides) )
 	int32													MaxCount = 32;
 
-protected:
-	virtual void OnActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
-	
 public :
 	virtual bool CanActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate) const;
-	void SetActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
-	bool HasGameplayTag(const FGameplayTag& GameplayTag);
 };

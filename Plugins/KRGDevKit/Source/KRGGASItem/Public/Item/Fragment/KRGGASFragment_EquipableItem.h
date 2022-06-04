@@ -33,17 +33,12 @@ class KRGGASITEM_API UKRGGASFragment_EquipableItem : public UKRGGASFragment_Item
 
 public :
 	const TArray<FKRGEquipmentItemFragmentDefinition>& GetEquipmentItemDefinitions() const;
-
+	TSubclassOf<class UGameplayEffect>	GetGameplayEffectClass() const;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FKRGEquipmentItemFragmentDefinition>				EquipmentItemDefinitions;
 
-	TArray<TSoftObjectPtr<AActor>> Temp;
-	
-protected:
-	virtual void OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate) override;
-
-public :
-	//void SetActivateCollisions(bool bIsActivate);
-	const TArray<TSoftObjectPtr<class AActor>>& GetSpawnEquipmentActors() const;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class UGameplayEffect>						GameplayEffectClass;
 };

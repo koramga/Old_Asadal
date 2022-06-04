@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "Definition/KRGGASDefinition.h"
 #include "UObject/Object.h"
@@ -31,6 +32,7 @@ public :
 	
 protected:
 	TSoftObjectPtr<UKRGGASDefinition>				KRGGASDefinition;
+	FActiveGameplayEffectHandle						ActivateGameplayEffectHandle;
 	TArray<TSoftObjectPtr<class AActor>>			SpawnActors;
 	bool											IsActivateItem = false;
 };

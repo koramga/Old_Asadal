@@ -24,18 +24,6 @@ FName UKRGGASFragment_Item::GetDisplayName() const
 	return DisplayName;
 }
 
-void UKRGGASFragment_Item::OnActivate(UKRGAbilitySystemComponent* KRGAbilitySystemComponent, bool bIsActivate)
-{
-	if(true == bIsActivate)
-	{
-		KRGAbilitySystemComponent->AddLooseGameplayTag(ItemGameplayTag);
-	}
-	else
-	{
-		KRGAbilitySystemComponent->RemoveLooseGameplayTag(ItemGameplayTag);
-	}
-}
-
 bool UKRGGASFragment_Item::CanActivate(UKRGAbilitySystemComponent* KRGAbilitySystemComponent, bool bIsActivate) const
 {
 	if(IsValid(KRGAbilitySystemComponent))
@@ -44,17 +32,4 @@ bool UKRGGASFragment_Item::CanActivate(UKRGAbilitySystemComponent* KRGAbilitySys
 	}
 
 	return false;
-}
-
-void UKRGGASFragment_Item::SetActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)
-{
-	if(CanActivate(AbilitySystemComponent, bIsActivate))
-	{
-		OnActivate(AbilitySystemComponent, bIsActivate);
-	}
-}
-
-bool UKRGGASFragment_Item::HasGameplayTag(const FGameplayTag& GameplayTag)
-{
-	return ItemGameplayTag.MatchesTag(GameplayTag);
 }

@@ -2,11 +2,10 @@
 
 
 #include "Item/KRGGASItem.h"
-
 #include "GameFramework/Character.h"
 #include "Item/Fragment/KRGGASFragment_EquipableItem.h"
 #include "Item/Fragment/KRGGASFragment_Item.h"
-#include "KRGGASToolkit/Public/GAS/KRGAbilitySystemComponent.h"
+#include "GAS/KRGAbilitySystemComponent.h"
 
 void UKRGGASItem::SetDefinition(UKRGGASDefinition* Definition)
 {
@@ -61,7 +60,12 @@ void UKRGGASItem::OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent,
 
 					SpawnActors.Add(NewEquipmentActor);
 				}
-			}			
+			}
+			
+			if(IsValid(EquipableItem->GetGameplayEffectClass()))
+			{
+				ActivateGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(EquipableItem->GetGameplayEffectClass().GetDefaultObject(), 1.f, AbilitySystemComponent->MakeEffectContext());				
+			}
 		}
 
 		IsActivateItem = true;
@@ -81,6 +85,12 @@ void UKRGGASItem::Clear()
 		for(TSoftObjectPtr<AActor> SpawnActor : SpawnActors)
 		{
 			SpawnActor->Destroy();
+		}
+
+		if(ActivateGameplayEffectHandle.IsValid()
+			&& IsValid(ActivateGameplayEffectHandle.GetOwningAbilitySystemComponent()))
+		{
+			ActivateGameplayEffectHandle.GetOwningAbilitySystemComponent()->RemoveActiveGameplayEffect(ActivateGameplayEffectHandle);
 		}
 		
 		SpawnActors.Empty();		
