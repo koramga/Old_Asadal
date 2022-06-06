@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "KRGGASEquipmentComponent.generated.h"
 
@@ -16,7 +17,15 @@ public:
 	// Sets default values for this component's properties
 	UKRGGASEquipmentComponent();
 
+	
 	void SetKRGAbilitySystemComponent(class UKRGAbilitySystemComponent* AbilitySystemComponent);
+	TSoftObjectPtr<class UKRGGASEquipment> FindEquipmentFromItem(class UKRGGASItem* Item);
+	TSoftObjectPtr<class UKRGGASEquipment> FindEquipmentFromGameplayTag(const FGameplayTag& GameplayTag);
+	bool AddExtraItem(class UKRGGASItem* Item);
+	bool EquipmentNextExtraItem(const FGameplayTag& EquipmentGameplayTag);
+	bool EquipmentItem(class UKRGGASItem* Item);
+	class UKRGGASItem* GetItemFromEquipmentGameplayTag(const FGameplayTag& GameplayTag) const;
+	bool TakeoffItem(class UKRGGASItem* Item);
 	bool AddDefinition(class UKRGGASDefinition* Definition);
 
 protected:

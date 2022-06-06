@@ -53,6 +53,7 @@ public :
 	static const FGameplayTag AttributePropertyWaterTag;
 	static const FGameplayTag AttributePropertyTreeTag;
 	static const FGameplayTag AttributeFragmentDefaultTag;
+	static const FGameplayTag EquipmentWeaponTag;
 	
 public :
 	static int32 GetDilationPriority(const FGameplayTag& GameplayTag);

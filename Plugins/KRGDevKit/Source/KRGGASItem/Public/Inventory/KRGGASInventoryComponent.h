@@ -35,7 +35,8 @@ public:
 	void SetKRGAbilitySystemComponent(class UKRGAbilitySystemComponent* AbilitySystemComponent);
 
 public :
-	const UKRGGASItem* AddItem(UKRGGASDefinition* Definition);
+	TArray<TSoftObjectPtr<UKRGGASItem>> GetItemsFromTag(const FGameplayTag& Tag);
+	UKRGGASItem* AddItem(UKRGGASDefinition* Definition);
 	bool ActivateItem(const UKRGGASItem* Item, bool bIsActivate);
 	bool RemoveItem(const UKRGGASItem* Item);
 

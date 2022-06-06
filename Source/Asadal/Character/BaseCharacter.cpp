@@ -240,49 +240,49 @@ void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinitio
 	*/
 }
 
-void ABaseCharacter::TryEquipNextWeapon()
-{
-	if(IsDeath())
-	{
-		return;
-	}
-
-	/*
-	if(KRGGASItemDefinitions.Num() > 0)
-	{
-		if(false == ActivateWeaponDefinition.IsValid())
-		{
-			SetEquipInventoryItem(KRGGASItemDefinitions[0]);
-		}
-		else
-		{
-			int32 Index = KRGGASItemDefinitions.Find(ActivateWeaponDefinition.Get());
-
-			if(Index != INDEX_NONE)
-			{				
-				Index = (Index + 1) % KRGGASItemDefinitions.Num();
-
-				SetEquipInventoryItem(KRGGASItemDefinitions[Index]);
-			}
-		}
-	}
-	
-	if(ActivateWeaponDefinition.IsValid())
-	{
-		UKRGGASFragment_EquipableItem* EquipableItemFragment = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
-
-		if(IsValid(EquipableItemFragment))
-		{
-			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipableItemFragment->GetItemGameplayTag());
-
-			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
-			{
-				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
-			}
-		}
-	}
-	*/
-}
+//void ABaseCharacter::TryEquipNextWeapon()
+//{
+//	if(IsDeath())
+//	{
+//		return;
+//	}
+//
+//	/*
+//	if(KRGGASItemDefinitions.Num() > 0)
+//	{
+//		if(false == ActivateWeaponDefinition.IsValid())
+//		{
+//			SetEquipInventoryItem(KRGGASItemDefinitions[0]);
+//		}
+//		else
+//		{
+//			int32 Index = KRGGASItemDefinitions.Find(ActivateWeaponDefinition.Get());
+//
+//			if(Index != INDEX_NONE)
+//			{				
+//				Index = (Index + 1) % KRGGASItemDefinitions.Num();
+//
+//				SetEquipInventoryItem(KRGGASItemDefinitions[Index]);
+//			}
+//		}
+//	}
+//	
+//	if(ActivateWeaponDefinition.IsValid())
+//	{
+//		UKRGGASFragment_EquipableItem* EquipableItemFragment = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
+//
+//		if(IsValid(EquipableItemFragment))
+//		{
+//			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipableItemFragment->GetItemGameplayTag());
+//
+//			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+//			{
+//				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
+//			}
+//		}
+//	}
+//	*/
+//}
 
 void ABaseCharacter::TryAvoid()
 {
@@ -332,6 +332,27 @@ void ABaseCharacter::BeginPlay()
 		DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();
 	}
 
+	if(IsValid(BaseInventoryComponent))
+	{
+		KRGGASWeaponItems = BaseInventoryComponent->GetItemsFromTag(UAsadalGameplayTags::ItemWeaponTag);
+	}
+
+	if(IsValid(BaseEquipmentComponent))
+	{
+		for(TSoftObjectPtr<UKRGGASItem> WeaponItem : KRGGASWeaponItems)
+		{
+			if(false == BaseEquipmentComponent->AddExtraItem(WeaponItem.Get()))
+			{
+				UE_LOG(LogTemp, Display, TEXT("SetItem False"));
+			}
+		}
+		
+		if(KRGGASWeaponItems.Num() > 0)
+		{
+			BaseEquipmentComponent->EquipmentNextExtraItem(UAsadalGameplayTags::EquipmentWeaponTag);
+		}
+	}
+
 	DamageTextSpawnComponents.Empty();
 
 	TArray<UActorComponent*> FindActorComponents;
@@ -347,8 +368,6 @@ void ABaseCharacter::BeginPlay()
 			DamageTextSpawnComponents.Add(SceneComponent);			
 		}		
 	}
-
-	TryEquipNextWeapon();
 
 	for(const FGameplayTag& LooseGameplayTag : AddLooseGameplayTagContainer)
 	{
@@ -597,6 +616,75 @@ void ABaseCharacter::OnHit(const FOnAttributeChangeData& Data)
 	*/
 }
 
+void ABaseCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIsActivate)
+{
+	//이거 PC로 가야하는데 일단은 이대로 간다. (npc가 copy형태라서)
+	if(GameplayTag.MatchesTag(UAsadalGameplayTags::ItemWeaponTag))
+	{
+		if(bIsActivate)
+		{
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
+				LinkSubAnimInstance(AbilityGameplayTag);
+			}		
+		}
+		else
+		{
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				UnLinkSubAnimInstance(AbilityGameplayTag);
+			}
+		}
+	}
+	else if(UAsadalGameplayTags::HitStateGameplayTag == GameplayTag)
+	{
+		if(bIsActivate)
+		{
+			//Material Instance ON
+
+			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			{
+				MaterialInstanceVariable.SetMaterialInstanceParameterWithBackup(GetMesh());
+				MaterialInstanceVariable.StartUpdate();
+			}
+		}
+		else
+		{
+			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			{
+				MaterialInstanceVariable.RollbackMaterialInstanceParameter(GetMesh());
+				MaterialInstanceVariable.EndUpdate();
+			}
+			
+			//Material Instance OFF
+			//UMaterialInstanceDynamic* MaterialInstanceDynamic = GetMesh()->CreateDynamicMaterialInstance(0);
+			//
+			//if(IsValid(MaterialInstanceDynamic))
+			//{
+			//	MaterialInstanceDynamic->SetVectorParameterValue(TEXT("OutLineColor"), FLinearColor(1.f, 0.f, 0.f, 0.f));
+			//}		
+		}
+	}
+	else if(UAsadalGameplayTags::DeathStateGameplayTag == GameplayTag)
+	{
+		if(bIsActivate)
+		{
+			
+		}
+		else
+		{
+			
+		}
+	}
+	
+	UE_LOG(LogTemp, Display, TEXT("OnTagUpdatedEvent : <%s> : <%d>"), *GameplayTag.ToString(),bIsActivate);
+}
+
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)
 {	
 	OnHealthChanged(Data);
@@ -661,46 +749,5 @@ void ABaseCharacter::__OnGEToTargetLatentEventNative(const TArray<FGEEExecEvent>
 
 void ABaseCharacter::__OnTagUpdatedEventNative(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
-	if(UAsadalGameplayTags::HitStateGameplayTag == GameplayTag)
-	{
-		if(bIsActivate)
-		{
-			//Material Instance ON
-
-			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
-			{
-				MaterialInstanceVariable.SetMaterialInstanceParameterWithBackup(GetMesh());
-				MaterialInstanceVariable.StartUpdate();
-			}
-		}
-		else
-		{
-			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
-			{
-				MaterialInstanceVariable.RollbackMaterialInstanceParameter(GetMesh());
-				MaterialInstanceVariable.EndUpdate();
-			}
-			
-			//Material Instance OFF
-			//UMaterialInstanceDynamic* MaterialInstanceDynamic = GetMesh()->CreateDynamicMaterialInstance(0);
-			//
-			//if(IsValid(MaterialInstanceDynamic))
-			//{
-			//	MaterialInstanceDynamic->SetVectorParameterValue(TEXT("OutLineColor"), FLinearColor(1.f, 0.f, 0.f, 0.f));
-			//}		
-		}
-	}
-	else if(UAsadalGameplayTags::DeathStateGameplayTag == GameplayTag)
-	{
-		if(bIsActivate)
-		{
-			
-		}
-		else
-		{
-			
-		}
-	}
-	
-	UE_LOG(LogTemp, Display, TEXT("<%s> : <%d>"), *GameplayTag.ToString(),bIsActivate);
+	OnTagUpdatedEvent(GameplayTag, bIsActivate);
 }

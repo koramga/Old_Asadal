@@ -87,6 +87,24 @@ bool APCCharacter::TryActivateSkillByIndex(int32 Index)
 void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
 	Super::TryActivateEquipment(GameplayTag, bIsActivate);
+
+	UKRGGASItem* Item = BaseEquipmentComponent->GetItemFromEquipmentGameplayTag(UAsadalGameplayTags::EquipmentWeaponTag);
+
+	if(IsValid(Item))
+	{
+		TArray<TSoftObjectPtr<AActor>>& SpawnActors = Item->GetSpawnActors();
+
+		for(TSoftObjectPtr<AActor> SpawnEquipmentActor : SpawnActors)
+		{
+			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(SpawnEquipmentActor.Get());
+
+			if(IsValid(BaseWeapon))
+			{
+				BaseWeapon->SetActivateCollision(bIsActivate);
+			}
+		}
+	}
+	
 	/*
 	if(ActivateWeaponDefinition.IsValid())
 	{
@@ -107,6 +125,16 @@ void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bI
 	*/
 }
 
+void APCCharacter::TryEquipNextWeapon()
+{
+	if(IsDeath())
+	{
+		return;
+	}
+
+	BaseEquipmentComponent->EquipmentNextExtraItem(UAsadalGameplayTags::EquipmentWeaponTag);
+}
+
 // Called when the game starts or when spawned
 void APCCharacter::BeginPlay()
 {
@@ -117,6 +145,39 @@ void APCCharacter::BeginPlay()
 void APCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void APCCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIsActivate)
+{
+	/*
+	if(GameplayTag.MatchesTag(UAsadalGameplayTags::ItemWeaponTag))
+	{
+		if(bIsActivate)
+		{
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
+				LinkSubAnimInstance(AbilityGameplayTag);
+			}		
+		}
+		else
+		{
+			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
+
+			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			{
+				UnLinkSubAnimInstance(AbilityGameplayTag);
+			}
+		}
+	}
+	else
+	{
+		Super::OnTagUpdatedEvent(GameplayTag, bIsActivate);
+	}
+	*/
+	Super::OnTagUpdatedEvent(GameplayTag, bIsActivate);
 }
 
 //bool APCCharacter::HasSkill(uint32_t Index)

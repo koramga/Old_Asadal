@@ -8,6 +8,7 @@
 #include "Equipment/KRGGASEquipment.h"
 #include "Equipment/Fragment/KRGGASFragment_Eqipment.h"
 #include "GAS/KRGAbilitySystemComponent.h"
+#include "Item/KRGGASItem.h"
 
 // Sets default values for this component's properties
 UKRGGASEquipmentComponent::UKRGGASEquipmentComponent()
@@ -22,6 +23,96 @@ UKRGGASEquipmentComponent::UKRGGASEquipmentComponent()
 void UKRGGASEquipmentComponent::SetKRGAbilitySystemComponent(UKRGAbilitySystemComponent* AbilitySystemComponent)
 {
 	KRGAbilitySystemComponent = AbilitySystemComponent;
+}
+
+TSoftObjectPtr<UKRGGASEquipment> UKRGGASEquipmentComponent::FindEquipmentFromItem(UKRGGASItem* Item)
+{
+	FGameplayTagContainer GameplayTagContainer = Item->GetEquipmentGameplayTag();
+
+	if(GameplayTagContainer.Num() > 0)
+	{
+		for(TSoftObjectPtr<UKRGGASEquipment> Equipment : KRGGASEquipments)
+		{
+			FGameplayTag EquipmentGameplayTag = Equipment->GetEquipmentGameplayTag();
+			
+			if(GameplayTagContainer.HasTag(EquipmentGameplayTag))
+			{
+				return Equipment;
+			}
+		}
+	}
+	
+	return nullptr;
+}
+
+TSoftObjectPtr<UKRGGASEquipment> UKRGGASEquipmentComponent::FindEquipmentFromGameplayTag(
+	const FGameplayTag& GameplayTag)
+{
+	for(TSoftObjectPtr<UKRGGASEquipment> Equipment : KRGGASEquipments)
+	{
+		FGameplayTag EquipmentGameplayTag = Equipment->GetEquipmentGameplayTag();
+		
+		if(EquipmentGameplayTag == GameplayTag)
+		{
+			return Equipment;
+		}
+	}
+	
+	return nullptr;	
+}
+
+bool UKRGGASEquipmentComponent::AddExtraItem(UKRGGASItem* Item)
+{
+	TSoftObjectPtr<UKRGGASEquipment> EquipmentFragment = FindEquipmentFromItem(Item);
+	
+	if(EquipmentFragment.IsValid())
+	{
+		return EquipmentFragment->AddExtraItem(Item);
+	}
+
+	return false;
+}
+
+bool UKRGGASEquipmentComponent::EquipmentNextExtraItem(const FGameplayTag& EquipmentGameplayTag)
+{
+	TSoftObjectPtr<UKRGGASEquipment> KRGGASEquipment = FindEquipmentFromGameplayTag(EquipmentGameplayTag);
+
+	if(KRGGASEquipment.IsValid())
+	{
+		return KRGGASEquipment->SetActivateNextExtraItem();
+	}
+
+	return false;
+}
+
+bool UKRGGASEquipmentComponent::EquipmentItem(UKRGGASItem* Item)
+{
+	TSoftObjectPtr<UKRGGASEquipment> EquipmentFragment = FindEquipmentFromItem(Item);
+	
+	if(EquipmentFragment.IsValid())
+	{
+		return EquipmentFragment->SetActivateItem(Item);
+	}
+
+	return false;
+}
+
+UKRGGASItem* UKRGGASEquipmentComponent::GetItemFromEquipmentGameplayTag(const FGameplayTag& GameplayTag) const
+{
+	for(TSoftObjectPtr<UKRGGASEquipment> KRGGASEquipment : KRGGASEquipments)
+	{
+		if(KRGGASEquipment->GetEquipmentGameplayTag() == GameplayTag)
+		{
+			return KRGGASEquipment->GetActivateItem();
+		}
+	}
+
+	return nullptr;
+}
+
+bool UKRGGASEquipmentComponent::TakeoffItem(UKRGGASItem* Item)
+{
+	return false;
 }
 
 bool UKRGGASEquipmentComponent::AddDefinition(UKRGGASDefinition* Definition)

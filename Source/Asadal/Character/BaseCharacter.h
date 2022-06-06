@@ -42,7 +42,7 @@ public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
 	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefinition);
-	virtual void TryEquipNextWeapon();
+	//virtual void TryEquipNextWeapon();
 	virtual void TryAvoid();
 	bool IsDeath() const;
 
@@ -58,6 +58,7 @@ protected:
 	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
 	virtual void UpdateDeath(bool bIsDeath);
 	virtual void OnHit(const FOnAttributeChangeData& Data);
+	virtual void OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIsActivate);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -86,6 +87,8 @@ protected:
 
 	//TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
 	//TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
+
+	TArray<TSoftObjectPtr<UKRGGASItem>>					KRGGASWeaponItems;
 
 	TArray<TSoftObjectPtr<USceneComponent>>						DamageTextSpawnComponents;
 

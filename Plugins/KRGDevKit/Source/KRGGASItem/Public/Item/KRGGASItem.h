@@ -21,6 +21,7 @@ class KRGGASITEM_API UKRGGASItem : public UKRGGASDefinitionObject
 public :
 	FGameplayTag GetItemGameplayTag() const;
 	FGameplayTagContainer GetEquipmentGameplayTag() const;
+	TArray<TSoftObjectPtr<class AActor>>& GetSpawnActors();
 	
 protected:
 	virtual bool CanUpdateDefinition(UKRGGASDefinition* Definition) const override;

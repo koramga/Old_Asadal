@@ -31,6 +31,11 @@ FGameplayTagContainer UKRGGASItem::GetEquipmentGameplayTag() const
 	return FGameplayTagContainer();
 }
 
+TArray<TSoftObjectPtr<AActor>>& UKRGGASItem::GetSpawnActors()
+{
+	return SpawnActors;
+}
+
 bool UKRGGASItem::CanUpdateDefinition(UKRGGASDefinition* Definition) const
 {
 	if(false == Super::CanUpdateDefinition(Definition))

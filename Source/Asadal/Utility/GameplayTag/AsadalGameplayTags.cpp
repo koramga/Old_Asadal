@@ -40,6 +40,7 @@ FGameplayTag const UAsadalGameplayTags::AttributePropertyFireTag = FGameplayTag:
 FGameplayTag const UAsadalGameplayTags::AttributePropertyWaterTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Property.Water"));
 FGameplayTag const UAsadalGameplayTags::AttributePropertyTreeTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Property.Tree"));
 FGameplayTag const UAsadalGameplayTags::AttributeFragmentDefaultTag = FGameplayTag::RequestGameplayTag(TEXT("Attribute.Fragment.Default"));
+FGameplayTag const UAsadalGameplayTags::EquipmentWeaponTag = FGameplayTag::RequestGameplayTag(TEXT("Equipment.Weapon"));
 
 int32 UAsadalGameplayTags::GetDilationPriority(const FGameplayTag& GameplayTag)
 {

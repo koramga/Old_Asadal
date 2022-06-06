@@ -6,71 +6,133 @@
 #include "Equipment/Fragment/KRGGASFragment_Eqipment.h"
 #include "Item/KRGGASItem.h"
 
-bool UKRGGASEquipment::CanPushItem(UKRGGASItem* Item) const
+bool UKRGGASEquipment::AddExtraItem(UKRGGASItem* Item)
 {
-	if(KRGGASDefinition.IsValid()
-		&& IsValid(Item))
+	if(CanActivateItem(Item))
 	{
-		FGameplayTagContainer EquipmentGameplayTags = Item->GetEquipmentGameplayTag();
-
-		if(EquipmentGameplayTags.Num() > 0)
-		{
-			UKRGGASFragment_Eqipment* Equipment = KRGGASDefinition->FindFragment<UKRGGASFragment_Eqipment>();
-
-			if(IsValid(Equipment))
-			{
-				return EquipmentGameplayTags.HasTag(Equipment->GetEquipmentGameplayTag());
-			}			
-		}
+		ExtraItems.Add(Item);
+		return true;
 	}
 
 	return false;
 }
 
-bool UKRGGASEquipment::PushItem(UKRGGASItem* Item)
+bool UKRGGASEquipment::SetActivateNextExtraItem()
 {
-	if(CanPushItem(Item))
+	int32 ExtraItemIndex = ExtraItems.Find(ActivateItem);
+	int32 NextExtraIndex = 0;
+
+	if(ExtraItemIndex != INDEX_NONE)
 	{
-		if(false == Items.Contains(Item))
-		{
-			Items.Add(Item);
-			return true;
-		}
+		NextExtraIndex = (ExtraItemIndex + 1) % ExtraItems.Num();
 	}
 
-	return false;
+	return SetActivateItem(ExtraItems[NextExtraIndex].Get());
 }
 
 bool UKRGGASEquipment::SetActivateItem(UKRGGASItem* Item)
 {
+	if(CanActivateItem(Item))
+	{
+		UpdateActivateItem(Item);
+
+		return true;
+	}
+
+	return false;
+}
+
+FGameplayTag UKRGGASEquipment::GetEquipmentGameplayTag() const
+{
+	UKRGGASFragment_Eqipment* Equipment = KRGGASDefinition->FindFragment<UKRGGASFragment_Eqipment>();
+
+	if(IsValid(Equipment))
+	{
+		return Equipment->GetEquipmentGameplayTag();
+	}
+
+	return FGameplayTag::EmptyTag;
+}
+
+UKRGGASItem* UKRGGASEquipment::GetActivateItem() const
+{
+	if(ActivateItem.IsValid())
+	{
+		return ActivateItem.Get();
+	}
+
+	return nullptr;
+}
+
+bool UKRGGASEquipment::CanActivateItem(UKRGGASItem* Item) const
+{
+	if(false == KRGGASDefinition.IsValid())
+	{
+		return false;
+	}
+
+	if(false == IsValid(Item))
+	{
+		return false;
+	}
+	
 	if(false == KRGAbilitySystemComponent.IsValid())
 	{
 		return false;
 	}
 	
-	if(Items.Contains(Item))
+	FGameplayTagContainer EquipmentGameplayTags = Item->GetEquipmentGameplayTag();
+
+	if(EquipmentGameplayTags.Num() <= 0)
 	{
-		if(ActivateItem.IsValid()
-			&& ActivateItem != Item)
-		{
-			if(false == ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), false))
-			{
-				return false;
-			}
-		}
+		return false;
+	}
+	
+	UKRGGASFragment_Eqipment* EquipmentFragment = KRGGASDefinition->FindFragment<UKRGGASFragment_Eqipment>();
 
-		ActivateItem = Item;
-
-		if(ActivateItem.IsValid())
+	if(false == IsValid(EquipmentFragment))
+	{
+		return false;
+	}
+	
+	if(false == EquipmentGameplayTags.HasTag(EquipmentFragment->GetEquipmentGameplayTag()))
+	{
+		return false;
+	}
+	
+	if(ActivateItem.IsValid())
+	{
+		if(false == ActivateItem->CanActivate(KRGAbilitySystemComponent.Get(), false))
 		{
-			if(false == ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), true))
-			{
-				return false;
-			}
+			return false;
+		}		
+	}
+
+	if(IsValid(Item))
+	{
+		if(false == Item->CanActivate(KRGAbilitySystemComponent.Get(), true))
+		{
+			return false;
 		}
 	}
 
 	return true;
+}
+
+void UKRGGASEquipment::UpdateActivateItem(UKRGGASItem* Item)
+{
+	if(ActivateItem.IsValid()
+		&& ActivateItem != Item)
+	{
+		check(ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), false));
+	}
+
+	ActivateItem = Item;
+
+	if(ActivateItem.IsValid())
+	{
+		check(ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), true));
+	}
 }
 
 bool UKRGGASEquipment::CanUpdateDefinition(UKRGGASDefinition* Definition) const

@@ -21,18 +21,31 @@ void UKRGGASInventoryComponent::SetKRGAbilitySystemComponent(UKRGAbilitySystemCo
 	KRGAbilitySystemComponent = AbilitySystemComponent;
 }
 
-const UKRGGASItem* UKRGGASInventoryComponent::AddItem(UKRGGASDefinition* Definition)
+TArray<TSoftObjectPtr<UKRGGASItem>> UKRGGASInventoryComponent::GetItemsFromTag(const FGameplayTag& Tag)
+{
+	TArray<TSoftObjectPtr<UKRGGASItem>> KRGGASItems;
+	
+	for(const FKRGInventoryItem& KRGInventoryItem : KRGInventoryItems)
+	{
+		if(KRGInventoryItem.Item->GetItemGameplayTag().MatchesTag(Tag))
+		{
+			KRGGASItems.Add(KRGInventoryItem.Item.Get());
+		}
+	}
+
+	return KRGGASItems;
+}
+
+UKRGGASItem* UKRGGASInventoryComponent::AddItem(UKRGGASDefinition* Definition)
 {
 	if(IsValid(Definition))
 	{
-		if(IsValid(Definition->FindFragment<UKRGGASFragment_Item>()))
-		{
-			FKRGInventoryItem KRGInventoryItem;
+		FKRGInventoryItem KRGInventoryItem;
 
-			KRGInventoryItem.Item = NewObject<UKRGGASItem>();
+		KRGInventoryItem.Item = NewObject<UKRGGASItem>();
 			
-			KRGInventoryItem.Item->SetDefinition(Definition);
-	
+		if(KRGInventoryItem.Item->SetDefinition(Definition))
+		{
 			KRGInventoryItems.Add(KRGInventoryItem);
 
 			return KRGInventoryItem.Item.Get();
