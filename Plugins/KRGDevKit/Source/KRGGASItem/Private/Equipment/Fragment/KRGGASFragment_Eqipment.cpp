@@ -3,7 +3,7 @@
 
 #include "Equipment/Fragment/KRGGASFragment_Eqipment.h"
 
-FGameplayTag UKRGGASFragment_Eqipment::GetEquipableGameplayTag() const
+FGameplayTag UKRGGASFragment_Eqipment::GetEquipmentGameplayTag() const
 {
-	return EquipableGameplayTag;
+	return EquipmentGameplayTag;
 }

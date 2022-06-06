@@ -34,8 +34,12 @@ class KRGGASITEM_API UKRGGASFragment_EquipableItem : public UKRGGASFragment_Item
 public :
 	const TArray<FKRGEquipmentItemFragmentDefinition>& GetEquipmentItemDefinitions() const;
 	TSubclassOf<class UGameplayEffect>	GetGameplayEffectClass() const;
+	FGameplayTagContainer GetEquipmentGameplayTags();
 	
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTagContainer									EquipmentGameplayTags;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FKRGEquipmentItemFragmentDefinition>				EquipmentItemDefinitions;
 

@@ -38,7 +38,7 @@ bool UKRGGASEquipmentComponent::AddDefinition(UKRGGASDefinition* Definition)
 			UKRGGASEquipment* KRGGASEquipment = NewObject<UKRGGASEquipment>();
 
 			KRGGASEquipment->SetDefinition(Definition);
-			KRGGASEquipment->SetAbilitySystemComponent(KRGAbilitySystemComponent.Get());
+			KRGGASEquipment->SetKRGAbilitySystemComponent(KRGAbilitySystemComponent.Get());
 
 			KRGGASEquipments.Add(KRGGASEquipment);
 

@@ -6,6 +6,7 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "Definition/KRGGASDefinition.h"
+#include "Definition/KRGGASDefinitionObject.h"
 #include "UObject/Object.h"
 #include "KRGGASItem.generated.h"
 
@@ -13,15 +14,17 @@
  * 
  */
 UCLASS()
-class KRGGASITEM_API UKRGGASItem : public UObject
+class KRGGASITEM_API UKRGGASItem : public UKRGGASDefinitionObject
 {
 	GENERATED_BODY()
 	
 public :
-	void SetDefinition(UKRGGASDefinition* Definition);
 	FGameplayTag GetItemGameplayTag() const;
+	FGameplayTagContainer GetEquipmentGameplayTag() const;
 	
 protected:
+	virtual bool CanUpdateDefinition(UKRGGASDefinition* Definition) const override;
+	virtual void UpdateDefinition(UKRGGASDefinition* Definition) override;
 	virtual void OnActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
 	virtual void Clear();
 	
@@ -31,7 +34,6 @@ public :
 	bool SetActivate(class UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate);
 	
 protected:
-	TSoftObjectPtr<UKRGGASDefinition>				KRGGASDefinition;
 	FActiveGameplayEffectHandle						ActivateGameplayEffectHandle;
 	TArray<TSoftObjectPtr<class AActor>>			SpawnActors;
 	bool											IsActivateItem = false;

@@ -7,16 +7,6 @@
 #include "Item/Fragment/KRGGASFragment_Item.h"
 #include "GAS/KRGAbilitySystemComponent.h"
 
-void UKRGGASItem::SetDefinition(UKRGGASDefinition* Definition)
-{
-	if(KRGGASDefinition.IsValid())
-	{
-		Clear();
-	}
-
-	KRGGASDefinition = Definition;
-}
-
 FGameplayTag UKRGGASItem::GetItemGameplayTag() const
 {
 	UKRGGASFragment_Item* Item = KRGGASDefinition->FindFragment<UKRGGASFragment_Item>();
@@ -27,6 +17,43 @@ FGameplayTag UKRGGASItem::GetItemGameplayTag() const
 	}
 
 	return FGameplayTag::EmptyTag;
+}
+
+FGameplayTagContainer UKRGGASItem::GetEquipmentGameplayTag() const
+{
+	UKRGGASFragment_EquipableItem* Item = KRGGASDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
+
+	if(IsValid(Item))
+	{
+		return Item->GetEquipmentGameplayTags();
+	}
+
+	return FGameplayTagContainer();
+}
+
+bool UKRGGASItem::CanUpdateDefinition(UKRGGASDefinition* Definition) const
+{
+	if(false == Super::CanUpdateDefinition(Definition))
+	{
+		return false;
+	}
+
+	if(false == HasFragment<UKRGGASFragment_Item>(Definition))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UKRGGASItem::UpdateDefinition(UKRGGASDefinition* Definition)
+{
+	if(KRGGASDefinition.IsValid())
+	{
+		Clear();
+	}
+
+	return Super::UpdateDefinition(Definition);
 }
 
 void UKRGGASItem::OnActivate(UKRGAbilitySystemComponent* AbilitySystemComponent, bool bIsActivate)

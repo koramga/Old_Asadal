@@ -14,3 +14,8 @@ TSubclassOf<UGameplayEffect> UKRGGASFragment_EquipableItem::GetGameplayEffectCla
 {
 	return GameplayEffectClass;
 }
+
+FGameplayTagContainer UKRGGASFragment_EquipableItem::GetEquipmentGameplayTags()
+{
+	return EquipmentGameplayTags;
+}

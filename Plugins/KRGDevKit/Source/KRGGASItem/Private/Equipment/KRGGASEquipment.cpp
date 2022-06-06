@@ -6,28 +6,21 @@
 #include "Equipment/Fragment/KRGGASFragment_Eqipment.h"
 #include "Item/KRGGASItem.h"
 
-void UKRGGASEquipment::SetDefinition(UKRGGASDefinition* Definition)
-{
-	KRGGASDefinition = Definition;
-}
-
-void UKRGGASEquipment::SetAbilitySystemComponent(UKRGAbilitySystemComponent* InAbilitySystemComponent)
-{
-	AbilitySystemComponent = InAbilitySystemComponent;
-}
-
 bool UKRGGASEquipment::CanPushItem(UKRGGASItem* Item) const
 {
 	if(KRGGASDefinition.IsValid()
 		&& IsValid(Item))
 	{
-		UKRGGASFragment_Eqipment* Equipment = KRGGASDefinition->FindFragment<UKRGGASFragment_Eqipment>();
+		FGameplayTagContainer EquipmentGameplayTags = Item->GetEquipmentGameplayTag();
 
-		if(IsValid(Equipment))
+		if(EquipmentGameplayTags.Num() > 0)
 		{
-			FGameplayTag EquipableGameplayTag = Equipment->GetEquipableGameplayTag();
-			
-			return Item->GetItemGameplayTag().MatchesTag(EquipableGameplayTag);
+			UKRGGASFragment_Eqipment* Equipment = KRGGASDefinition->FindFragment<UKRGGASFragment_Eqipment>();
+
+			if(IsValid(Equipment))
+			{
+				return EquipmentGameplayTags.HasTag(Equipment->GetEquipmentGameplayTag());
+			}			
 		}
 	}
 
@@ -50,7 +43,7 @@ bool UKRGGASEquipment::PushItem(UKRGGASItem* Item)
 
 bool UKRGGASEquipment::SetActivateItem(UKRGGASItem* Item)
 {
-	if(false == AbilitySystemComponent.IsValid())
+	if(false == KRGAbilitySystemComponent.IsValid())
 	{
 		return false;
 	}
@@ -60,7 +53,7 @@ bool UKRGGASEquipment::SetActivateItem(UKRGGASItem* Item)
 		if(ActivateItem.IsValid()
 			&& ActivateItem != Item)
 		{
-			if(false == ActivateItem->SetActivate(AbilitySystemComponent.Get(), false))
+			if(false == ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), false))
 			{
 				return false;
 			}
@@ -70,11 +63,26 @@ bool UKRGGASEquipment::SetActivateItem(UKRGGASItem* Item)
 
 		if(ActivateItem.IsValid())
 		{
-			if(false == ActivateItem->SetActivate(AbilitySystemComponent.Get(), true))
+			if(false == ActivateItem->SetActivate(KRGAbilitySystemComponent.Get(), true))
 			{
 				return false;
 			}
 		}
+	}
+
+	return true;
+}
+
+bool UKRGGASEquipment::CanUpdateDefinition(UKRGGASDefinition* Definition) const
+{
+	if(false == Super::CanUpdateDefinition(Definition))
+	{
+		return false;
+	}
+
+	if(false == HasFragment<UKRGGASFragment_Eqipment>(Definition))
+	{
+		return false;
 	}
 
 	return true;

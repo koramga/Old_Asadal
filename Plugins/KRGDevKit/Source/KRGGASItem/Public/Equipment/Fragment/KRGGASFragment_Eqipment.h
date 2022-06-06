@@ -17,12 +17,12 @@ class KRGGASITEM_API UKRGGASFragment_Eqipment : public UKRGGASFragment
 	GENERATED_BODY()
 
 public :
-	FGameplayTag GetEquipableGameplayTag() const;
+	FGameplayTag GetEquipmentGameplayTag() const;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName					DisplayName;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayTag			EquipableGameplayTag;
+	FGameplayTag			EquipmentGameplayTag;
 };

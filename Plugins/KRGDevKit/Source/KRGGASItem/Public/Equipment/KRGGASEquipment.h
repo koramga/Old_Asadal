@@ -3,19 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Definition/KRGGASDefinitionObject.h"
 #include "KRGGASEquipment.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class KRGGASITEM_API UKRGGASEquipment : public UObject
+class KRGGASITEM_API UKRGGASEquipment : public UKRGGASDefinitionObject
 {
 	GENERATED_BODY()
-
-public :
-	void SetDefinition(class UKRGGASDefinition* Definition);
-	void SetAbilitySystemComponent(class UKRGAbilitySystemComponent* InAbilitySystemComponent);
 
 public :
 	bool CanPushItem(class UKRGGASItem* Item) const;
@@ -23,8 +20,9 @@ public :
 	bool SetActivateItem(class UKRGGASItem* Item);
 
 protected:
-	TSoftObjectPtr<class UKRGGASDefinition>				KRGGASDefinition;
+	virtual bool CanUpdateDefinition(UKRGGASDefinition* Definition) const override;
+
+protected:
 	TSoftObjectPtr<class UKRGGASItem>					ActivateItem;
 	TArray<TSoftObjectPtr<class UKRGGASItem>>			Items;
-	TSoftObjectPtr<class UKRGAbilitySystemComponent>	AbilitySystemComponent;
 };
