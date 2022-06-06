@@ -19,15 +19,20 @@ bool UKRGGASEquipment::AddExtraItem(UKRGGASItem* Item)
 
 bool UKRGGASEquipment::SetActivateNextExtraItem()
 {
-	int32 ExtraItemIndex = ExtraItems.Find(ActivateItem);
-	int32 NextExtraIndex = 0;
-
-	if(ExtraItemIndex != INDEX_NONE)
+	if(ExtraItems.Num() > 0)
 	{
-		NextExtraIndex = (ExtraItemIndex + 1) % ExtraItems.Num();
+		int32 ExtraItemIndex = ExtraItems.Find(ActivateItem);
+		int32 NextExtraIndex = 0;
+
+		if(ExtraItemIndex != INDEX_NONE)
+		{
+			NextExtraIndex = (ExtraItemIndex + 1) % ExtraItems.Num();
+		}
+
+		return SetActivateItem(ExtraItems[NextExtraIndex].Get());
 	}
 
-	return SetActivateItem(ExtraItems[NextExtraIndex].Get());
+	return false;
 }
 
 bool UKRGGASEquipment::SetActivateItem(UKRGGASItem* Item)

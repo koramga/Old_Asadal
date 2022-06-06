@@ -24,7 +24,7 @@ public :
 	UTexture2D* GetPCSkillIconByIndex(int32 Index);
 	bool TryActivateSkillByIndex(int32 Index);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate) override;
-	virtual void TryEquipNextWeapon();
+	virtual void TryEquipNextWeapon() override;
 	
 protected:
 	// Called when the game starts or when spawned

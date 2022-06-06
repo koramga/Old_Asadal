@@ -191,6 +191,34 @@ void ABaseCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool 
 {
 }
 
+void ABaseCharacter::TryEquipNextWeapon()
+{	
+	if(IsDeath())
+	{
+		return;
+	}
+
+	if(BaseEquipmentComponent->EquipmentNextExtraItem(UAsadalGameplayTags::EquipmentWeaponTag))
+	{
+		UKRGGASItem* Item = BaseEquipmentComponent->GetItemFromEquipmentGameplayTag(UAsadalGameplayTags::EquipmentWeaponTag);
+
+		if(IsValid(Item))
+		{
+			TArray<TSoftObjectPtr<AActor>>& SpawnActors = Item->GetSpawnActors();
+
+			for(TSoftObjectPtr<AActor> SpawnEquipmentActor : SpawnActors)
+			{
+				ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(SpawnEquipmentActor.Get());
+
+				if(IsValid(BaseWeapon))
+				{
+					BaseWeapon->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
+				}
+			}
+		}
+	}
+}
+
 void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefition)
 {
 	if(false == KRGGASDefition.IsValid())
@@ -343,15 +371,12 @@ void ABaseCharacter::BeginPlay()
 		{
 			if(false == BaseEquipmentComponent->AddExtraItem(WeaponItem.Get()))
 			{
-				UE_LOG(LogTemp, Display, TEXT("SetItem False"));
+				UE_LOG(LogTemp, Display, TEXT("AddExtraItem Failed"));
 			}
 		}
-		
-		if(KRGGASWeaponItems.Num() > 0)
-		{
-			BaseEquipmentComponent->EquipmentNextExtraItem(UAsadalGameplayTags::EquipmentWeaponTag);
-		}
 	}
+
+	TryEquipNextWeapon();
 
 	DamageTextSpawnComponents.Empty();
 

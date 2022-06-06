@@ -41,6 +41,7 @@ public:
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
+	virtual void TryEquipNextWeapon();
 	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefinition);
 	//virtual void TryEquipNextWeapon();
 	virtual void TryAvoid();

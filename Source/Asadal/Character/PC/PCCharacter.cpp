@@ -127,12 +127,7 @@ void APCCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bI
 
 void APCCharacter::TryEquipNextWeapon()
 {
-	if(IsDeath())
-	{
-		return;
-	}
-
-	BaseEquipmentComponent->EquipmentNextExtraItem(UAsadalGameplayTags::EquipmentWeaponTag);
+	Super::TryEquipNextWeapon();
 }
 
 // Called when the game starts or when spawned
