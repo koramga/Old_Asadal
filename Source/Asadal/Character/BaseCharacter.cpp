@@ -12,6 +12,7 @@
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "Asadal/Animation/Instance/BaseAnimInstance.h"
 #include "Asadal/Actor/DamageText/TextActor.h"
+#include "Asadal/Controller/NPC/NPCController.h"
 #include "Asadal/Controller/PC/PCController.h"
 #include "Asadal/Game/GameMode/MainGameMode.h"
 #include "Asadal/Utility/GameplayTag/AsadalGameplayTags.h"
@@ -20,7 +21,11 @@
 #include "Asadal/GAS/Ability/BaseGameplayAbility.h"
 #include "Asadal/GAS/AttributeSet/LifeAttributeSet.h"
 #include "GameFramework/GameModeBase.h"
-#include "KRGGASItem/Public/Item/Fragment/KRGGASFragment_EquipableItem.h"
+#include "Kismet/GameplayStatics.h"
+#include "Camera/CameraComponent.h"
+#include "Asadal/Widget/Screen/ScreenCharacterStatusWidget.h"
+#include "Components/WidgetComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -38,11 +43,17 @@ ABaseCharacter::ABaseCharacter()
 		BaseInventoryComponent->SetKRGAbilitySystemComponent(GASComponent);
 	}
 
-	if(IsValid(GASComponent))
-	{
-		
-	}
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	
+	//Arm을 Root에 붙여준다.
+	SpringArmComponent->SetupAttachment(RootComponent);
+
+	//Camera를 Arm에 붙여준다.
+	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	SpringArmComponent->SetActive(false);
+	CameraComponent->SetActive(false);
 }
 
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
@@ -183,12 +194,41 @@ void ABaseCharacter::UnLinkSubAnimInstance(const FGameplayTag& GameplayTag)
 	}
 }
 
+UTexture2D* ABaseCharacter::GetAbilityIconByIndex(int32 Index)
+{
+	const FGameplayAbilityActionGroup* AbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
+	
+	if(nullptr != AbilityActionGroup
+		&& AbilityActionGroup->AttackAbilityFragmentHandles.Num() > Index)
+	{
+		return AbilityActionGroup->AttackAbilityFragmentHandles[Index].KRGGASAbilityInfo->IconTexture;
+	}
+
+	return nullptr;
+}
+
 void ABaseCharacter::SetActivateCollision(const FString& Name, bool bIsActivate)
 {
 }
 
 void ABaseCharacter::TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate)
 {
+	UKRGGASItem* Item = BaseEquipmentComponent->GetItemFromEquipmentGameplayTag(UAsadalGameplayTags::EquipmentWeaponTag);
+
+	if(IsValid(Item))
+	{
+		TArray<TSoftObjectPtr<AActor>>& SpawnActors = Item->GetSpawnActors();
+
+		for(TSoftObjectPtr<AActor> SpawnEquipmentActor : SpawnActors)
+		{
+			ABaseWeapon* BaseWeapon = Cast<ABaseWeapon>(SpawnEquipmentActor.Get());
+
+			if(IsValid(BaseWeapon))
+			{
+				BaseWeapon->SetActivateCollision(bIsActivate);
+			}
+		}
+	}
 }
 
 void ABaseCharacter::TryEquipNextWeapon()
@@ -219,104 +259,48 @@ void ABaseCharacter::TryEquipNextWeapon()
 	}
 }
 
-void ABaseCharacter::SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefition)
-{
-	if(false == KRGGASDefition.IsValid())
-	{
-		return;
-	}
-	/*
-	UKRGGASFragment_EquipableItem* FragmentEquippableItem = KRGGASDefition->FindFragment<UKRGGASFragment_EquipableItem>();
-
-	if(IsValid(FragmentEquippableItem))
-	{
-		if(FragmentEquippableItem->HasGameplayTag(UAsadalGameplayTags::ItemWeaponTag))
-		{
-			//Weapon입니다.
-
-			if(KRGGASDefition != ActivateWeaponDefinition)
-			{
-				if(ActivateWeaponDefinition.IsValid())
-				{
-					UKRGGASFragment_EquipableItem* EquipmentFragmentEquippableItem = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
-
-					EquipmentFragmentEquippableItem->SetActivate(GASComponent, false);
-					UnLinkSubAnimInstance(EquipmentFragmentEquippableItem->GetItemGameplayTag());
-				}
-
-				if(IsValid(FragmentEquippableItem))
-				{
-					FragmentEquippableItem->SetActivate(GASComponent, true);
-					LinkSubAnimInstance(FragmentEquippableItem->GetItemGameplayTag());
-					const TArray<TSoftObjectPtr<AActor>>& Equipments = FragmentEquippableItem->GetSpawnEquipmentActors();
-
-					for(const TSoftObjectPtr<AActor>& Equipment : Equipments)
-					{
-						ABaseEquipment* BaseEquipment = Cast<ABaseEquipment>(Equipment.Get());
-
-						if(IsValid(BaseEquipment))
-						{
-							BaseEquipment->OnEquipmentOverlapEvent.AddDynamic(this, &ABaseCharacter::__OnEquipmentOverlapEventNative);
-						}						
-					}
-				}
-
-				ActivateWeaponDefinition = KRGGASDefition;
-			}
-		}
-	}
-	*/
-}
-
-//void ABaseCharacter::TryEquipNextWeapon()
-//{
-//	if(IsDeath())
-//	{
-//		return;
-//	}
-//
-//	/*
-//	if(KRGGASItemDefinitions.Num() > 0)
-//	{
-//		if(false == ActivateWeaponDefinition.IsValid())
-//		{
-//			SetEquipInventoryItem(KRGGASItemDefinitions[0]);
-//		}
-//		else
-//		{
-//			int32 Index = KRGGASItemDefinitions.Find(ActivateWeaponDefinition.Get());
-//
-//			if(Index != INDEX_NONE)
-//			{				
-//				Index = (Index + 1) % KRGGASItemDefinitions.Num();
-//
-//				SetEquipInventoryItem(KRGGASItemDefinitions[Index]);
-//			}
-//		}
-//	}
-//	
-//	if(ActivateWeaponDefinition.IsValid())
-//	{
-//		UKRGGASFragment_EquipableItem* EquipableItemFragment = ActivateWeaponDefinition->FindFragment<UKRGGASFragment_EquipableItem>();
-//
-//		if(IsValid(EquipableItemFragment))
-//		{
-//			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(EquipableItemFragment->GetItemGameplayTag());
-//
-//			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
-//			{
-//				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
-//			}
-//		}
-//	}
-//	*/
-//}
-
 void ABaseCharacter::TryAvoid()
 {
 	if(IsValid(GASComponent))
 	{
 		GASComponent->TryAvoidAbilityFromActionGroup();
+	}
+}
+
+bool ABaseCharacter::TryAttackAbilityByIndex(int32 Index)
+{
+	return GASComponent->TryAttackAbilityFromActionGroup(Index);
+}
+
+void ABaseCharacter::InputMoveForward(float Value)
+{
+	if (IsValid(Controller))
+	{
+		//if (Cast<ACPlayerController>(Controller)->bOnClick) return;
+		// find out which way is forward
+		//const FRotator Rotation = Controller->GetControlRotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator YawRotation(0, QUARTER_VIEW_ANGLE, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
+	}
+}
+
+void ABaseCharacter::InputMoveRight(float Value)
+{
+	if (IsValid(Controller))
+	{
+		//	if (Cast<ACPlayerController>(Controller)->bOnClick) return;
+		// find out which way is right
+		//const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, QUARTER_VIEW_ANGLE, 0.f);
+
+		// get right vector 
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		// add movement in that direction
+		AddMovementInput(Direction, Value);
 	}
 }
 
@@ -337,15 +321,6 @@ void ABaseCharacter::BeginPlay()
 	{
 		GASComponent->OnGEExecLatentEvent.AddDynamic(this, &ABaseCharacter::__OnGEToTargetLatentEventNative);
 		GASComponent->OnTagUpdatedEvent.AddDynamic(this, &ABaseCharacter::__OnTagUpdatedEventNative);
-		
-		// Init starting data
-		//for (int32 i=0; i < AttributeSets.Num(); ++i)
-		//{
-		//	if (AttributeSets[i].Attributes && AttributeSets[i].DefaultStartingTable)
-		//	{
-		//		const UAttributeSet* Attributes = GASComponent->InitStats(AttributeSets[i].Attributes, AttributeSets[i].DefaultStartingTable);
-		//	}
-		//}
 
 		GASComponent->ActivateFragmentAttributeSet(UAsadalGameplayTags::AttributeFragmentDefaultTag);
 		LifeAttributeSet = GASComponent->GetSet<ULifeAttributeSet>();
@@ -360,13 +335,11 @@ void ABaseCharacter::BeginPlay()
 		DefenseAttributeSet = GASComponent->GetSet<UDefenseAttributeSet>();
 	}
 
-	if(IsValid(BaseInventoryComponent))
+	if(IsValid(BaseInventoryComponent)
+		&& IsValid(BaseEquipmentComponent))
 	{
-		KRGGASWeaponItems = BaseInventoryComponent->GetItemsFromTag(UAsadalGameplayTags::ItemWeaponTag);
-	}
-
-	if(IsValid(BaseEquipmentComponent))
-	{
+		TArray<TSoftObjectPtr<UKRGGASItem>> KRGGASWeaponItems = BaseInventoryComponent->GetItemsFromTag(UAsadalGameplayTags::ItemWeaponTag);
+		
 		for(TSoftObjectPtr<UKRGGASItem> WeaponItem : KRGGASWeaponItems)
 		{
 			if(false == BaseEquipmentComponent->AddExtraItem(WeaponItem.Get()))
@@ -397,6 +370,31 @@ void ABaseCharacter::BeginPlay()
 	for(const FGameplayTag& LooseGameplayTag : AddLooseGameplayTagContainer)
 	{
 		AddLooseGameplayTag(LooseGameplayTag);
+	}
+	
+	TArray<UActorComponent*> ActorComponents;
+	
+	GetComponents(UWidgetComponent::StaticClass(), ActorComponents);
+
+	for(UActorComponent* ActorComponent : ActorComponents)
+	{
+		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(ActorComponent);
+
+		if(IsValid(WidgetComponent))
+		{
+			if(WidgetComponent->GetWidget()->IsA(UScreenCharacterStatusWidget::StaticClass()))
+			{
+				ScreenCharacterStatusWidget = Cast<UScreenCharacterStatusWidget>(WidgetComponent->GetWidget());
+
+				if(IsPossessedByPlayer())
+				{
+					ScreenCharacterStatusWidget->SetHiddenInGame(true);
+				}
+				
+				UpdateCharacterStatusWidget();
+				break;
+			}
+		}
 	}
 }
 
@@ -471,6 +469,31 @@ void ABaseCharacter::Tick(float DeltaTime)
 	}
 }
 
+void ABaseCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	APCController* PCController = Cast<APCController>(NewController);
+	ANPCController* NPCController = Cast<ANPCController>(NewController);
+	
+	if(IsValid(PCController))
+	{
+		//PCCharacter
+		OnUpdatePossessedByPlayer(PCController);
+	}
+	else if(IsValid(NPCController))
+	{
+		OnUpdatePossessedByAI(NPCController);
+	}
+}
+
+void ABaseCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+
+	OnUpdateUnPossessed();
+}
+
 void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	//UE_LOG(LogTemp, Display, TEXT("<%s> Health Change From %.2f To %.2f"), *GetName(), Data.OldValue, Data.NewValue);
@@ -479,17 +502,17 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(false == IsDeath())
 		{
-			AddLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
-			UpdateDeath(true);
+			AddLooseGameplayTag(UAsadalGameplayTags::DeathStateGameplayTag);
+			//UpdateDeath(true);
 		}
 	}
 	else
 	{
 		if(true == IsDeath())
 		{
-			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
-			UpdateDeath(false);
-		}	
+			RemoveLooseGameplayTag(UAsadalGameplayTags::DeathStateGameplayTag);
+			//UpdateDeath(false);
+		}
 	}
 
 	if(false == IsDeath())
@@ -583,23 +606,34 @@ void ABaseCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 			}			
 		}
 	}
+
+	UpdateCharacterStatusWidget();
 }
 
 void ABaseCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 }
 
-void ABaseCharacter::UpdateDeath(bool bIsDeath)
+void ABaseCharacter::OnDeath(bool bIsDeath)
 {
+	if(IsPossessedByAI())
+	{ 
+		if(ScreenCharacterStatusWidget.IsValid())
+		{
+			ScreenCharacterStatusWidget->SetHiddenInGame(bIsDeath);
+		}		
+	}
+	
 	if(true == bIsDeath)
 	{
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
-		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);		
+		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		AddLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
 	}
 	else
 	{
-		
+		RemoveLooseGameplayTag(UAsadalGameplayTags::DeathActionGameplayTag);
 	}
 }
 
@@ -618,51 +652,26 @@ void ABaseCharacter::OnHit(const FOnAttributeChangeData& Data)
 			SetActorRotation(NewRotator);
 		}			
 	}
-	
-	/*
-	const FGameplayAbilityActionGroup* GameplayAbilityActionGroup = GASComponent->GetActivateAbilityActionGroup();
-
-	if(nullptr != GameplayAbilityActionGroup)
-	{
-		if(GASComponent->TryActivateAbility(GameplayAbilityActionGroup->HitAbilitySpecHandle))
-		{
-			AActor* Actor = Data.GEModData->EffectSpec.GetEffectContext().GetInstigator();
-
-			if(IsValid(Actor))
-			{
-				FVector TargetLocation = Actor->GetActorLocation();
-				FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
-				FRotator NewRotator = FRotator(GetActorRotation().Pitch, LookAtRotator.Yaw, GetActorRotation().Roll);
-			
-				SetActorRotation(NewRotator);
-			}			
-		}
-	}
-	*/
 }
 
 void ABaseCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIsActivate)
-{
+{	
 	//이거 PC로 가야하는데 일단은 이대로 간다. (npc가 copy형태라서)
-	if(GameplayTag.MatchesTag(UAsadalGameplayTags::ItemWeaponTag))
+	if(GameplayTag.MatchesTag(UAsadalGameplayTags::AbilityGameplayTag))
 	{
 		if(bIsActivate)
 		{
-			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
-
-			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			if(GameplayTag != FGameplayTag::EmptyTag)
 			{
-				GASComponent->ActivateFragmentAbility(AbilityGameplayTag);
-				LinkSubAnimInstance(AbilityGameplayTag);
+				GASComponent->ActivateFragmentAbility(GameplayTag);
+				LinkSubAnimInstance(GameplayTag);
 			}		
 		}
 		else
 		{
-			FGameplayTag AbilityGameplayTag = UAsadalGameplayTags::GetAbilityGameplayTagFromItem(GameplayTag);
-
-			if(AbilityGameplayTag != FGameplayTag::EmptyTag)
+			if(GameplayTag != FGameplayTag::EmptyTag)
 			{
-				UnLinkSubAnimInstance(AbilityGameplayTag);
+				UnLinkSubAnimInstance(GameplayTag);
 			}
 		}
 	}
@@ -697,17 +706,73 @@ void ABaseCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIs
 	}
 	else if(UAsadalGameplayTags::DeathStateGameplayTag == GameplayTag)
 	{
-		if(bIsActivate)
-		{
-			
-		}
-		else
-		{
-			
-		}
+		OnDeath(bIsActivate);
 	}
-	
-	UE_LOG(LogTemp, Display, TEXT("OnTagUpdatedEvent : <%s> : <%d>"), *GameplayTag.ToString(),bIsActivate);
+		UE_LOG(LogTemp, Display, TEXT("OnTagUpdatedEvent : <%s> : <%d>"), *GameplayTag.ToString(),bIsActivate);
+}
+
+void ABaseCharacter::OnUpdatePossessedByPlayer(APCController* PCController)
+{
+	CameraComponent->SetActive(true);
+	SpringArmComponent->SetActive(true);
+
+	if(ScreenCharacterStatusWidget.IsValid())
+	{
+		ScreenCharacterStatusWidget->SetHiddenInGame(true);
+	}
+}
+
+void ABaseCharacter::OnUpdatePossessedByAI(ANPCController* NPCController)
+{
+	CameraComponent->SetActive(false);
+	SpringArmComponent->SetActive(false);
+
+	if(ScreenCharacterStatusWidget.IsValid())
+	{
+		ScreenCharacterStatusWidget->SetHiddenInGame(false);
+	}	
+}
+
+void ABaseCharacter::OnUpdateUnPossessed()
+{
+	CameraComponent->SetActive(false);
+	SpringArmComponent->SetActive(false);
+
+	if(ScreenCharacterStatusWidget.IsValid())
+	{
+		ScreenCharacterStatusWidget->SetHiddenInGame(true);
+	}	
+}
+
+void ABaseCharacter::UpdateCharacterStatusWidget()
+{
+	if(ScreenCharacterStatusWidget.IsValid())
+	{
+		float Health, MaxHealth;
+		GetHealthValues(Health, MaxHealth);
+
+		ScreenCharacterStatusWidget->SetHealthPercent(Health / MaxHealth);		
+	}	
+}
+
+bool ABaseCharacter::IsPossessedByPlayer() const
+{
+	if(IsValid(Cast<APCController>(Controller)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool ABaseCharacter::IsPossessedByAI() const
+{
+	if(IsValid(Cast<ANPCController>(Controller)))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void ABaseCharacter::__OnHealthChangedNative(const FOnAttributeChangeData& Data)

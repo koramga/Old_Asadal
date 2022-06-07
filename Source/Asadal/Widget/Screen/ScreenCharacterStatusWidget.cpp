@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ScreenNPCStatusWidget.h"
+#include "ScreenCharacterStatusWidget.h"
 #include "Components/ProgressBar.h"
 
-void UScreenNPCStatusWidget::NativePreConstruct()
+void UScreenCharacterStatusWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
@@ -13,22 +13,22 @@ void UScreenNPCStatusWidget::NativePreConstruct()
 	SetHealthPercent(InitHealthBarPercent);
 }
 
-void UScreenNPCStatusWidget::NativeConstruct()
+void UScreenCharacterStatusWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
 
-void UScreenNPCStatusWidget::NativeDestruct()
+void UScreenCharacterStatusWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 }
 
-void UScreenNPCStatusWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UScreenCharacterStatusWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void UScreenNPCStatusWidget::SetHealthPercent(float Percent)
+void UScreenCharacterStatusWidget::SetHealthPercent(float Percent)
 {
 	if(HealthBar.IsValid())
 	{
@@ -39,4 +39,3 @@ void UScreenNPCStatusWidget::SetHealthPercent(float Percent)
 		InitHealthBarPercent = Percent;
 	}
 }
-

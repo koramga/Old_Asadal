@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "BaseScreenWidget.h"
 #include "UObject/Object.h"
-#include "ScreenNPCStatusWidget.generated.h"
+#include "ScreenCharacterStatusWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ASADAL_API UScreenNPCStatusWidget : public UBaseScreenWidget
+class ASADAL_API UScreenCharacterStatusWidget : public UBaseScreenWidget
 {
 	GENERATED_BODY()
 	

@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UBaseHUDWidget>		BaseHUDWidgetClass;
 	TSoftObjectPtr<class UBaseHUDWidget>	BaseHUDWidget;
-	TSoftObjectPtr<class APCCharacter>		PCCharacter;
+	TSoftObjectPtr<class ABaseCharacter>	BaseCharacter;
 
 private:
 	UFUNCTION()

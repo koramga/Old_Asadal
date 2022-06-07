@@ -37,14 +37,16 @@ public:
 	void ApplyGEToTargetData(const FGameplayEffectSpecHandle& GESpec, const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 	void LinkSubAnimInstance(const FGameplayTag& GameplayTag);
 	void UnLinkSubAnimInstance(const FGameplayTag& GameplayTag);
+	UTexture2D* GetAbilityIconByIndex(int32 Index);
 
 public :
 	virtual void SetActivateCollision(const FString& Name, bool bIsActivate);
 	virtual void TryActivateEquipment(const FGameplayTag& GameplayTag, bool bIsActivate);
 	virtual void TryEquipNextWeapon();
-	virtual void SetEquipInventoryItem(TSoftObjectPtr<class UKRGGASDefinition> KRGGASDefinition);
-	//virtual void TryEquipNextWeapon();
 	virtual void TryAvoid();
+	virtual bool TryAttackAbilityByIndex(int32 Index);
+	virtual void InputMoveForward(float Value);
+	virtual void InputMoveRight(float Value);
 	bool IsDeath() const;
 
 protected:
@@ -54,14 +56,31 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void UnPossessed() override;
+
 protected:
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
 	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
-	virtual void UpdateDeath(bool bIsDeath);
+	virtual void OnDeath(bool bIsDeath);
 	virtual void OnHit(const FOnAttributeChangeData& Data);
 	virtual void OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIsActivate);
+	virtual void OnUpdatePossessedByPlayer(class APCController* PCController);
+	virtual void OnUpdatePossessedByAI(class ANPCController* NPCController);
+	virtual void OnUpdateUnPossessed();
 
 protected:
+	void UpdateCharacterStatusWidget();
+	bool IsPossessedByPlayer() const;
+	bool IsPossessedByAI() const;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USpringArmComponent* SpringArmComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UGASComponent* GASComponent;
 
@@ -72,32 +91,28 @@ protected:
 	UBaseInventoryComponent*	BaseInventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
-	TArray<TSubclassOf<class ATextActor>>						DamageTextActorClasses;
+	TArray<TSubclassOf<class ATextActor>>					DamageTextActorClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
-	TArray<FString>												DamageTextSpawnComponentNames;
+	TArray<FString>											DamageTextSpawnComponentNames;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|SubAnimInstance")
-	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>		SubAnimInstanceClassMap;
+	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>			SubAnimInstanceClassMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
-	TArray<FMaterialInstanceVariable>				HitMaterialInstanceVairables;
+	TArray<FMaterialInstanceVariable>						HitMaterialInstanceVairables;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
-	FGameplayTagContainer							AddLooseGameplayTagContainer;
+	FGameplayTagContainer									AddLooseGameplayTagContainer;
 
-	//TArray<TSoftObjectPtr<class UAsadalInventoryItemDefinition>>	EquipmentWeaponItemDefinitions;
-	//TSoftObjectPtr<UAsadalInventoryItemDefinition>					EquipmentWepaonItemDefinition;
-
-	TArray<TSoftObjectPtr<UKRGGASItem>>					KRGGASWeaponItems;
-
-	TArray<TSoftObjectPtr<USceneComponent>>						DamageTextSpawnComponents;
+	TSoftObjectPtr<class UScreenCharacterStatusWidget>			ScreenCharacterStatusWidget;
+	TArray<TSoftObjectPtr<USceneComponent>>					DamageTextSpawnComponents;
 
 	TSoftObjectPtr<const class UOffenseAttributeSet>		OffenseAttributeSet;
 	TSoftObjectPtr<const class UDefenseAttributeSet>		DefenseAttributeSet;
 	TSoftObjectPtr<const class ULifeAttributeSet>			LifeAttributeSet;
-	TSoftObjectPtr<class UBaseAnimInstance>	BaseAnimInstance;
-	float MoveBlendRatio = 1.f;	
+	TSoftObjectPtr<class UBaseAnimInstance>					BaseAnimInstance;
+	float MoveBlendRatio = 1.f;
 	
 private :
 	void __OnHealthChangedNative(const FOnAttributeChangeData& Data);

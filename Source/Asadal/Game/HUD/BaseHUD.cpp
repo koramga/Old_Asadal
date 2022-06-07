@@ -4,7 +4,7 @@
 #include "BaseHUD.h"
 
 #include "Asadal/Asadal.h"
-#include "Asadal/Character/PC/PCCharacter.h"
+#include "Asadal/Character/BaseCharacter.h"
 #include "Asadal/Widget/HUD/BaseHUDWidget.h"
 
 void ABaseHUD::BeginPlay()
@@ -28,7 +28,7 @@ void ABaseHUD::BeginPlay()
 
 	if(IsValid(PlayerController))
 	{
-		PCCharacter = Cast<APCCharacter>(PlayerController->GetPawn());
+		BaseCharacter = Cast<ABaseCharacter>(PlayerController->GetPawn());
 	}
 }
 
@@ -36,13 +36,13 @@ void ABaseHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(PCCharacter.IsValid())
+	if(BaseCharacter.IsValid())
 	{
 		//여기서 알아서 갱신한다.
 
 		for(uint32 Index = 0; Index < MAX_PC_SKILL_COUNT; ++Index)
 		{
-			UTexture2D* IconTexture = PCCharacter->GetPCSkillIconByIndex(Index);
+			UTexture2D* IconTexture = BaseCharacter->GetAbilityIconByIndex(Index);
 
 			BaseHUDWidget->SetPCSkillIcon(Index, IconTexture);
 		}
@@ -51,24 +51,24 @@ void ABaseHUD::Tick(float DeltaSeconds)
 
 void ABaseHUD::__OnSkillSetButtonClickNative(int32 Index)
 {
-	if(PCCharacter.IsValid())
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(Index);
+		BaseCharacter->TryAttackAbilityByIndex(Index);
 	}
 }
 
 void ABaseHUD::__OnSwapWeaponButtonClickNative()
 {
-	if(PCCharacter.IsValid())
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryEquipNextWeapon();
+		BaseCharacter->TryEquipNextWeapon();
 	}
 }
 
 void ABaseHUD::__OnAvoidButtonClickNative()
 {
-	if(PCCharacter.IsValid())
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryAvoid();
+		BaseCharacter->TryAvoid();
 	}
 }

@@ -26,7 +26,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
-	class APCCharacter* PCCharacter;
+	TSoftObjectPtr<class ABaseCharacter> BaseCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|TimeDilation")
 	FTimeDilationSettings			StrikeTimeDilationSettings;

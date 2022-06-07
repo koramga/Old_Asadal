@@ -49,6 +49,11 @@
 			"Name": "KRGGASItem",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"			
+		},
+		{
+			"Name": "KRGGASBT",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins" : [

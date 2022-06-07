@@ -3,7 +3,8 @@
 
 #include "PCController.h"
 
-#include "Asadal/Character/PC/PCCharacter.h"
+#include "Asadal/Character/BaseCharacter.h"
+#include "Asadal/Character/BaseCharacter.h"
 #include "Asadal/Game/CheatManager/BaseCheatManager.h"
 
 APCController::APCController()
@@ -40,77 +41,77 @@ void APCController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	PCCharacter = Cast<APCCharacter>(InPawn);
+	BaseCharacter = Cast<ABaseCharacter>(InPawn);
 }
 
 void APCController::__InputMoveForward(float Value)
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->InputMoveForward(Value);
+		BaseCharacter->InputMoveForward(Value);
 	}
 }
 
 void APCController::__InputMoveRight(float Value)
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->InputMoveRight(Value);
+		BaseCharacter->InputMoveRight(Value);
 	}
 }
 
 void APCController::__InputPressedPCSkill0()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(0);
+		BaseCharacter->TryAttackAbilityByIndex(0);
 	}
 }
 
 void APCController::__InputPressedPCSkill1()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(1);
+		BaseCharacter->TryAttackAbilityByIndex(1);
 	}
 }
 
 void APCController::__InputPressedPCSkill2()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(2);
+		BaseCharacter->TryAttackAbilityByIndex(2);
 	}
 }
 
 void APCController::__InputPressedPCSkill3()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(3);
+		BaseCharacter->TryAttackAbilityByIndex(3);
 	}
 }
 
 void APCController::__InputPressedPCSkill4()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryActivateSkillByIndex(4);
+		BaseCharacter->TryAttackAbilityByIndex(4);
 	}
 }
 
 void APCController::__InputSwapWeapon()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryEquipNextWeapon();
+		BaseCharacter->TryEquipNextWeapon();
 	}
 }
 
 void APCController::__InputPressedDash()
 {
-	if(IsValid(PCCharacter))
+	if(BaseCharacter.IsValid())
 	{
-		PCCharacter->TryAvoid();
+		BaseCharacter->TryAvoid();
 	}
 }
