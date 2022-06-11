@@ -16,12 +16,21 @@ public:
 	// Sets default values for this component's properties
 	UKRGGASBTComponent();
 
+public:
+	void SetKRGAbilitySystemComponent(class UKRGAbilitySystemComponent* AbilitySystemComponent);
+	void SetBlackboardData(class AAIController* AIController);
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-public:
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+							   FActorComponentTickFunction* ThisTickFunction) override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Definition")
+	UDataAsset*											AIDefinition;
+	
+	TSoftObjectPtr<class UKRGAbilitySystemComponent>	KRGAbilitySystemComponent;
 };

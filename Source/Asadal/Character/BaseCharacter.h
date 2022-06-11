@@ -8,14 +8,15 @@
 #include "../GAS/GASComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "Asadal/Actor/Object/Equipment/BaseEquipment.h"
+#include "Asadal/GAS/BT/BaseBTComponent.h"
 #include "Asadal/GAS/Equipment/BaseEquipmentComponent.h"
 #include "Asadal/GAS/Inventory/BaseInventoryComponent.h"
+#include "KRGGASBT/Public/KRGGASBTInterface.h"
 #include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
-#include "KRGGASToolkit/Public/Definition/KRGGASDefinition.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
-class ASADAL_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface
+class ASADAL_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface, public IKRGGASBTInterface
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,7 @@ public:
 	ABaseCharacter();
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UKRGGASBTComponent* GetKRGGASBTComponent() const override;
 	FGameplayAbilitySpecHandle InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel);
 	void GetHealthValues(float& Health, float& MaxHealth);
 	void SetHealthValues(float NewHealth, float NewMaxHealth);
@@ -89,6 +91,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UBaseInventoryComponent*	BaseInventoryComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBaseBTComponent*			BaseBTComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|DamageText")
 	TArray<TSubclassOf<class ATextActor>>					DamageTextActorClasses;

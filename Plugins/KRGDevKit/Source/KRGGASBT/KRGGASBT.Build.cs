@@ -27,6 +27,7 @@ public class KRGGASBT : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
+				"AIModule",
 			}
 			);
 			

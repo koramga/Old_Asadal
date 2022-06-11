@@ -17,4 +17,16 @@ class ASADAL_API ANPCController : public AAIController
 public :
 	ANPCController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|BehaviorTree")
+	class UBehaviorTree*					BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|BehaviorTree")
+	class UBlackboardData*					BlackboardData;
 };

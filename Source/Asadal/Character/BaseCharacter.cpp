@@ -36,11 +36,13 @@ ABaseCharacter::ABaseCharacter()
 	GASComponent = CreateDefaultSubobject<UGASComponent>("GASComponent");
 	BaseEquipmentComponent = CreateDefaultSubobject<UBaseEquipmentComponent>("EquipmentComponent");
 	BaseInventoryComponent = CreateDefaultSubobject<UBaseInventoryComponent>("InventoryComponent");
+	BaseBTComponent = CreateDefaultSubobject<UBaseBTComponent>("BTComponent");
 	
 	if(IsValid(GASComponent))
 	{
 		BaseEquipmentComponent->SetKRGAbilitySystemComponent(GASComponent);
 		BaseInventoryComponent->SetKRGAbilitySystemComponent(GASComponent);
+		BaseBTComponent->SetKRGAbilitySystemComponent(GASComponent);
 	}
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -59,6 +61,11 @@ ABaseCharacter::ABaseCharacter()
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
 	return GASComponent;
+}
+
+UKRGGASBTComponent* ABaseCharacter::GetKRGGASBTComponent() const
+{
+	return BaseBTComponent;
 }
 
 FGameplayAbilitySpecHandle ABaseCharacter::InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel)
@@ -730,7 +737,9 @@ void ABaseCharacter::OnUpdatePossessedByAI(ANPCController* NPCController)
 	if(ScreenCharacterStatusWidget.IsValid())
 	{
 		ScreenCharacterStatusWidget->SetHiddenInGame(false);
-	}	
+	}
+
+	BaseBTComponent->SetBlackboardData(NPCController);	
 }
 
 void ABaseCharacter::OnUpdateUnPossessed()

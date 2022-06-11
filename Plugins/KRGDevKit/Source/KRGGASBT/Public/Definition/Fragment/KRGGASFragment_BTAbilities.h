@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Definition/Fragment/KRGGASFragment.h"
+#include "KRGGASFragment_BTBase.h"
 #include "KRGGASFragment_BTAbilities.generated.h"
 
 /**
@@ -21,13 +21,10 @@ struct FKRGGASBTAbilityInfo
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UKRGGameplayAbility>	AbilityClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TRange<float>							AbilityDistance;
 };
 
 UCLASS()
-class KRGGASBT_API UKRGGASFragment_BTAbilities : public UKRGGASFragment
+class KRGGASBT_API UKRGGASFragment_BTAbilities : public UKRGGASFragment_BTBase
 {
 	GENERATED_BODY()
 };
