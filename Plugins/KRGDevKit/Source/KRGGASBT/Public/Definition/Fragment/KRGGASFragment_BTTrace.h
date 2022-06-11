@@ -4,16 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "KRGGASFragment_BTBase.h"
-#include "KRGGASFragment_BTMove.generated.h"
+#include "UObject/Object.h"
+#include "KRGGASFragment_BTTrace.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class KRGGASBT_API UKRGGASFragment_BTMove : public UKRGGASFragment_BTBase
+class KRGGASBT_API UKRGGASFragment_BTTrace : public UKRGGASFragment_BTBase
 {
 	GENERATED_BODY()
 
 public :
 	virtual void InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
+	virtual bool IsValidBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
+	
+protected:
 };

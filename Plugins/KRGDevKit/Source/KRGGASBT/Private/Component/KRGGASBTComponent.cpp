@@ -42,13 +42,29 @@ void UKRGGASBTComponent::SetBlackboardData(AAIController* AIController)
 
 				for(UKRGGASFragment_BTBase* BTBase : BTBases)
 				{
-					BTBase->SetupBlackboard(BlackboardComponent);
+					BTBase->InitalizeBlackboardComponent(BlackboardComponent);
 				}
 			}
 		}		
 	}
 }
 
+UKRGGASDefinition* UKRGGASBTComponent::GetKRGGASDefinition() const
+{
+	return Cast<UKRGGASDefinition>(AIDefinition);
+}
+
+UKRGGASFragment_BTMove* UKRGGASBTComponent::GetMoveFragment() const
+{
+	UKRGGASDefinition* KRGGASDefinition = Cast<UKRGGASDefinition>(AIDefinition);
+
+	if(IsValid(KRGGASDefinition))
+	{
+		return KRGGASDefinition->FindFragment<UKRGGASFragment_BTMove>();
+	}
+
+	return nullptr;
+}
 
 // Called when the game starts
 void UKRGGASBTComponent::BeginPlay()

@@ -16,5 +16,6 @@ class KRGGASBT_API UKRGGASFragment_BTBase : public UKRGGASFragment
 	GENERATED_BODY()
 
 public :
-	virtual void SetupBlackboard(class UBlackboardComponent* BlackboardComponent);
+	virtual void InitalizeBlackboardComponent(class UBlackboardComponent* BlackboardComponent);
+	virtual bool IsValidBlackboardComponent(class UBlackboardComponent* BlackboardComponent);
 };

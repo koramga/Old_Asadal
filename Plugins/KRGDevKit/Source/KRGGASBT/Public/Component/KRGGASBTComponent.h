@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Definition/KRGGASDefinition.h"
+#include "Definition/Fragment/KRGGASFragment_BTMove.h"
 #include "KRGGASBTComponent.generated.h"
 
 
@@ -19,6 +21,10 @@ public:
 public:
 	void SetKRGAbilitySystemComponent(class UKRGAbilitySystemComponent* AbilitySystemComponent);
 	void SetBlackboardData(class AAIController* AIController);
+
+public :
+	UKRGGASDefinition*	GetKRGGASDefinition() const;
+	UKRGGASFragment_BTMove* GetMoveFragment() const;
 	
 protected:
 	// Called when the game starts
