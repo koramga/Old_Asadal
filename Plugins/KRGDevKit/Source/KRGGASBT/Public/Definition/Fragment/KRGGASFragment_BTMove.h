@@ -15,5 +15,8 @@ class KRGGASBT_API UKRGGASFragment_BTMove : public UKRGGASFragment_BTBase
 	GENERATED_BODY()
 
 public :
-	virtual void InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
+	UKRGGASFragment_BTMove();
+
+public :
+	virtual bool InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
 };

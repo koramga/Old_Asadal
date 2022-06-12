@@ -54,6 +54,11 @@
 			"Name": "KRGGASBT",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "KRGMetaTool",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins" : [

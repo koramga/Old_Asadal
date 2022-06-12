@@ -3,11 +3,30 @@
 
 #include "Definition/Fragment/KRGGASFragment_BTBase.h"
 
-void UKRGGASFragment_BTBase::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
+#include "BehaviorTree/BlackboardComponent.h"
+
+bool UKRGGASFragment_BTBase::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
 {
+	for(const FName& Key : KeyLists)
+	{
+		if(FBlackboard::InvalidKey == BlackboardComponent->GetKeyID(Key))
+		{
+			return false;
+		}
+	}
+	
+	return false;
 }
 
 bool UKRGGASFragment_BTBase::IsValidBlackboardComponent(UBlackboardComponent* BlackboardComponent)
 {
+	for(const FName& Key : KeyLists)
+	{
+		if(FBlackboard::InvalidKey == BlackboardComponent->GetKeyID(Key))
+		{
+			return false;
+		}
+	}
+	
 	return true;
 }

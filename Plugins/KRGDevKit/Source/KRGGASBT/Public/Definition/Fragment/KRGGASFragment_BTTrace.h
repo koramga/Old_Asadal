@@ -16,8 +16,13 @@ class KRGGASBT_API UKRGGASFragment_BTTrace : public UKRGGASFragment_BTBase
 	GENERATED_BODY()
 
 public :
-	virtual void InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
+	UKRGGASFragment_BTTrace();
+
+public :
+	virtual bool InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
 	virtual bool IsValidBlackboardComponent(UBlackboardComponent* BlackboardComponent) override;
 	
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float	TraceRange = 200.f;
 };

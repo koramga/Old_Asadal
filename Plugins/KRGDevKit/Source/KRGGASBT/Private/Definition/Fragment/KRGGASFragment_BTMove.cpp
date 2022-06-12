@@ -7,9 +7,19 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
-void UKRGGASFragment_BTMove::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
+UKRGGASFragment_BTMove::UKRGGASFragment_BTMove()
 {
-	Super::InitalizeBlackboardComponent(BlackboardComponent);
+	
+}
+
+bool UKRGGASFragment_BTMove::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
+{
+	if(false == Super::InitalizeBlackboardComponent(BlackboardComponent))
+	{
+		return false;
+	}
+
+	return true;
 
 	/*
 	UBlackboardData* BlackboardData = BlackboardComponent->GetBlackboardAsset();

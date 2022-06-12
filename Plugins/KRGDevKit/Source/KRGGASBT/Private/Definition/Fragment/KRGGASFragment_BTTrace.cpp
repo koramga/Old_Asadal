@@ -3,16 +3,25 @@
 
 #include "Definition/Fragment/KRGGASFragment_BTTrace.h"
 
+#include "KRGGASBTKeys.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-void UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
+UKRGGASFragment_BTTrace::UKRGGASFragment_BTTrace()
 {
-	Super::InitalizeBlackboardComponent(BlackboardComponent);
+	KeyLists.Empty();
+	KeyLists.Add(UKRGGASBTKeys::TraceRangeKey);
+}
 
-	if(FBlackboard::InvalidKey != BlackboardComponent->GetKeyID(TEXT("KRGTrace")))
+bool UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
+{
+	if(false == Super::InitalizeBlackboardComponent(BlackboardComponent))
 	{
-		
+		return false;
 	}
+
+	BlackboardComponent->SetValueAsFloat(UKRGGASBTKeys::TraceRangeKey, TraceRange);
+
+	return true;
 }
 
 bool UKRGGASFragment_BTTrace::IsValidBlackboardComponent(UBlackboardComponent* BlackboardComponent)
@@ -21,11 +30,5 @@ bool UKRGGASFragment_BTTrace::IsValidBlackboardComponent(UBlackboardComponent* B
 	{
 		return false;
 	}
-	
-	if(FBlackboard::InvalidKey == BlackboardComponent->GetKeyID(TEXT("KRGTrace")))
-	{
-		return false;
-	}
-
 	return true;
 }
