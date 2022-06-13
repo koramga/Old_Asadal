@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "KRGGASFragment_BTBase.h"
+#include "KRGVariableMetaData.h"
 #include "UObject/Object.h"
 #include "KRGGASFragment_BTTrace.generated.h"
 
@@ -24,5 +25,11 @@ public :
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float	TraceRange = 200.f;
+	FKRGFloatVariableMetaData	TraceRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool						bIsFollowTraceTarget;
+	
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//FKRGFloatVariableMetaData	TraceGoalDelta;
 };

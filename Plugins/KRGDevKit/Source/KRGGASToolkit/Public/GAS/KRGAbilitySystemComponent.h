@@ -62,6 +62,8 @@ public :
 	bool UpdateFromKRGGASDefinition();
 	bool ActivateFragmentAbility(const FGameplayTag& GameplayTag);
 	bool ActivateFragmentAttributeSet(const FGameplayTag& GameplayTag);
+	bool IsActivate() const;
+	void SetActivate(bool bNewActivate);
 	
 public :
 	FOnGEExecLatentEvent		OnGEExecLatentEvent;
@@ -97,6 +99,8 @@ protected:
 
 	TArray<FKRGGASFragmentAbilityHandle>		ActivateAbilityFragmentHandles;
 	TArray<FKRGGASFragmentAttributeSetHandle>	ActivateAttributeSetFragmentHandles;
+
+	bool						bIsActivate = true;
 };
 
 

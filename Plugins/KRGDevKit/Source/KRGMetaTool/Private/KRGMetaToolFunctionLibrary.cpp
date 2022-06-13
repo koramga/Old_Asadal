@@ -57,3 +57,16 @@ TKRGMetaVariable UKRGMetaToolFunctionLibrary::LerpVariable(const TKRGMetaVariabl
 
 	return Result;
 }
+
+bool UKRGMetaToolFunctionLibrary::IsMatchedVariableType(const TKRGMetaVariable& MetaVariable,
+	EKRGMetaVariableType MetaVariableType)
+{
+	EKRGMetaVariableType InMetaVariableType = static_cast<EKRGMetaVariableType>(MetaVariable.GetIndex());
+
+	if(MetaVariableType == InMetaVariableType)
+	{
+		return true;
+	}
+
+	return false;
+}

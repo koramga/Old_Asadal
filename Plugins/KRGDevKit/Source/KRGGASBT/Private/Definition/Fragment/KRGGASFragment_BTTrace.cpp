@@ -3,13 +3,15 @@
 
 #include "Definition/Fragment/KRGGASFragment_BTTrace.h"
 
-#include "KRGGASBTKeys.h"
+#include "KRGBTBlackboardKeys.h"
+#include "KRGMetaToolFunctionLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UKRGGASFragment_BTTrace::UKRGGASFragment_BTTrace()
 {
 	KeyLists.Empty();
-	KeyLists.Add(UKRGGASBTKeys::TraceRangeKey);
+	KeyLists.Add(UKRGBTBlackboardKeys::TraceRangeKey);
+	KeyLists.Add(UKRGBTBlackboardKeys::IsFollowTraceTargetKey);
 }
 
 bool UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
@@ -19,8 +21,10 @@ bool UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent*
 		return false;
 	}
 
-	BlackboardComponent->SetValueAsFloat(UKRGGASBTKeys::TraceRangeKey, TraceRange);
-
+	TKRGMetaVariable MetaVariable = TraceRange.GetMetaVariable();
+	BlackboardComponent->SetValueAsFloat(UKRGBTBlackboardKeys::TraceRangeKey, MetaVariable.Get<float>());
+	BlackboardComponent->SetValueAsBool(UKRGBTBlackboardKeys::IsFollowTraceTargetKey, bIsFollowTraceTarget);
+	
 	return true;
 }
 
@@ -30,5 +34,6 @@ bool UKRGGASFragment_BTTrace::IsValidBlackboardComponent(UBlackboardComponent* B
 	{
 		return false;
 	}
+	
 	return true;
 }

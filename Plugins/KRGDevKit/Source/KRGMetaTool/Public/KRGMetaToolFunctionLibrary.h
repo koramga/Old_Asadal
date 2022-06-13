@@ -17,4 +17,5 @@ class KRGMETATOOL_API UKRGMetaToolFunctionLibrary : public UBlueprintFunctionLib
 public :
 	static TKRGMetaVariable MakeRangeScopeVariable(const TKRGMetaVariable& LMetaVariant, const TKRGMetaVariable& RMetaVariant);
 	static TKRGMetaVariable LerpVariable(const TKRGMetaVariable& LMetaVariant, const TKRGMetaVariable& RMetaVariant, float LerpTime);
+	static bool IsMatchedVariableType(const TKRGMetaVariable& MetaVariable, EKRGMetaVariableType MetaVariableType);
 };

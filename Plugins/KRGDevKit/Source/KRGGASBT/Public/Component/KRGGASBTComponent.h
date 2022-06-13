@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Definition/KRGGASDefinition.h"
 #include "Definition/Fragment/KRGGASFragment_BTMove.h"
+#include "Definition/Fragment/KRGGASFragment_BTTrace.h"
 #include "KRGGASBTComponent.generated.h"
 
 
@@ -25,6 +26,19 @@ public:
 public :
 	UKRGGASDefinition*	GetKRGGASDefinition() const;
 	UKRGGASFragment_BTMove* GetMoveFragment() const;
+
+	template <typename T>
+	T* GetFragmentFromDefinition()
+	{
+		UKRGGASDefinition* KRGGASDefinition = Cast<UKRGGASDefinition>(AIDefinition);
+
+		if(IsValid(KRGGASDefinition))
+		{
+			return KRGGASDefinition->FindFragment<T>();
+		}
+
+		return nullptr;	
+	}
 	
 protected:
 	// Called when the game starts

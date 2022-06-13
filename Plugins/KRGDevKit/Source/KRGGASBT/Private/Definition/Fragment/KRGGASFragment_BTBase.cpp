@@ -15,7 +15,7 @@ bool UKRGGASFragment_BTBase::InitalizeBlackboardComponent(UBlackboardComponent* 
 		}
 	}
 	
-	return false;
+	return true;
 }
 
 bool UKRGGASFragment_BTBase::IsValidBlackboardComponent(UBlackboardComponent* BlackboardComponent)

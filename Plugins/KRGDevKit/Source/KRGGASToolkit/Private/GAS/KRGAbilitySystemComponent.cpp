@@ -275,6 +275,16 @@ bool UKRGAbilitySystemComponent::ActivateFragmentAttributeSet(const FGameplayTag
 	return true;
 }
 
+bool UKRGAbilitySystemComponent::IsActivate() const
+{
+	return bIsActivate;
+}
+
+void UKRGAbilitySystemComponent::SetActivate(bool bNewActivate)
+{
+	bIsActivate = bNewActivate;
+}
+
 void UKRGAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnGiveAbility(AbilitySpec);
