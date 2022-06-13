@@ -36,11 +36,6 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "MetaTools",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
 			"Name": "KRGGASToolkit",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"

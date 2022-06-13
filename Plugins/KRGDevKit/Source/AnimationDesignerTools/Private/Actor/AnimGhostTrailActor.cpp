@@ -31,11 +31,11 @@ void AAnimGhostTrailActor::SetGhostSkeletalMeshMaterial(int32 ElementIndex, UMat
 	PoseableMeshComponent->SetMaterial(ElementIndex, Material);
 }
 
-void AAnimGhostTrailActor::SetMaterialInstanceVariable(const FMaterialInstanceVariable& MaterialInstanceVariable)
+void AAnimGhostTrailActor::SetMaterialInstanceVariable(const FKRGMaterialInstanceVariable& MaterialInstanceVariable)
 {
 	MaterialInstanceVariables.Add(MaterialInstanceVariable);
 
-	FMaterialInstanceVariable& NewMaterialInstanceVariable = MaterialInstanceVariables[MaterialInstanceVariables.Num() - 1];
+	FKRGMaterialInstanceVariable& NewMaterialInstanceVariable = MaterialInstanceVariables[MaterialInstanceVariables.Num() - 1];
 
 	NewMaterialInstanceVariable.SetMaterialInstanceParameter(PoseableMeshComponent);
 	NewMaterialInstanceVariable.StartUpdate();
@@ -52,7 +52,7 @@ void AAnimGhostTrailActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	for(FMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
+	for(FKRGMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
 	{
 		MaterialInstanceVariable.Update(PoseableMeshComponent, DeltaTime);
 	}

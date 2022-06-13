@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "KRGVariable.h"
 #include "Components/PoseableMeshComponent.h"
 #include "GameFramework/Actor.h"
-#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
 #include "AnimGhostTrailActor.generated.h"
 
 UCLASS()
@@ -19,7 +19,7 @@ public:
 
 	void SetGhostSkeletalMeshComponent(USkeletalMeshComponent* SkeletalMeshComponent, float LifeTime = 1.f);
 	void SetGhostSkeletalMeshMaterial(int32 ElementIndex, UMaterial* Material);
-	void SetMaterialInstanceVariable(const FMaterialInstanceVariable& MaterialInstanceVariable);
+	void SetMaterialInstanceVariable(const FKRGMaterialInstanceVariable& MaterialInstanceVariable);
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +32,6 @@ protected:
 	UPoseableMeshComponent*	PoseableMeshComponent;
 
 	UPROPERTY()
-	TArray<FMaterialInstanceVariable>	MaterialInstanceVariables;
+	TArray<FKRGMaterialInstanceVariable>	MaterialInstanceVariables;
 
 };

@@ -411,7 +411,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	
-	for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+	for(FKRGMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 	{
 		MaterialInstanceVariable.Update(GetMesh(), DeltaTime);
 	}
@@ -688,7 +688,7 @@ void ABaseCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIs
 		{
 			//Material Instance ON
 
-			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			for(FKRGMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 			{
 				MaterialInstanceVariable.SetMaterialInstanceParameterWithBackup(GetMesh());
 				MaterialInstanceVariable.StartUpdate();
@@ -696,7 +696,7 @@ void ABaseCharacter::OnTagUpdatedEvent(const FGameplayTag& GameplayTag, bool bIs
 		}
 		else
 		{
-			for(FMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
+			for(FKRGMaterialInstanceVariable& MaterialInstanceVariable : HitMaterialInstanceVairables)
 			{
 				MaterialInstanceVariable.RollbackMaterialInstanceParameter(GetMesh());
 				MaterialInstanceVariable.EndUpdate();

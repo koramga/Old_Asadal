@@ -1,12 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MetaToolsFunctionLibrary.h"
+#include "KRGMetaToolFunctionLibrary.h"
+
 #include "Kismet/KismetMathLibrary.h"
 
-TMetaVariable UMetaToolsFunctionLibrary::MakeRangeScopeVariable(const TMetaVariable& LMetaVariant, const TMetaVariable& RMetaVariant)
+TKRGMetaVariable UKRGMetaToolFunctionLibrary::MakeRangeScopeVariable(const TKRGMetaVariable& LMetaVariant,
+                                                                     const TKRGMetaVariable& RMetaVariant)
 {
-	if(LMetaVariant.GetIndex() == static_cast<int>(EMetaVariableType::Bool))
+	if(LMetaVariant.GetIndex() == static_cast<int>(EKRGMetaVariableType::Bool))
 	{
 		return LerpVariable(LMetaVariant, RMetaVariant, FMath::Rand() % 2);
 	}
@@ -14,18 +16,18 @@ TMetaVariable UMetaToolsFunctionLibrary::MakeRangeScopeVariable(const TMetaVaria
 	return LerpVariable(LMetaVariant, RMetaVariant, FMath::RandRange(0.f, 1.f));
 }
 
-TMetaVariable UMetaToolsFunctionLibrary::LerpVariable(const TMetaVariable& LMetaVariant,
-	const TMetaVariable& RMetaVariant, float LerpTime)
+TKRGMetaVariable UKRGMetaToolFunctionLibrary::LerpVariable(const TKRGMetaVariable& LMetaVariant,
+	const TKRGMetaVariable& RMetaVariant, float LerpTime)
 {
-	TMetaVariable Result;
+	TKRGMetaVariable Result;
 
 	if (LMetaVariant.GetIndex() == RMetaVariant.GetIndex())
 	{
-		EMetaVariableType MetaVariableType = static_cast<EMetaVariableType>(LMetaVariant.GetIndex());
+		EKRGMetaVariableType MetaVariableType = static_cast<EKRGMetaVariableType>(LMetaVariant.GetIndex());
 
 		switch (MetaVariableType)
 		{
-		case EMetaVariableType::Bool:
+		case EKRGMetaVariableType::Bool:
 			if (LMetaVariant.Get<bool>() == RMetaVariant.Get<bool>())
 			{
 				Result.Set<bool>(LMetaVariant.Get<bool>());
@@ -35,19 +37,19 @@ TMetaVariable UMetaToolsFunctionLibrary::LerpVariable(const TMetaVariable& LMeta
 				Result.Set<bool>(static_cast<bool>(LerpTime));
 			}
 			break;
-		case EMetaVariableType::Int:
+		case EKRGMetaVariableType::Int:
 			Result.Set<int>(FMath::Lerp<int>(LMetaVariant.Get<int>(), RMetaVariant.Get<int>(), LerpTime));
 			break;
-		case EMetaVariableType::Float:
+		case EKRGMetaVariableType::Float:
 			Result.Set<float>(FMath::Lerp<float>(LMetaVariant.Get<float>(), RMetaVariant.Get<float>(), LerpTime));
 			break;
-		case EMetaVariableType::Vector:
+		case EKRGMetaVariableType::Vector:
 			Result.Set<FVector>(FMath::Lerp<FVector>(LMetaVariant.Get<FVector>(), RMetaVariant.Get<FVector>(), LerpTime));
 			break;
-		case EMetaVariableType::Vector4:
+		case EKRGMetaVariableType::Vector4:
 			Result.Set<FVector4>(FMath::Lerp<FVector4>(LMetaVariant.Get<FVector4>(), RMetaVariant.Get<FVector4>(), LerpTime));
 			break;
-		case EMetaVariableType::LinearColor:
+		case EKRGMetaVariableType::LinearColor:
 			Result.Set<FLinearColor>(UKismetMathLibrary::LinearColorLerp(LMetaVariant.Get<FLinearColor>(), RMetaVariant.Get<FLinearColor>(), LerpTime));
 			break;
 		}

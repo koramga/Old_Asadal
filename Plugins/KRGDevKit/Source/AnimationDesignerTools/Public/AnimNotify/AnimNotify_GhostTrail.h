@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
-#include "UObject/Object.h"
+#include "KRGVariable.h"
 #include "AnimNotify_GhostTrail.generated.h"
 
 /**
@@ -44,5 +43,5 @@ protected:
 	TArray<FGhostTrailMaterial>			GhostTrailMaterials;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FMaterialInstanceVariable>	MaterialInstanceVariables;
+	TArray<FKRGMaterialInstanceVariable>	MaterialInstanceVariables;
 };

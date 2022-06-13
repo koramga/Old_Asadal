@@ -1,11 +1,42 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MaterialInstanceVariable.h"
+#include "KRGVariable.h"
 
-#include "MetaTools/Utility/MetaToolsFunctionLibrary.h"
+#include "KRGMetaToolFunctionLibrary.h"
 
-bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
+FKRGBaseVariableMetaDataGroup::FKRGBaseVariableMetaDataGroup()
+{
+	
+}
+
+TKRGMetaVariable FKRGBaseVariableMetaDataGroup::GetMetaVariable() const
+{
+	switch (MetaVariableType)
+	{
+	case EKRGMetaVariableType::Bool :
+		return BoolVariableMetaData.GetMetaVariable();
+	case EKRGMetaVariableType::Float :
+		return FloatVariableMetaData.GetMetaVariable();
+	case EKRGMetaVariableType::Int :
+		return IntVariableMetaData.GetMetaVariable();
+	case EKRGMetaVariableType::Vector :
+		return VectorVariableMetaData.GetMetaVariable();
+	case EKRGMetaVariableType::Vector4 :
+		return Vector4VariableMetaData.GetMetaVariable();
+	case EKRGMetaVariableType::LinearColor :
+		return LinearColorVariableMetaData.GetMetaVariable();
+	}
+
+	return TKRGMetaVariable();
+}
+
+EKRGMetaVariableType FKRGBaseVariableMetaDataGroup::GetMetaVariableType() const
+{
+	return MetaVariableType;
+}
+
+bool FKRGMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
 {
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = PrimitiveComponent->CreateDynamicMaterialInstance(DynamicMaterialInstanceElementIndex);
 
@@ -17,8 +48,8 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent
 	return false;
 }
 
-bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent,
-	const TMetaVariable& MetaVariable) const
+bool FKRGMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent,
+	const TKRGMetaVariable& MetaVariable) const
 {
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = PrimitiveComponent->CreateDynamicMaterialInstance(DynamicMaterialInstanceElementIndex);
 
@@ -30,9 +61,9 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UPrimitiveComponent
 	return false;
 }
 
-bool FMaterialInstanceVariable::SetMaterialInstanceParameterWithBackup(UPrimitiveComponent* PrimitiveComponent)
+bool FKRGMaterialInstanceVariable::SetMaterialInstanceParameterWithBackup(UPrimitiveComponent* PrimitiveComponent)
 {
-	TMetaVariable NewMetaVariable = GetMaterialInstanceParameter(PrimitiveComponent);
+	TKRGMetaVariable NewMetaVariable = GetMaterialInstanceParameter(PrimitiveComponent);
 	
 	ResetDynamicMaterialInstanceMetaVariableMap.Remove(PrimitiveComponent);
 	ResetDynamicMaterialInstanceMetaVariableMap.Add(PrimitiveComponent, NewMetaVariable);
@@ -40,11 +71,11 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameterWithBackup(UPrimitiv
 	return SetMaterialInstanceParameter(PrimitiveComponent);
 }
 
-bool FMaterialInstanceVariable::RollbackMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
+bool FKRGMaterialInstanceVariable::RollbackMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
 {
 	if(ResetDynamicMaterialInstanceMetaVariableMap.Contains(PrimitiveComponent))
 	{
-		TMetaVariable MetaVariable = ResetDynamicMaterialInstanceMetaVariableMap.FindRef(PrimitiveComponent);
+		TKRGMetaVariable MetaVariable = ResetDynamicMaterialInstanceMetaVariableMap.FindRef(PrimitiveComponent);
 
 		return SetMaterialInstanceParameter(PrimitiveComponent, MetaVariable);
 	}
@@ -52,9 +83,9 @@ bool FMaterialInstanceVariable::RollbackMaterialInstanceParameter(UPrimitiveComp
 	return false;
 }
 
-bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDynamic* MaterialInstanceDynamic) const
+bool FKRGMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDynamic* MaterialInstanceDynamic) const
 {
-	TMetaVariable MetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
+	TKRGMetaVariable MetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
 	
 	return SetMaterialInstanceParameter(MaterialInstanceDynamic, MetaVariable);
 
@@ -107,32 +138,32 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDy
 	*/	
 }
 
-bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDynamic* MaterialInstanceDynamic,
-	const TMetaVariable& MetaVariable) const
+bool FKRGMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDynamic* MaterialInstanceDynamic,
+	const TKRGMetaVariable& MetaVariable) const
 {
 	if(IsValid(MaterialInstanceDynamic))
 	{
-		EMetaVariableType MetaVariableType = static_cast<EMetaVariableType>(MetaVariable.GetIndex());
+		EKRGMetaVariableType MetaVariableType = static_cast<EKRGMetaVariableType>(MetaVariable.GetIndex());
 
 		switch (MetaVariableType)
 		{
-		case EMetaVariableType::Bool:
+		case EKRGMetaVariableType::Bool:
 			MaterialInstanceDynamic->SetScalarParameterValue(ParameterName, MetaVariable.Get<bool>());
 			break;
 
-		case EMetaVariableType::Float :
+		case EKRGMetaVariableType::Float :
 			MaterialInstanceDynamic->SetScalarParameterValue(ParameterName, MetaVariable.Get<float>());
 			break;
 
-		case EMetaVariableType::Int :
+		case EKRGMetaVariableType::Int :
 			MaterialInstanceDynamic->SetScalarParameterValue(ParameterName, MetaVariable.Get<int>());
 			break;
 
-		case EMetaVariableType::Vector :
+		case EKRGMetaVariableType::Vector :
 			MaterialInstanceDynamic->SetVectorParameterValue(ParameterName, MetaVariable.Get<FVector>());
 			break;
 
-		case EMetaVariableType::Vector4 :
+		case EKRGMetaVariableType::Vector4 :
 			{
 				FVector4 Vector4  = MetaVariable.Get<FVector4>();
 				FLinearColor LinearColor;
@@ -145,7 +176,7 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDy
 			}
 			break;
 
-		case EMetaVariableType::LinearColor :
+		case EKRGMetaVariableType::LinearColor :
 			MaterialInstanceDynamic->SetVectorParameterValue(ParameterName, MetaVariable.Get<FLinearColor>());
 			break;
 		}
@@ -156,7 +187,7 @@ bool FMaterialInstanceVariable::SetMaterialInstanceParameter(UMaterialInstanceDy
 	return false;
 }
 
-TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
+TKRGMetaVariable FKRGMaterialInstanceVariable::GetMaterialInstanceParameter(UPrimitiveComponent* PrimitiveComponent) const
 {
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = PrimitiveComponent->CreateDynamicMaterialInstance(DynamicMaterialInstanceElementIndex);
 
@@ -165,14 +196,14 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(UPrimitive
 		return GetMaterialInstanceParameter(MaterialInstanceDynamic);
 	}
 
-	return TMetaVariable();
+	return TKRGMetaVariable();
 }
 
-TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
+TKRGMetaVariable FKRGMaterialInstanceVariable::GetMaterialInstanceParameter(
 	UMaterialInstanceDynamic* MaterialInstanceDynamic) const
 {
-	TMetaVariable ReturnMetaVariable = TMetaVariable();
-	EMetaVariableType MetaVariableType = StartVariableMetaDataGroup.GetMetaVariableType();
+	TKRGMetaVariable ReturnMetaVariable = TKRGMetaVariable();
+	EKRGMetaVariableType MetaVariableType = StartVariableMetaDataGroup.GetMetaVariableType();
 
 	float Sclar;
 	FVector Vector;
@@ -181,14 +212,14 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 	
 	switch (MetaVariableType)
 	{
-	case EMetaVariableType::Bool:
-	case EMetaVariableType::Float :
-	case EMetaVariableType::Int :
+	case EKRGMetaVariableType::Bool:
+	case EKRGMetaVariableType::Float :
+	case EKRGMetaVariableType::Int :
 		MaterialInstanceDynamic->GetScalarParameterValue(ParameterName, Sclar);
 		ReturnMetaVariable.Set<float>(Sclar);
 		break;
 
-	case EMetaVariableType::Vector :
+	case EKRGMetaVariableType::Vector :
 		MaterialInstanceDynamic->GetVectorParameterValue(ParameterName, LinearColor);
 
 		Vector.X = LinearColor.R;
@@ -198,7 +229,7 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 		ReturnMetaVariable.Set<FVector>(Vector);
 		break;
 
-	case EMetaVariableType::Vector4 :
+	case EKRGMetaVariableType::Vector4 :
 		MaterialInstanceDynamic->GetVectorParameterValue(ParameterName, LinearColor);
 
 		Vector4.X = LinearColor.R;
@@ -209,7 +240,7 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 		ReturnMetaVariable.Set<FVector4>(Vector4);
 		break;
 		
-	case EMetaVariableType::LinearColor :
+	case EKRGMetaVariableType::LinearColor :
 		MaterialInstanceDynamic->GetVectorParameterValue(ParameterName, LinearColor);
 		ReturnMetaVariable.Set<FLinearColor>(LinearColor);
 		break;
@@ -218,13 +249,13 @@ TMetaVariable FMaterialInstanceVariable::GetMaterialInstanceParameter(
 	return ReturnMetaVariable;
 }
 
-void FMaterialInstanceVariable::StartUpdate()
+void FKRGMaterialInstanceVariable::StartUpdate()
 {
 	bIsUpdateLerp = true;
 	LerpDeltaTime = 0.f;
 }
 
-bool FMaterialInstanceVariable::CanUpdate() const
+bool FKRGMaterialInstanceVariable::CanUpdate() const
 {
 	if(LerpTime <= 0.f)
 	{
@@ -239,7 +270,7 @@ bool FMaterialInstanceVariable::CanUpdate() const
 	return bIsUpdateLerp;
 }
 
-void FMaterialInstanceVariable::Update(UPrimitiveComponent* PrimitiveComponent, float DeltaSeconds)
+void FKRGMaterialInstanceVariable::Update(UPrimitiveComponent* PrimitiveComponent, float DeltaSeconds)
 {
 	if(CanUpdate())
 	{
@@ -253,17 +284,17 @@ void FMaterialInstanceVariable::Update(UPrimitiveComponent* PrimitiveComponent, 
 		{
 			float ClampDeltaTime = FMath::Clamp(LerpDeltaTime / LerpTime, 0.f, 1.f);
 
-			const TMetaVariable StartMetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
-			const TMetaVariable EndMetaVariable = EndVariableMetaDataGroup.GetMetaVariable();
+			const TKRGMetaVariable StartMetaVariable = StartVariableMetaDataGroup.GetMetaVariable();
+			const TKRGMetaVariable EndMetaVariable = EndVariableMetaDataGroup.GetMetaVariable();
 
-			const TMetaVariable UpdateMetaVariable = UMetaToolsFunctionLibrary::LerpVariable(StartMetaVariable, EndMetaVariable, ClampDeltaTime);
+			const TKRGMetaVariable UpdateMetaVariable = UKRGMetaToolFunctionLibrary::LerpVariable(StartMetaVariable, EndMetaVariable, ClampDeltaTime);
 
 			SetMaterialInstanceParameter(PrimitiveComponent, UpdateMetaVariable);
 		}
 	}
 }
 
-void FMaterialInstanceVariable::EndUpdate()
+void FKRGMaterialInstanceVariable::EndUpdate()
 {
 	bIsUpdateLerp = false;
 }

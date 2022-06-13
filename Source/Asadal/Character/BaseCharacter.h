@@ -12,7 +12,7 @@
 #include "Asadal/GAS/Equipment/BaseEquipmentComponent.h"
 #include "Asadal/GAS/Inventory/BaseInventoryComponent.h"
 #include "KRGGASBT/Public/KRGGASBTInterface.h"
-#include "MetaTools/VariableGroup/MaterialInstanceVariable.h"
+#include "KRGMetaTool/Public/KRGVariable.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -105,7 +105,7 @@ protected:
 	TMap<FGameplayTag, TSubclassOf<UAnimInstance>>			SubAnimInstanceClassMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|MaterialInstance")
-	TArray<FMaterialInstanceVariable>						HitMaterialInstanceVairables;
+	TArray<FKRGMaterialInstanceVariable>					HitMaterialInstanceVairables;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Test")
 	FGameplayTagContainer									AddLooseGameplayTagContainer;

@@ -29,7 +29,7 @@ void UAnimNotify_GhostTrail::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 		AnimGhostTrailActor->SetGhostSkeletalMeshMaterial(GhostTrailMaterial.ElementIndex, GhostTrailMaterial.Material);
 	}
 
-	for(const FMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
+	for(const FKRGMaterialInstanceVariable& MaterialInstanceVariable : MaterialInstanceVariables)
 	{
 		AnimGhostTrailActor->SetMaterialInstanceVariable(MaterialInstanceVariable);
 	}
