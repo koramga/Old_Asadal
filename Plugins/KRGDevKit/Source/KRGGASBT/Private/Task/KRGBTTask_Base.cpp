@@ -95,7 +95,7 @@ bool UKRGBTTask_Base::FillVariablesFromComp(UBehaviorTreeComponent& OwnerComp)
 
 	OwnerBlackboardComponent = OwnerComp.GetBlackboardComponent();
 
-	if(OwnerBlackboardComponent.IsValid())
+	if(false == OwnerBlackboardComponent.IsValid())
 	{
 		return false;
 	}

@@ -5,5 +5,5 @@
 
 const FName UKRGBTBlackboardKeys::TraceRangeKey = TEXT("KRGTraceRange");
 const FName UKRGBTBlackboardKeys::TraceTargetKey = TEXT("KRGTraceTarget");
-const FName UKRGBTBlackboardKeys::IsFollowTraceTargetKey = TEXT("IsFollowTraceTarget");
-const FName UKRGBTBlackboardKeys::FollowTraceTargetDeltaRangeKey = TEXT("FollowTraceTargetDletaRange");
+const FName UKRGBTBlackboardKeys::IsFollowTraceTargetKey = TEXT("KRGIsFollowTraceTarget");
+const FName UKRGBTBlackboardKeys::FollowTraceTargetDeltaRangeKey = TEXT("KRGFollowTraceTargetDletaRange");

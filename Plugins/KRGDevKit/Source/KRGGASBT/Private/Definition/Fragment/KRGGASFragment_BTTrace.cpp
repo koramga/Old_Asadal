@@ -12,6 +12,7 @@ UKRGGASFragment_BTTrace::UKRGGASFragment_BTTrace()
 	KeyLists.Empty();
 	KeyLists.Add(UKRGBTBlackboardKeys::TraceRangeKey);
 	KeyLists.Add(UKRGBTBlackboardKeys::IsFollowTraceTargetKey);
+	KeyLists.Add(UKRGBTBlackboardKeys::FollowTraceTargetDeltaRangeKey);
 }
 
 bool UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent* BlackboardComponent)
@@ -22,8 +23,14 @@ bool UKRGGASFragment_BTTrace::InitalizeBlackboardComponent(UBlackboardComponent*
 	}
 
 	TKRGMetaVariable MetaVariable = TraceRange.GetMetaVariable();
+	TKRGMetaVariable FollowTraceTargetDeltaRange = TraceTargetDeltaRange.GetMetaVariable();
 	BlackboardComponent->SetValueAsFloat(UKRGBTBlackboardKeys::TraceRangeKey, MetaVariable.Get<float>());
 	BlackboardComponent->SetValueAsBool(UKRGBTBlackboardKeys::IsFollowTraceTargetKey, bIsFollowTraceTarget);
+
+	if(FollowTraceTargetDeltaRange.IsType<float>())
+	{
+		BlackboardComponent->SetValueAsFloat(UKRGBTBlackboardKeys::FollowTraceTargetDeltaRangeKey, FollowTraceTargetDeltaRange.Get<float>());
+	}
 	
 	return true;
 }

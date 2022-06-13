@@ -30,6 +30,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool						bIsFollowTraceTarget;
 	
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//FKRGFloatVariableMetaData	TraceGoalDelta;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition = "bIsFollowTraceTarget", EditConditionHides))
+	FKRGFloatVariableMetaData	TraceTargetDeltaRange;
 };
