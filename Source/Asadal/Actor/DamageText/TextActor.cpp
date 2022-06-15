@@ -21,7 +21,7 @@ void ATextActor::SetText(const FString& Text, const FColor& Color)
 {
 	if(IsValid(TextRenderComponent))
 	{
-		TextRenderComponent->SetText(Text);
+		TextRenderComponent->SetText(FText::FromString(Text));
 		TextRenderComponent->SetTextRenderColor(Color);
 	}
 }
