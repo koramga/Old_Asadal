@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "KRGGASToolkit/Public/GAS/Cue/KRGActorCue.h"
+#include "GAS/Cue/Actor/KRGActorCue.h"
 
 
 // Sets default values

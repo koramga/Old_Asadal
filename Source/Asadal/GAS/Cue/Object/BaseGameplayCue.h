@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayCueNotify_Static.h"
-#include "GAS/Cue/KRGStaticCue.h"
+#include "GAS/Cue/Static/KRGStaticCue.h"
 #include "BaseGameplayCue.generated.h"
 
 /**
