@@ -85,8 +85,8 @@ void UKRGBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 #ifdef ENABLE_DRAW_DEBUG
 
-	FColor DrawColor = TargetKRGAbilitySystemComponent ? FColor::Red : FColor::Green;
-	DrawDebugSphere(GetWorld(), OwnerCharacterLocation, TraceRange, 20, DrawColor, false, Interval);
+	//FColor DrawColor = TargetKRGAbilitySystemComponent ? FColor::Red : FColor::Green;
+	//DrawDebugSphere(GetWorld(), OwnerCharacterLocation, TraceRange, 20, DrawColor, false, Interval);
 	
 #endif
 

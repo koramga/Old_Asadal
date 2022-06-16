@@ -17,6 +17,7 @@ public:
 	AKRGActorCue_Effect();
 
 protected:
+	virtual bool Recycle() override;
 	virtual bool HandlesEvent(EGameplayCueEvent::Type EventType) const override;
 	virtual void HandleGameplayCue(AActor* MyTarget, EGameplayCueEvent::Type EventType, const FGameplayCueParameters& Parameters) override;
 

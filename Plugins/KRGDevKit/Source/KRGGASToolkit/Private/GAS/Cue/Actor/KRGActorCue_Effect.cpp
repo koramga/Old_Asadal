@@ -10,6 +10,16 @@ AKRGActorCue_Effect::AKRGActorCue_Effect()
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffect"));
 	
 	SetRootComponent(NiagaraComponent);
+
+	PrimaryActorTick.bStartWithTickEnabled = false;
+	bAutoDestroyOnRemove = true;
+
+	//Recycle();
+}
+
+bool AKRGActorCue_Effect::Recycle()
+{
+	return Super::Recycle();
 }
 
 bool AKRGActorCue_Effect::HandlesEvent(EGameplayCueEvent::Type EventType) const
@@ -26,6 +36,7 @@ void AKRGActorCue_Effect::HandleGameplayCue(AActor* MyTarget, EGameplayCueEvent:
 
 	if(IsValid(NiagaraComponent))
 	{
+		SetActorLocation(MyTarget->GetActorLocation());
 		NiagaraComponent->Activate(true);
 	}
 }

@@ -101,10 +101,13 @@ UKRGGASItem* UKRGGASEquipmentComponent::GetItemFromEquipmentGameplayTag(const FG
 {
 	for(TSoftObjectPtr<UKRGGASEquipment> KRGGASEquipment : KRGGASEquipments)
 	{
-		if(KRGGASEquipment->GetEquipmentGameplayTag() == GameplayTag)
+		if(KRGGASEquipment.IsValid())
 		{
-			return KRGGASEquipment->GetActivateItem();
-		}
+			if(KRGGASEquipment->GetEquipmentGameplayTag() == GameplayTag)
+			{
+				return KRGGASEquipment->GetActivateItem();
+			}			
+		}		
 	}
 
 	return nullptr;
