@@ -17,8 +17,8 @@ struct FEdGraphSchemaAction_KRGDialogueNew : public FEdGraphSchemaAction
 
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
-	virtual void CreateNodeTemplate(UKRGDialogueGraph* Graph, UEdGraph* Owner, TSubclassOf<UEdKRGDialogueNode> NodeTemplateClass, TSubclassOf<UKRGDialogueElement> GraphElementClass);
+	virtual void CreateElementTemplate(UKRGDialogueGraph* Graph, UEdGraph* Owner, TSubclassOf<UEdKRGDialogueElement> ElementTemplateClass, TSubclassOf<UKRGDialogueElement> GraphElementClass);
 	
 protected:
-	UEdKRGDialogueNode* NodeTemplate;
+	UEdKRGDialogueElement* NodeTemplate;
 };

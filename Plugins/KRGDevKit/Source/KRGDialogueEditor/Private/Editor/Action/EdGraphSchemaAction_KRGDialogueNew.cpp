@@ -38,12 +38,12 @@ void FEdGraphSchemaAction_KRGDialogueNew::AddReferencedObjects(FReferenceCollect
 	Collector.AddReferencedObject(NodeTemplate);
 }
 
-void FEdGraphSchemaAction_KRGDialogueNew::CreateNodeTemplate(UKRGDialogueGraph* Graph, UEdGraph* Owner,
-	TSubclassOf<UEdKRGDialogueNode> NodeTemplateClass, TSubclassOf<UKRGDialogueElement> GraphElementClass)
+void FEdGraphSchemaAction_KRGDialogueNew::CreateElementTemplate(UKRGDialogueGraph* Graph, UEdGraph* Owner,
+	TSubclassOf<UEdKRGDialogueElement> ElementTemplateClass, TSubclassOf<UKRGDialogueElement> GraphElementClass)
 {
 	check(Owner);
-	check(NodeTemplateClass);
-	NodeTemplate = NewObject<UEdKRGDialogueNode>(Owner, NodeTemplateClass);
+	check(ElementTemplateClass);
+	NodeTemplate = NewObject<UEdKRGDialogueElement>(Owner, ElementTemplateClass);
 	NodeTemplate->SetGraphElement(NodeTemplate, GraphElementClass);
 	UKRGDialogueElement* GraphElement = NodeTemplate->GetGraphElement();
 	check(GraphElement);	

@@ -144,13 +144,13 @@ void UEdGraphSchema_KRGDialogue::GetGraphContextActions(FGraphContextMenuBuilder
 
 	
 	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewFinishNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Script Node")), AddToolTip, 0));
-	NewFinishNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Script::StaticClass(), UKRGDialogueNode_Script::StaticClass());
+	NewFinishNodeAction->CreateElementTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Script::StaticClass(), UKRGDialogueNode_Script::StaticClass());
 	ContextMenuBuilder.AddAction(NewFinishNodeAction);
 
 	Visited.Add(UKRGDialogueNode_Script::StaticClass());
 	
 	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewCraftNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Branch Node")), AddToolTip, 0));
-	NewCraftNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Branch::StaticClass(), UKRGDialogueNode_Branch::StaticClass());
+	NewCraftNodeAction->CreateElementTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Branch::StaticClass(), UKRGDialogueNode_Branch::StaticClass());
 	ContextMenuBuilder.AddAction(NewCraftNodeAction);
 
 	Visited.Add(UKRGDialogueNode_Branch::StaticClass());
@@ -352,7 +352,7 @@ bool UEdGraphSchema_KRGDialogue::CreateAutomaticConversionNodeAndConnections(UEd
 
 	
 	FEdGraphSchemaAction_KRGDialogueNew Action;
-	Action.CreateNodeTemplate(Graph, NodeA->GetGraph(), UEdKRGDialogueEdge::StaticClass(), UKRGDialogueEdge::StaticClass());
+	Action.CreateElementTemplate(Graph, NodeA->GetGraph(), UEdKRGDialogueEdge::StaticClass(), UKRGDialogueEdge::StaticClass());
 	UEdKRGDialogueEdge* EdEdge = Cast<UEdKRGDialogueEdge>(Action.PerformAction(NodeA->GetGraph(), nullptr, InitPos, false));
 
 	//Always create connections from node A to B, don't allow adding in reverse
