@@ -11,6 +11,7 @@
 #include "Framework/Commands/GenericCommands.h"
 #include "Graph/EdKRGDialogueGraph.h"
 #include "ToolMenu.h"
+#include "Editor/Policy/ConnectionDrawingPolicy_KRGDialogueStraight.h"
 #include "Element/Node/KRGDialogueNode_Branch.h"
 #include "Element/Node/KRGDialogueNode_Script.h"
 #include "Node/Edge/EdKRGDialogueEdge.h"
@@ -369,6 +370,7 @@ FConnectionDrawingPolicy* UEdGraphSchema_KRGDialogue::CreateConnectionDrawingPol
 	//                                            InDrawElements, InGraphObj);
 
 	return new FConnectionDrawingPolicy_KRGDialogueBase(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
+	//return new ConnectionDrawingPolicy_KRGDialogueStraight(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
 	//return new FConnectionDrawingPolicy_ATSStraight(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
 }
 
