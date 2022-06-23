@@ -8,8 +8,6 @@
 #include "Utility/EdKRGDialogueColor.h"
 #include "Graph/KRGDialogueGraph.h"
 
-BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-
 bool SEdKRGDialogueNode::IsNameReadOnly() const
 {
 	UEdKRGDialogueNode* EdNode = Cast<UEdKRGDialogueNode>(GraphNode);

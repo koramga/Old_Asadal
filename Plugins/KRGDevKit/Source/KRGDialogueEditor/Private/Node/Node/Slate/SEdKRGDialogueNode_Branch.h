@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SEdKRGDialogueNode.h"
-#include "Widgets/SCompoundWidget.h"
 
 /**
  * 
