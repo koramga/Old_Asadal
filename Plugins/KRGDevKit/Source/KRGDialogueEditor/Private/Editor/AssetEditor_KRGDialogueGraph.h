@@ -91,7 +91,7 @@ protected:
 	UKRGDialogueGraph* EditingGraph;
 
 	//Toolbar
-	TSharedPtr<class FAssetEditorToolbar_ATSBase> ToolbarBuilder;
+	TSharedPtr<class FAssetEditorToolbar_KRGDialogue> ToolbarBuilder;
 
 	/**Handle to the registered OnPackageSave delegate */
 	FDelegateHandle OnPackageSavedDelegateHandle;
