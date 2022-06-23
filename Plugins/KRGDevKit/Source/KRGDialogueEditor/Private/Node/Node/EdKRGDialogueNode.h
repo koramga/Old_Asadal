@@ -14,7 +14,7 @@ class SEdKRGDialogueNode;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class KRGDIALOGUEEDITOR_API UEdKRGDialogueNode : public UEdKRGDialogueElement
 {
 	GENERATED_BODY()

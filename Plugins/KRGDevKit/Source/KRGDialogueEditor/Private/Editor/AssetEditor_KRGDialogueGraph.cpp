@@ -1,9 +1,17 @@
 ﻿#include "AssetEditor_KRGDialogueGraph.h"
 
+#include "EdGraphUtilities.h"
 #include "GraphEditorActions.h"
+#include "KRGDialogueEditorPCH.h"
 #include "Command/EditorCommands_KRGDialogueGraph.h"
 #include "Graph/EdKRGDialogueGraph.h"
 #include "Toolbar/AssetEditorToolbar_KRGDialogue.h"
+#include "Framework/Commands/GenericCommands.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "Node/Edge/EdKRGDialogueEdge.h"
+#include "Node/Node/EdKRGDialogueNode.h"
+#include "Windows/WindowsPlatformApplicationMisc.h"
+#include "Schema/EdGraphSchema_KRGDialogue.h"
 
 const FName ATSGraphEditorAppName = FName(TEXT("ATSGraphEditorAppName"));
 
@@ -273,8 +281,8 @@ void FAssetEditor_KRGDialogueGraph::BindCommands()
 void FAssetEditor_KRGDialogueGraph::CreateEdGraph()
 {
 	if(EditingGraph->EdGraph == nullptr)
-	{
-		EditingGraph->EdGraph = CastChecked<UEdKRGDialogueGraph>(FBlueprintEditorUtils::CreateNewGraph(EditingGraph, NAME_None, UEdGraph_ATSBase::StaticClass(), UEdGraphSchema_ATSBase::StaticClass()));
+	{		
+		EditingGraph->EdGraph = CastChecked<UEdKRGDialogueGraph>(FBlueprintEditorUtils::CreateNewGraph(EditingGraph, NAME_None, UEdKRGDialogueGraph::StaticClass(), UEdGraphSchema_KRGDialogue::StaticClass()));
 		EditingGraph->EdGraph->bAllowDeletion = false;
 
 		//Give the schema a chance to fill out any reqquired nodes (like the results node)
@@ -282,9 +290,9 @@ void FAssetEditor_KRGDialogueGraph::CreateEdGraph()
 		Schema->CreateDefaultNodesForGraph(*EditingGraph->EdGraph);
 
 		//RootNode는 자동으로 추가한다.
-		FEdGraphSchemaAction_ATSBaseNew Action;
-		Action.CreateNodeTemplate(EditingGraph, EditingGraph->EdGraph, UEdGraphNode_ATSGeneralNode::StaticClass(), UATSRootNode::StaticClass());
-		Action.PerformAction(EditingGraph->EdGraph, nullptr, FVector2D(0.f, 0.f), false);
+		//FEdGraphSchemaAction_ATSBaseNew Action;
+		//Action.CreateNodeTemplate(EditingGraph, EditingGraph->EdGraph, UEdGraphNode_ATSGeneralNode::StaticClass(), UATSRootNode::StaticClass());
+		//Action.PerformAction(EditingGraph->EdGraph, nullptr, FVector2D(0.f, 0.f), false);
 	}
 }
 
@@ -301,7 +309,7 @@ void FAssetEditor_KRGDialogueGraph::CreateCommandList()
 	// however it should be safe, since commands are being used only within this editor
 	// if it ever crashes, this function will have to go away and be reimplemented in each derived class
 
-	GraphEditorCommands->MapAction(FEditorCommands_ATSGraph::Get().GraphSettings,
+	GraphEditorCommands->MapAction(FEditorCommands_KRGDialogueGraph::Get().GraphSettings,
 		FExecuteAction::CreateRaw(this, &FAssetEditor_KRGDialogueGraph::GraphSettings),
 		FCanExecuteAction::CreateRaw(this, &FAssetEditor_KRGDialogueGraph::CanGraphSettings));
 
@@ -367,7 +375,7 @@ void FAssetEditor_KRGDialogueGraph::RebuildGraph()
 		return;
 	}
 
-	UEdGraph_ATSBase* EdGraph = Cast<UEdGraph_ATSBase>(EditingGraph->EdGraph);
+	UEdKRGDialogueGraph* EdGraph = Cast<UEdKRGDialogueGraph>(EditingGraph->EdGraph);
 	check(EdGraph != nullptr);
 
 	EdGraph->RebuildGraph(this);
@@ -408,7 +416,7 @@ void FAssetEditor_KRGDialogueGraph::DeleteSelectedNodes()
 		if (EdNode == nullptr || !EdNode->CanUserDeleteNode())
 			continue;;
 
-		if (UEdGraphNode_ATSBaseNode* EdNode_Node = Cast<UEdGraphNode_ATSBaseNode>(EdNode))
+		if (UEdKRGDialogueNode* EdNode_Node = Cast<UEdKRGDialogueNode>(EdNode))
 		{
 			EdNode_Node->Modify();
 
@@ -505,10 +513,10 @@ void FAssetEditor_KRGDialogueGraph::CopySelectedNodes()
 			continue;
 		}
 
-		if (UEdGraphNode_ATSBaseEdge* EdNode_Edge = Cast<UEdGraphNode_ATSBaseEdge>(*SelectedIter))
+		if (UEdKRGDialogueEdge* EdNode_Edge = Cast<UEdKRGDialogueEdge>(*SelectedIter))
 		{
-			UEdGraphNode_ATSBaseNode* EdStartNode = EdNode_Edge->GetEdStartNode();
-			UEdGraphNode_ATSBaseNode* EdEndNode = EdNode_Edge->GetEdEndNode();
+			UEdKRGDialogueNode* EdStartNode = EdNode_Edge->GetEdStartNode();
+			UEdKRGDialogueNode* EdEndNode = EdNode_Edge->GetEdEndNode();
 
 			if (!SelectedNodes.Contains(EdStartNode) || !SelectedNodes.Contains(EdEndNode))
 			{
@@ -642,7 +650,7 @@ bool FAssetEditor_KRGDialogueGraph::CanDuplicateNodes()
 
 void FAssetEditor_KRGDialogueGraph::GraphSettings()
 {
-	ATSDetailWidget->SetObject(EditingGraph);
+	//ATSDetailWidget->SetObject(EditingGraph);
 }
 
 bool FAssetEditor_KRGDialogueGraph::CanGraphSettings() const
@@ -680,7 +688,7 @@ void FAssetEditor_KRGDialogueGraph::OnRenameNode()
 
 bool FAssetEditor_KRGDialogueGraph::CanRenameNodes() const
 {
-	UEdGraph_ATSBase* EdGraph = Cast<UEdGraph_ATSBase>(EditingGraph->EdGraph);
+	UEdKRGDialogueGraph* EdGraph = Cast<UEdKRGDialogueGraph>(EditingGraph->EdGraph);
 	check(EdGraph != nullptr);
 
 	UKRGDialogueGraph* Graph = EdGraph->GetGraph();
@@ -702,9 +710,9 @@ void FAssetEditor_KRGDialogueGraph::OnSelectedNodesChanged(const TSet<UObject*>&
 	{
 		for(UObject* Select : Selection)
 		{
-			if(UEdGraphNode_ATSBase* Base = Cast<UEdGraphNode_ATSBase>(Select))
+			if(UEdKRGDialogueElement* Base = Cast<UEdKRGDialogueElement>(Select))
 			{
-				ATSDetailWidget->SetGraphNode(Base);
+				//ATSDetailWidget->SetGraphNode(Base);
 				break;
 			}
 		}

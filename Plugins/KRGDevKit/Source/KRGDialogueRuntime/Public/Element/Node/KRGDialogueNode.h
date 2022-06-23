@@ -12,7 +12,7 @@
 class UKRGDialogueGraph;
 class UKRGDialogueEdge;
 
-UCLASS(Blueprintable)
+UCLASS(Abstract)
 class KRGDIALOGUERUNTIME_API UKRGDialogueNode : public UKRGDialogueElement
 {
 	GENERATED_BODY()
@@ -101,7 +101,7 @@ public :
 	const TSubclassOf<UKRGDialogueNode>& GetCompatibleGraphType() const;
 	virtual void SetNodeTitle(const FText& NewTitle);
 	virtual bool CanCreateConnection(UKRGDialogueNode* Other, FText& ErrorMessage);
-	virtual bool CanCreateConnectionTo(UKRGDialogueNode* Other, int32 NumberOfChildrenNodes, FText& ErrorMessage);
-	virtual bool CanCreateConnectionFrom(UKRGDialogueNode* Other, int32 NumberOfParentNodes, FText& ErrorMessage);
+	virtual bool CanCreateConnectionTo(UKRGDialogueNode* Other, FText& ErrorMessage);
+	virtual bool CanCreateConnectionFrom(UKRGDialogueNode* Other, FText& ErrorMessage);
 #endif
 };

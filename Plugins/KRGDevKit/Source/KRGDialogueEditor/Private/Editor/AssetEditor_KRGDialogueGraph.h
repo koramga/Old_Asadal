@@ -28,7 +28,7 @@ public :
 	//End of FAssetToolkit
 
 	//Toolbar
-	TSharedPtr<class FAssetEditorToolbar_ATSBase> GetToolbarBuilder() { return ToolbarBuilder; }
+	TSharedPtr<class FAssetEditorToolbar_KRGDialogue> GetToolbarBuilder() { return ToolbarBuilder; }
 	void RegisterToolbarTab(const TSharedRef<class FTabManager>& InTabManager);
 
 	//FSerializableObject interface

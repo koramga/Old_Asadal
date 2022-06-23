@@ -25,7 +25,7 @@ public :
 	UEdKRGDialogueGraph();
 	virtual ~UEdKRGDialogueGraph();
 
-	//virtual void RebuildGraph(class FAssetEditor_ATSGraph* AssetEditor_ATSGraph);
+	virtual void RebuildGraph(class FAssetEditor_KRGDialogueGraph* AssetEditor_ATSGraph);
 	UKRGDialogueGraph* GetGraph() const;
 
 	virtual bool Modify(bool bAlwaysMarkDirty) override;

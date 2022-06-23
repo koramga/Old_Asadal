@@ -3,10 +3,19 @@
 
 #include "EdGraphSchema_KRGDialogue.h"
 
+#include "GraphEditorActions.h"
 #include "ToolMenuSection.h"
 #include "Editor/Action/EdGraphSchemaAction_KRGDialogueNew.h"
 #include "Editor/Policy/ConnectionDrawingPolicy_KRGDialogueBase.h"
 #include "Graph/KRGDialogueGraph.h"
+#include "Framework/Commands/GenericCommands.h"
+#include "Graph/EdKRGDialogueGraph.h"
+#include "ToolMenu.h"
+#include "Element/Node/KRGDialogueNode_Branch.h"
+#include "Element/Node/KRGDialogueNode_Script.h"
+#include "Node/Edge/EdKRGDialogueEdge.h"
+#include "Node/Node/EdKRGDialogueNode_Branch.h"
+#include "Node/Node/EdKRGDialogueNode_Script.h"
 
 int32 UEdGraphSchema_KRGDialogue::CurrentCacheRefreshID = 0;
 
@@ -134,17 +143,17 @@ void UEdGraphSchema_KRGDialogue::GetGraphContextActions(FGraphContextMenuBuilder
 	FText Desc = FText::FromString(Title);
 
 	
-	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewFinishNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Finish Node")), AddToolTip, 0));
-	NewFinishNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdGraphNode_ATSGeneralNode::StaticClass(), UATSFinishNode::StaticClass());
+	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewFinishNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Script Node")), AddToolTip, 0));
+	NewFinishNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Script::StaticClass(), UKRGDialogueNode_Script::StaticClass());
 	ContextMenuBuilder.AddAction(NewFinishNodeAction);
 
-	Visited.Add(UATSFinishNode::StaticClass());
+	Visited.Add(UKRGDialogueNode_Script::StaticClass());
 	
-	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewCraftNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Craft Node")), AddToolTip, 0));
-	NewCraftNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdGraphNode_ATSCraftNode::StaticClass(), UATSCraftNode::StaticClass());
+	TSharedPtr<FEdGraphSchemaAction_KRGDialogueNew> NewCraftNodeAction(new FEdGraphSchemaAction_KRGDialogueNew(FText::FromString(TEXT("Node")), FText::FromString(TEXT("Branch Node")), AddToolTip, 0));
+	NewCraftNodeAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode_Branch::StaticClass(), UKRGDialogueNode_Branch::StaticClass());
 	ContextMenuBuilder.AddAction(NewCraftNodeAction);
 
-	Visited.Add(UATSCraftNode::StaticClass());
+	Visited.Add(UKRGDialogueNode_Branch::StaticClass());
 
 	
 
@@ -171,7 +180,7 @@ void UEdGraphSchema_KRGDialogue::GetGraphContextActions(FGraphContextMenuBuilder
 			Desc = FText::FromString(Title);
 
 			TSharedPtr<FEdGraphSchemaAction_ATSBaseNew> NewAction(new FEdGraphSchemaAction_ATSBaseNew(FText::FromString(TEXT("Graph Node")), FText::FromString(TEXT("Base Node")), AddToolTip, 0));
-			NewAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdGraphNode_ATSBaseNode::StaticClass(), NodeElementClass);
+			NewAction->CreateNodeTemplate(Graph, ContextMenuBuilder.OwnerOfTemporaries, UEdKRGDialogueNode::StaticClass(), NodeElementClass);
 			ContextMenuBuilder.AddAction(NewAction);
 
 			Visited.Add(NodeElementClass);
@@ -198,11 +207,11 @@ void UEdGraphSchema_KRGDialogue::GetContextMenuActions(UToolMenu* Menu, UGraphNo
 					"BreakLinkTo"
 					, FText::FromString(TEXT("Break Link to..."))
 					, FText::FromString(TEXT("Break a specific link..."))
-					, FNewToolMenuDelegate::CreateUObject((UEdGraphSchema_ATSBase* const)this, &UEdGraphSchema_ATSBase::GetBreakLinkToSubMenuActions, const_cast<UEdGraphPin*>(Context->Pin)));
+					, FNewToolMenuDelegate::CreateUObject((UEdGraphSchema_KRGDialogue* const)this, &UEdGraphSchema_KRGDialogue::GetBreakLinkToSubMenuActions, const_cast<UEdGraphPin*>(Context->Pin)));
 			}
 			else
 			{
-				((UEdGraphSchema_ATSBase* const)this)->GetBreakLinkToSubMenuActions(Menu, const_cast<UEdGraphPin*>(Context->Pin));
+				((UEdGraphSchema_KRGDialogue* const)this)->GetBreakLinkToSubMenuActions(Menu, const_cast<UEdGraphPin*>(Context->Pin));
 			}
 		}
 	}
@@ -232,8 +241,8 @@ const FPinConnectionResponse UEdGraphSchema_KRGDialogue::CanCreateConnection(con
 	const UEdGraphPin* Out = A;
 	const UEdGraphPin* In = B;
 
-	UEdGraphNode_ATSBaseNode* EdNode_Out = Cast<UEdGraphNode_ATSBaseNode>(Out->GetOwningNode());
-	UEdGraphNode_ATSBaseNode* EdNode_In = Cast<UEdGraphNode_ATSBaseNode>(In->GetOwningNode());
+	UEdKRGDialogueNode* EdNode_Out = Cast<UEdKRGDialogueNode>(Out->GetOwningNode());
+	UEdKRGDialogueNode* EdNode_In = Cast<UEdKRGDialogueNode>(In->GetOwningNode());
 
 	if(false == IsValid(EdNode_In) || false == IsValid(EdNode_Out))
 	{
@@ -242,7 +251,7 @@ const FPinConnectionResponse UEdGraphSchema_KRGDialogue::CanCreateConnection(con
 
 	//Determine if we can have cyclces or not.
 	bool bAllowCycles = false;
-	auto EdGraph = Cast<UEdGraph_ATSBase>(EdNode_Out->GetGraph());
+	auto EdGraph = Cast<UEdKRGDialogueGraph>(EdNode_Out->GetGraph());
 	if(EdGraph != nullptr)
 	{
 		bAllowCycles = EdGraph->GetGraph()->bCanBeCyclical;
@@ -278,8 +287,8 @@ const FPinConnectionResponse UEdGraphSchema_KRGDialogue::CanCreateConnection(con
 bool UEdGraphSchema_KRGDialogue::TryCreateConnection(UEdGraphPin* A, UEdGraphPin* B) const
 {
 	//We don't actually care about the pin, we want the node that is being dragged between
-	UEdGraphNode_ATSBaseNode* NodeA = Cast<UEdGraphNode_ATSBaseNode>(A->GetOwningNode());
-	UEdGraphNode_ATSBaseNode* NodeB = Cast<UEdGraphNode_ATSBaseNode>(B->GetOwningNode());
+	UEdKRGDialogueNode* NodeA = Cast<UEdKRGDialogueNode>(A->GetOwningNode());
+	UEdKRGDialogueNode* NodeB = Cast<UEdKRGDialogueNode>(B->GetOwningNode());
 
 	if(nullptr == NodeA
 		|| nullptr == NodeB)
@@ -291,7 +300,7 @@ bool UEdGraphSchema_KRGDialogue::TryCreateConnection(UEdGraphPin* A, UEdGraphPin
 	for(UEdGraphPin* TestPin : NodeA->GetOutputPin()->LinkedTo)
 	{
 		UEdGraphNode* ChildNode = TestPin->GetOwningNode();
-		if(UEdGraphNode_ATSBaseEdge* EdEdge = Cast<UEdGraphNode_ATSBaseEdge>(ChildNode))
+		if(UEdKRGDialogueEdge* EdEdge = Cast<UEdKRGDialogueEdge>(ChildNode))
 		{
 			ChildNode = EdEdge->GetEdEndNode();
 		}
@@ -309,11 +318,11 @@ bool UEdGraphSchema_KRGDialogue::TryCreateConnection(UEdGraphPin* A, UEdGraphPin
 		UEdGraphPin* ToPin = NodeA->GetOutputPin();
 		UEdGraphPin* FromPin = NodeB->GetInputPin();
 		
-		if(NodeA->IsA(UEdGraphNode_ATSCraftNode::StaticClass()))
+		if(NodeA->IsA(UEdKRGDialogueNode_Branch::StaticClass()))
 		{
 			ToPin = A;
 		}
-		else if(NodeB->IsA(UEdGraphNode_ATSGeneralNode::StaticClass()))
+		else if(NodeB->IsA(UEdKRGDialogueNode_Script::StaticClass()))
 		{
 			FromPin = B;
 		}
@@ -328,8 +337,8 @@ bool UEdGraphSchema_KRGDialogue::TryCreateConnection(UEdGraphPin* A, UEdGraphPin
 
 bool UEdGraphSchema_KRGDialogue::CreateAutomaticConversionNodeAndConnections(UEdGraphPin* A, UEdGraphPin* B) const
 {
-	UEdGraphNode_ATSBaseNode* NodeA = Cast<UEdGraphNode_ATSBaseNode>(A->GetOwningNode());
-	UEdGraphNode_ATSBaseNode* NodeB = Cast<UEdGraphNode_ATSBaseNode>(B->GetOwningNode());
+	UEdKRGDialogueNode* NodeA = Cast<UEdKRGDialogueNode>(A->GetOwningNode());
+	UEdKRGDialogueNode* NodeB = Cast<UEdKRGDialogueNode>(B->GetOwningNode());
 
 	//Are nodes and pins all valid?
 	if(!NodeA || !NodeA->GetOutputPin() || !NodeB || !NodeB->GetInputPin())
@@ -337,13 +346,14 @@ bool UEdGraphSchema_KRGDialogue::CreateAutomaticConversionNodeAndConnections(UEd
 		return false;
 	}
 
-	UATSBaseGraph* Graph = NodeA->GetNode()->GetGraph();
+	UKRGDialogueGraph* Graph = NodeA->GetNode()->GetGraph();
 
 	FVector2D InitPos((NodeA->NodePosX + NodeB->NodePosX) / 2, (NodeA->NodePosY + NodeB->NodePosY) / 2);
 
-	FEdGraphSchemaAction_ATSBaseNew Action;
-	Action.CreateNodeTemplate(Graph, NodeA->GetGraph(), UEdGraphNode_ATSBaseEdge::StaticClass(), UATSBaseEdge::StaticClass());
-	UEdGraphNode_ATSBaseEdge* EdEdge = Cast<UEdGraphNode_ATSBaseEdge>(Action.PerformAction(NodeA->GetGraph(), nullptr, InitPos, false));
+	
+	FEdGraphSchemaAction_KRGDialogueNew Action;
+	Action.CreateNodeTemplate(Graph, NodeA->GetGraph(), UEdKRGDialogueEdge::StaticClass(), UKRGDialogueEdge::StaticClass());
+	UEdKRGDialogueEdge* EdEdge = Cast<UEdKRGDialogueEdge>(Action.PerformAction(NodeA->GetGraph(), nullptr, InitPos, false));
 
 	//Always create connections from node A to B, don't allow adding in reverse
 	EdEdge->CreateConnections(NodeA, NodeB);
@@ -389,7 +399,7 @@ void UEdGraphSchema_KRGDialogue::BreakSinglePinLink(UEdGraphPin* SourcePin, UEdG
 UEdGraphPin* UEdGraphSchema_KRGDialogue::DropPinOnNode(UEdGraphNode* InTargetNode, const FName& InSourcePinName,
 	const FEdGraphPinType& InSourcePinType, EEdGraphPinDirection InSourcePinDirection) const
 {
-	UEdGraphNode_ATSBaseNode* EdNode = Cast<UEdGraphNode_ATSBaseNode>(InTargetNode);
+	UEdKRGDialogueNode* EdNode = Cast<UEdKRGDialogueNode>(InTargetNode);
 
 	switch (InSourcePinDirection)
 	{

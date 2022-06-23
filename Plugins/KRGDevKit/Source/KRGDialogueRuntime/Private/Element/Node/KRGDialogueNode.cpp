@@ -151,7 +151,7 @@ bool UKRGDialogueNode::CanCreateConnection(UKRGDialogueNode* Other, FText& Error
 	return true;
 }
 
-bool UKRGDialogueNode::CanCreateConnectionTo(UKRGDialogueNode* Other, int32 NumberOfChildrenNodes, FText& ErrorMessage)
+bool UKRGDialogueNode::CanCreateConnectionTo(UKRGDialogueNode* Other, FText& ErrorMessage)
 {
 	//if( ENodeLimit::Limited == ChildrenLimitType
 	//	&& NumberOfChildrenNodes >= ChildrenLimit)
@@ -163,7 +163,7 @@ bool UKRGDialogueNode::CanCreateConnectionTo(UKRGDialogueNode* Other, int32 Numb
 	return CanCreateConnection(Other, ErrorMessage);
 }
 
-bool UKRGDialogueNode::CanCreateConnectionFrom(UKRGDialogueNode* Other, int32 NumberOfParentNodes, FText& ErrorMessage)
+bool UKRGDialogueNode::CanCreateConnectionFrom(UKRGDialogueNode* Other, FText& ErrorMessage)
 {
 	//if(ENodeLimit::Limited == ParentLimitType
 	//	&& NumberOfParentNodes >= ParentLimit)
