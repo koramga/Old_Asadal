@@ -21,16 +21,6 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "ScriptDesignerRuntime",
-			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
-		},
-		{
-			"Name": "ScriptDesignerEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		},
-		{
 			"Name": "SoundDesignerTools",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
@@ -53,6 +43,16 @@
 		{
 			"Name": "KRGMetaTool",
 			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "KRGDialogueRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "KRGDialogueEditor",
+			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}
 	],
