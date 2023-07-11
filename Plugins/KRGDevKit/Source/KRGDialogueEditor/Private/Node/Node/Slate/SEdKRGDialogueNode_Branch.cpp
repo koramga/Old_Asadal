@@ -60,7 +60,7 @@ void SEdKRGDialogueNode_Branch::SetDefaultTitleAreaWidget(TSharedRef<SOverlay> D
 	DefaultTitleAreaWidget->AddSlot()
 	[
 		SNew(SImage)
-		.Image( FEditorStyle::GetBrush("Graph.Node.TitleGloss") )
+		.Image( FAppStyle::GetBrush("Graph.Node.TitleGloss") )
 		.ColorAndOpacity( this, &SGraphNode::GetNodeTitleIconColor )
 	];
 
@@ -73,7 +73,7 @@ void SEdKRGDialogueNode_Branch::SetDefaultTitleAreaWidget(TSharedRef<SOverlay> D
 		.HAlign(HAlign_Fill)
 		[
 			SNew(SBorder)
-			.BorderImage( FEditorStyle::GetBrush("Graph.Node.ColorSpill") )
+			.BorderImage( FAppStyle::GetBrush("Graph.Node.ColorSpill") )
 			.Padding( FMargin(10,5,30,3) )
 			.BorderBackgroundColor( this, &SGraphNode::GetNodeTitleColor )
 			.VAlign(VAlign_Fill)

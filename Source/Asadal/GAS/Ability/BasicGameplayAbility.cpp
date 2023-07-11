@@ -75,7 +75,7 @@ void UBasicGameplayAbility::__OnCancelledNative()
 
 void UBasicGameplayAbility::__OnWaitGameplayEventReceivedNative(FGameplayEventData Payload)
 {
-	FGameplayAbilityTargetDataHandle AbilityTargetDataHandle = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(const_cast<AActor*>(Payload.Target));
+	FGameplayAbilityTargetDataHandle AbilityTargetDataHandle = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(const_cast<AActor*>(Payload.Target.Get()));
 
 	BP_ApplyGameplayEffectToTarget(AbilityTargetDataHandle, GameplayEffectClass);
 }

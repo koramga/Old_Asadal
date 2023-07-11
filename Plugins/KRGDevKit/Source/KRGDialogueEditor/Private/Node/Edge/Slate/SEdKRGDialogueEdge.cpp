@@ -68,7 +68,7 @@ void SEdKRGDialogueEdge::UpdateGraphNode()
 			+ SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
+				.Image(FAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 				.ColorAndOpacity(this, &SEdKRGDialogueEdge::GetEdgeColor)
 			]
 			+ SOverlay::Slot()
@@ -180,7 +180,7 @@ FSlateColor SEdKRGDialogueEdge::GetEdgeColor() const
 
 const FSlateBrush* SEdKRGDialogueEdge::GetEdgeImage() const
 {
-	return FEditorStyle::GetBrush( TEXT("Graph.TransitionNode.Icon"));
+	return FAppStyle::GetBrush( TEXT("Graph.TransitionNode.Icon"));
 }
 
 EVisibility SEdKRGDialogueEdge::GetEdgeImageVisibility() const

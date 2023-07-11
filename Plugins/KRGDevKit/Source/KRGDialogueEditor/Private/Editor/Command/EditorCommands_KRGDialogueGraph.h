@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "EditorStyleSet.h"
 
 class FEditorCommands_KRGDialogueGraph
 	: public TCommands<FEditorCommands_KRGDialogueGraph>

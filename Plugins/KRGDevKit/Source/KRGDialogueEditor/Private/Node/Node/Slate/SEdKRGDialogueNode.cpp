@@ -56,7 +56,7 @@ EVisibility SEdKRGDialogueNode::GetDragOverMarkerVisibility() const
 
 const FSlateBrush* SEdKRGDialogueNode::GetNameIcon() const
 {
-	return FEditorStyle::GetBrush(TEXT("BTEditor.Graph.BTNode.Icon"));
+	return FAppStyle::GetBrush(TEXT("BTEditor.Graph.BTNode.Icon"));
 }
 
 void SEdKRGDialogueNode::OnNameTextCommited(const FText& InText, ETextCommit::Type CommitInfo)

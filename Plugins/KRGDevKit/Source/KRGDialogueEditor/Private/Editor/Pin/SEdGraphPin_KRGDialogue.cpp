@@ -58,5 +58,5 @@ TSharedRef<FDragDropOperation> SEdGraphPin_KRGDialogue::SpawnPinDragEvent(const 
 
 const FSlateBrush* SEdGraphPin_KRGDialogue::GetPinBorder() const
 {
-	return FEditorStyle::GetBrush(TEXT("Graph.StateNode.Body"));
+	return FAppStyle::GetBrush(TEXT("Graph.StateNode.Body"));
 }
